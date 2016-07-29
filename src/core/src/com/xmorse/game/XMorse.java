@@ -2,8 +2,6 @@ package com.xmorse.game;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.xmorse.managers.EntityManager;
@@ -11,13 +9,12 @@ import com.xmorse.screens.SplashScreen;
 
 public class XMorse extends Game
 {
+	public static long currentTimeMillis;
 	private Engine engine;
 	private EntityManager entityManager;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private SplashScreen _splash;
-
-	public static long currentTimeMillis;
 
 	@Override
 	public void create()
@@ -34,11 +31,7 @@ public class XMorse extends Game
 	@Override
 	public void render()
 	{
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		screen.render(1);
-		batch.end();
+		super.render();
 	}
 
 	@Override
