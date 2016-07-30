@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -20,10 +19,13 @@ public class MenuScreen extends ScreenAdapter
 {
 	private XMorse _game;
 	private Skin _skin;
+	private Stage _stage;
 
 	public MenuScreen(XMorse game)
 	{
 		_game = game;
+		_stage = new Stage();
+		createSkin();
 	}
 
 	private void createSkin()
@@ -35,8 +37,8 @@ public class MenuScreen extends ScreenAdapter
 		_skin.add("default", font);
 
 		//Create a texture
-		int w = (int) Gdx.graphics.getWidth() / 4;
-		int h = (int) Gdx.graphics.getHeight() / 10;
+		int w = Gdx.graphics.getWidth() / 4;
+		int h = Gdx.graphics.getHeight() / 10;
 		Pixmap pixmap = new Pixmap(w, h, Pixmap.Format.RGB888);
 		pixmap.setColor(Color.WHITE);
 		pixmap.fill();
@@ -59,8 +61,7 @@ public class MenuScreen extends ScreenAdapter
 	public void show()
 	{
 		super.show();
-		createSkin();
-		Gdx.input.setInputProcessor(_game.stage);
+		Gdx.input.setInputProcessor(_stage);
 
 		TextButton playButton = new TextButton("Play", _skin);
 		int left = Gdx.graphics.getWidth() / 2 - Gdx.graphics.getWidth() / 8;
@@ -74,13 +75,13 @@ public class MenuScreen extends ScreenAdapter
 			}
 		});
 		playButton.setPosition(left, top);
-		_game.stage.addActor(playButton);
+		_stage.addActor(playButton);
 
 		Label titleLabel = new Label("X Morse", _skin);
 		float titleLeft = Gdx.graphics.getWidth() / 2 - titleLabel.getWidth() / 2;
 		float titleTop = Gdx.graphics.getHeight() - titleLabel.getHeight() - 20;
 		titleLabel.setPosition(titleLeft, titleTop);
-		_game.stage.addActor(titleLabel);
+		_stage.addActor(titleLabel);
 	}
 
 	@Override
@@ -90,8 +91,8 @@ public class MenuScreen extends ScreenAdapter
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		_game.batch.begin();
 		_game.batch.end();
-		_game.stage.act();
-		_game.stage.draw();
+		_stage.act();
+		_stage.draw();
 	}
 
 	@Override
@@ -122,6 +123,7 @@ public class MenuScreen extends ScreenAdapter
 	public void dispose()
 	{
 		_skin.dispose();
+		_stage.dispose();
 		super.dispose();
 	}
 }

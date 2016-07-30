@@ -11,8 +11,6 @@ import com.xmorse.screens.SplashScreen;
 public class XMorse extends Game
 {
 	public static long currentTimeMillis;
-
-	public Stage stage;
 	public SpriteBatch batch;
 
 	private Engine _engine;
@@ -23,7 +21,6 @@ public class XMorse extends Game
 	@Override
 	public void create()
 	{
-		stage = new Stage();
 		batch = new SpriteBatch();
 		_engine = new Engine();
 		_camera = new OrthographicCamera();
