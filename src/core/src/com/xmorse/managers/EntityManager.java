@@ -16,16 +16,14 @@ import com.xmorse.systems.RenderSystem;
 
 public class EntityManager
 {
-	private Engine engine;
+	private Engine _engine;
 
 	public EntityManager(Engine engine, SpriteBatch batch, OrthographicCamera camera)
 	{
-		this.engine = engine;
+		_engine = engine;
 
-		MovementSystem cms = new MovementSystem();
-		engine.addSystem(cms);
-		RenderSystem rs = new RenderSystem(batch);
-		engine.addSystem(rs);
+		engine.addSystem(new MovementSystem());
+		engine.addSystem(new RenderSystem(batch));
 
 		Entity player = new Entity();
 		player.add(new PlayerComponent());
@@ -39,6 +37,6 @@ public class EntityManager
 
 	public void update()
 	{
-		engine.update((float) Time.time);
+		_engine.update((float) Time.time);
 	}
 }

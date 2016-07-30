@@ -1,16 +1,15 @@
 package com.xmorse.components;
 
 import com.badlogic.ashley.core.Component;
-import com.badlogic.gdx.math.Vector3;
 
 public class VelocityComponent implements Component
 {
-	public float x = 0.0f;
-	public float y = 0.0f;
+	public float dx = 0.0f;
+	public float dy = 0.0f;
 
-	public VelocityComponent(float x, float y)
+	public VelocityComponent(float dx, float dy)
 	{
-		this.x = x;
-		this.y = y;
+		this.dx = dx;
+		this.dy = dy;
 	}
 }

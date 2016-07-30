@@ -16,7 +16,7 @@ public class RenderSystem extends EntitySystem
 	private ImmutableArray<Entity> entities;
 	private SpriteBatch batch;
 
-	private ComponentMapper<PositionComponent> pm =
+	private ComponentMapper<PositionComponent> _positions =
 		ComponentMapper.getFor(PositionComponent.class);
 
 	public RenderSystem(SpriteBatch batch)

@@ -9,10 +9,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.xmorse.Time;
+import com.xmorse.game.XMorse;
 
 public class SplashScreen extends ScreenAdapter
 {
-	private Game _game;
+	private XMorse _game;
 	private SpriteBatch _batch;
 	private Sprite _splash;
 	private Texture _texture;
@@ -23,7 +24,7 @@ public class SplashScreen extends ScreenAdapter
 	 * @param game     The Game instance.
 	 * @param batch    The game's SpriteBatch instance.
 	 */
-	public SplashScreen(Game game, SpriteBatch batch)
+	public SplashScreen(XMorse game, SpriteBatch batch)
 	{
 		_game = game;
 		_batch = batch;
@@ -47,8 +48,8 @@ public class SplashScreen extends ScreenAdapter
 		_splash.draw(_batch);
 		_batch.end();
 
-		if (TimeUtils.millis() - 2000 > _startTime)
-			_game.setScreen(new MenuScreen(_game, _batch));
+		if (TimeUtils.timeSinceMillis(_startTime) > 250)
+			_game.setScreen(new MenuScreen(_game));
 	}
 
 	@Override
