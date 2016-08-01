@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.xmorse.game.XMorse;
+import com.xmorse.XMorse;
 
 public class SplashScreen extends ScreenAdapter
 {

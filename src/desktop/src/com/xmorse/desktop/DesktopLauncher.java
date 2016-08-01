@@ -1,8 +1,8 @@
-package com.xmorse.game.desktop;
+package com.xmorse.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.xmorse.game.XMorse;
+import com.xmorse.XMorse;
 import com.xmorse.util.Static;
 
 public class DesktopLauncher {

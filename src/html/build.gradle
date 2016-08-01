@@ -7,8 +7,8 @@ gwt {
     minHeapSize="1G"
 
     src = files(file("src/")) // Needs to be in front of "modules" below.
-    modules 'com.xmorse.game.GdxDefinition'
-    devModules 'com.xmorse.game.GdxDefinitionSuperdev'
+    modules 'com.xmorse.GdxDefinition'
+    devModules 'com.xmorse.GdxDefinitionSuperdev'
     project.webAppDirName = 'webapp'
 
     compiler {

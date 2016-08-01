@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.xmorse.game.XMorse;
+import com.xmorse.XMorse;
 import com.xmorse.util.Static;
 
 public class GameOverScreen extends ScreenAdapter

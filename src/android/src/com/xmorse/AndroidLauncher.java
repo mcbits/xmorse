@@ -1,10 +1,10 @@
-package com.xmorse.game;
+package com.xmorse;
 
 import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.xmorse.game.XMorse;
+import com.xmorse.XMorse;
 
 public class AndroidLauncher extends AndroidApplication {
 	@Override

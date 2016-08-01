@@ -1,4 +1,4 @@
-package com.xmorse.game;
+package com.xmorse;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Game;

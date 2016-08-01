@@ -15,7 +15,7 @@ android {
         instrumentTest.setRoot('tests')
     }
     defaultConfig {
-        applicationId "com.xmorse.game"
+        applicationId "com.xmorse"
         minSdkVersion 8
         targetSdkVersion 24
     }
@@ -68,7 +68,7 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.xmorse.game/com.xmorse.game.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.xmorse/com.xmorse.AndroidLauncher'
 }
 
 // sets up the Android Eclipse project, using the old Ant based build.

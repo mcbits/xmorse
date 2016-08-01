@@ -4,7 +4,12 @@
 	<inherits name='com.badlogic.gdx.backends.gdx_backends_gwt' />
 	<inherits name='com.badlogic.gdx.physics.box2d.box2d-gwt' />
 	<inherits name='com.badlogic.ashley_gwt' />
-	<inherits name='XMorse' />
-	<entry-point class='com.xmorse.game.client.HtmlLauncher' />
-	<set-configuration-property name="gdx.assetpath" value="../android/assets" />
+
+    <inherits name='com.xmorse.GdxDefinition' />
+    
+    <collapse-all-properties />
+    
+	<add-linker name="xsiframe"/>	
+	<set-configuration-property name="devModeRedirectEnabled" value="false"/>
+	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>	
 </module>

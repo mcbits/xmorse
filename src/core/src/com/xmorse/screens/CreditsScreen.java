@@ -3,7 +3,7 @@ package com.xmorse.screens;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.xmorse.game.XMorse;
+import com.xmorse.XMorse;
 import com.xmorse.util.Static;
 
 public class CreditsScreen extends ScreenAdapter
