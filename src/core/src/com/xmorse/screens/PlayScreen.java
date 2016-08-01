@@ -8,8 +8,8 @@ import com.xmorse.game.XMorse;
 
 public class PlayScreen extends ScreenAdapter
 {
-	private XMorse _game;
-	private Stage _stage;
+	private final XMorse _game;
+	private final Stage _stage;
 	private boolean _alive = true;
 
 	public PlayScreen(XMorse game)

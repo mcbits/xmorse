@@ -16,7 +16,7 @@ import com.xmorse.systems.RenderSystem;
 
 public class EntityManager
 {
-	private Engine _engine;
+	private final Engine _engine;
 
 	public EntityManager(Engine engine, SpriteBatch batch, OrthographicCamera camera)
 	{

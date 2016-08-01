@@ -1,15 +1,22 @@
 package com.xmorse.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.xmorse.game.XMorse;
+import com.xmorse.util.Static;
 
 public class CreditsScreen extends ScreenAdapter
 {
-	private Game _game;
+	private final XMorse _game;
+	private final Stage _stage;
+	private final Skin _skin;
 
-	public CreditsScreen(Game game)
+	public CreditsScreen(final XMorse game)
 	{
 		_game = game;
+		_stage = new Stage();
+		_skin = Static.commonSkin();
 	}
 
 	@Override
@@ -51,6 +58,8 @@ public class CreditsScreen extends ScreenAdapter
 	@Override
 	public void dispose()
 	{
+		_skin.dispose();
+		_stage.dispose();
 		super.dispose();
 	}
 }

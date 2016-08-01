@@ -1,6 +1,5 @@
 package com.xmorse.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
@@ -8,34 +7,33 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.xmorse.Time;
 import com.xmorse.game.XMorse;
 
 public class SplashScreen extends ScreenAdapter
 {
-	private XMorse _game;
-	private SpriteBatch _batch;
-	private Sprite _splash;
-	private Texture _texture;
+	private final XMorse _game;
+	private final SpriteBatch _batch;
+	private final Sprite _splash;
+	private final Texture _texture;
+
 	private long _startTime;
 
 	/**
 	 * Creates a new instance of the splash screen.
 	 * @param game     The Game instance.
-	 * @param batch    The game's SpriteBatch instance.
 	 */
-	public SplashScreen(XMorse game, SpriteBatch batch)
+	public SplashScreen(XMorse game)
 	{
 		_game = game;
-		_batch = batch;
+		_batch = new SpriteBatch();
+		_texture = new Texture("PNG/splash_800x480.png");
+		_splash = new Sprite(_texture);
+		_splash.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 
 	@Override
 	public void show()
 	{
-		_texture = new Texture("PNG/splash_800x480.png");
-		_splash = new Sprite(_texture);
-		_splash.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		_startTime = TimeUtils.millis();
 	}
 

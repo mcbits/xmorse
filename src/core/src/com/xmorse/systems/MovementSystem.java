@@ -12,10 +12,8 @@ import com.xmorse.components.VelocityComponent;
 public class MovementSystem extends EntitySystem
 {
 	private ImmutableArray<Entity> _entities;
-	private ComponentMapper<PositionComponent> _positions =
-		ComponentMapper.getFor(PositionComponent.class);
-	private ComponentMapper<VelocityComponent> _velocities =
-		ComponentMapper.getFor(VelocityComponent.class);
+	private final ComponentMapper<PositionComponent> _positions = ComponentMapper.getFor(PositionComponent.class);
+	private final ComponentMapper<VelocityComponent> _velocities = ComponentMapper.getFor(VelocityComponent.class);
 
 	public MovementSystem()
 	{
@@ -24,9 +22,7 @@ public class MovementSystem extends EntitySystem
 	@Override
 	public void addedToEngine(Engine engine)
 	{
-		Family.Builder builder = Family.all(
-			PositionComponent.class,
-			VelocityComponent.class);
+		Family.Builder builder = Family.all(PositionComponent.class, VelocityComponent.class);
 		Family family = builder.get();
 		_entities = engine.getEntitiesFor(family);
 	}
@@ -38,7 +34,6 @@ public class MovementSystem extends EntitySystem
 			Entity entity = _entities.get(i);
 			PositionComponent position = _positions.get(entity);
 			VelocityComponent velocity = _velocities.get(entity);
-
 			position.x += velocity.dx * deltaTime;
 			position.y += velocity.dy * deltaTime;
 		}
