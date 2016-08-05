@@ -5,11 +5,19 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.xmorse.XMorse;
 import com.xmorse.scenes.Hud;
+import com.xmorse.sprites.PlayerSprite;
+import com.xmorse.stages.GameStage;
 import com.xmorse.util.Static;
 
 public class PlayScreen extends ScreenAdapter
@@ -19,14 +27,26 @@ public class PlayScreen extends ScreenAdapter
 	private Camera _camera;
 	private Viewport _viewport;
 	private Hud _hud;
+	private World _world;
+	private Box2DDebugRenderer _renderer;
+	private PlayerSprite _player;
+	private GameStage _stage;
 
 	public PlayScreen(XMorse game)
 	{
 		_game = game;
 		_camera = new OrthographicCamera();
-		_viewport = new FitViewport(Static.BaseWidth, Static.BaseHeight, _camera);
+		{
+			float scaledWidth = Static.BaseWidth / Static.PPM;
+			float scaledHeight = Static.BaseHeight / Static.PPM;
+			_viewport = new FitViewport(scaledWidth, scaledHeight, _camera);
+		}
 		_hud = new Hud(game.batch);
 		_camera.position.set(_viewport.getWorldWidth() / 2, _viewport.getWorldHeight() / 2, 0);
+		_world = new World(new Vector2(0, -10), true);
+		_renderer = new Box2DDebugRenderer();
+		_player = new PlayerSprite(_world);
+		_stage = new GameStage();
 	}
 
 	@Override
@@ -43,6 +63,9 @@ public class PlayScreen extends ScreenAdapter
 	public void update(float dt)
 	{
 		handleInput(dt);
+
+		_world.step(1 / 60f, 6, 2);
+
 		_camera.update();
 	}
 
@@ -60,6 +83,11 @@ public class PlayScreen extends ScreenAdapter
 
 		_game.batch.setProjectionMatrix(_hud.stage.getCamera().combined);
 		_hud.stage.draw();
+
+		_renderer.render(_world, _camera.combined);
+
+		_stage.draw();
+		_stage.act(dt);
 
 		//_alive = false;
 	}
@@ -91,6 +119,8 @@ public class PlayScreen extends ScreenAdapter
 	@Override
 	public void dispose()
 	{
+		_renderer.dispose();
+		_world.dispose();
 		super.dispose();
 	}
 }
