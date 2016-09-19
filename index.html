@@ -1,126 +1,13 @@
 ﻿<!DOCTYPE html>
-
-<html lang="en">
+<html>
 <head>
 	<meta charset="utf-8" />
-	<title>X Morse: Games to learn Morse code</title>
-	<link rel="stylesheet" href="app.css" type="text/css" />
-	<link href="https://fonts.googleapis.com/css?family=Patua+One" rel="stylesheet" type="text/css">
+	<title>X Morse: Code Runner</title>
+	<link rel="stylesheet" href="css/site.css" type="text/css" />
+	<script defer src="js/phaser.min.js"></script>
+	<script defer src="js/game.js"></script>
 </head>
 <body>
-	<header>
-		<h1>X Morse:</h1>
-
-		<a href="coderunner.html">Code Runner</a>
-	</header>
-
-	<div class="content">
-		<div class="filler-content">
-			<article class="intro">
-				<h1>XMORSE</h1>
-
-				<aside>
-					Learn Morse code and practice your skills.
-				</aside>
-
-				<div>
-					<img src="/img/tgraph.png" alt="Telegraph schematic" />
-				</div>
-
-				<div>
-					<button class="startButton big">Start</button>
-				</div>
-
-				<p>
-					It can be boring to transcribe random snippets of text from a Morse code training app.
-					Once you can "read" or "copy" (i.e. transcribe) at a comfortable pace, chatting allows you to
-					hone your skills by chatting with other users who are also learning along with you.
-				</p>
-
-				<p>
-					This site does not fully simulate a Morse code key. Instead, the goal is to make it as easy
-					as possible to pick up the code.
-				</p>
-
-				<p>
-					To transmit your own messages, press the space bar or click/tap on the <strong>Beep</strong> button. It is also possible
-					to transmit by clicking on characters in the "cheat sheet", but you should only use this feature
-					sparingly. Remember, the point is to learn!
-				</p>
-
-				<h3>But why?</h3>
-
-				<p>
-					In emergency and survival scenarios, basic CW transmissions can be the simplest and most efficient
-					means of radio communication. And Morse code can also be used in other types of communication.
-					(Think: Smoke signals!)
-				</p>
-
-				<aside>
-					Did you know: It's actually not uncommon for video games and movies to have "easter eggs"
-					based on Morse code!
-				</aside>
-
-				<p>
-					Although there is no longer a Morse code requirement for amateur radio licensing in the USA and
-					many other countries, it's
-					still a good idea to learn a minimum of 5 WPM. Even better to reach 15-20 WPM, which is pretty
-					typical for CW communications worldwide. Morse code is a nice skill to have, even if you never
-					operate a radio, although I hope spreading the knowledge of the code will inspire more people to
-					get licensed and get on the air.
-				</p>
-
-				<p>
-					Once you have your license and a real radio, knowing Morse code will help you potentially reach
-					millions of people around the world. Morse code can be sent and received over channels that are
-					much too noisy for voice communications, and you won't need the sophisticated gear involved with
-					encoding/decoding data transmissions.
-				</p>
-
-				<h3>Learning the code</h3>
-
-				<p>
-					How long does it take to learn Morse code? Many people pick up the basic letters, numbers, and
-					common punctuation within just a few hours of practice. However, it can take several
-					weeks or more to reach a speed that allows for comfortable communication. Generally, 15 words per
-					minute is a good target to aim for. After that, you can gradually practice to build your speed up to
-					20 or 30 WPM. (People who copy above 30 WPM are comparatively rare, but then it's always a treat to
-					connect with someone who can keep up!)
-				</p>
-
-				<p>
-					Just keep listing at a speed that's slightly too fast to keep up. Copy as much as you can, always keeping
-					in mind that you won't capture everything, and that's okay. Once you start getting mentally fatigued
-					(perhaps 15 to 45 minutes), reduce the speed a notch and practice for a few minutes
-					at a more manageable speed.
-				</p>
-
-				<p>
-					As soon as you have the characters committed to memory, start trying to recognize pairs, triplets,
-					and even whole words. This is <em>essential</em> for reaching higher speeds. There is a point around
-					15 to 20 WPM where it becomes impossible for your brain to decode Morse code character-by-character. Rather,
-					you will find yourself keeping a small buffer of characters in your head, clearing that buffer in small
-					batches at regular intervals. Challenge yourself!
-				</p>
-
-				<p>
-					When you are <em>first beginning</em>, it can help to count the dits and dahs at very low speeds, form a mental
-					image and then look up the letter in your mental lookup table. <strong>Try to break this habit as soon as possible</strong>.
-				</p>
-
-				<p>
-					<button class="startButton big">Start</button>
-				</p>
-			</article>
-
-			<article class="noWebAudio disabled">
-				<p>
-					This site requires a browser that supports the Web Audio API standards. Unfortunately, this means
-					Internet Explorer will not work at this time. Everything does seem to work in Chrome, Firefox, and
-					the new Microsoft Edge browsers, so try one of those!
-				</p>
-			</article>
-		</div>
-	</div>
+	<div id="game"></div>
 </body>
 </html>
