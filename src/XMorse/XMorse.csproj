@@ -55,12 +55,15 @@
     <Content Include="js\phaser.map" />
     <Content Include="package.json" />
     <Content Include="tslint.json" />
+    <None Include="Folder.pubxml" />
+    <Content Include="tsconfig.json" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
     <None Include="web.Release.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
+    <Content Include="XMorse.wpp.targets" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\sfx\" />
