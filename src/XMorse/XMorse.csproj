@@ -47,6 +47,8 @@
   <ItemGroup>
     <TypeScriptCompile Include="ts\Game.ts" />
     <TypeScriptCompile Include="ts\MainMenuState.ts" />
+    <TypeScriptCompile Include="ts\Obstacle.ts" />
+    <TypeScriptCompile Include="ts\Player.ts" />
     <TypeScriptCompile Include="ts\PlayState.ts" />
     <TypeScriptCompile Include="ts\typings\phaser\phaser.d.ts" />
   </ItemGroup>

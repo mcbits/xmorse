@@ -9,7 +9,7 @@ namespace XMorse
 		{
 			const conf: Phaser.IGameConfig = {
 				width: 800,
-				height: 400,
+				height: 480,
 				antialias: true,
 				enableDebug: true,
 				forceSetTimeOut: false,
@@ -37,6 +37,7 @@ namespace XMorse
 			load.spritesheet("run", "assets/images/player-run.png", 500, 800);
 			load.spritesheet("jump", "assets/images/player-jump.png", 490, 845);
 			load.spritesheet("land", "assets/images/player-land.png", 559, 764);
+			load.spritesheet("sign", "assets/images/sign.png", 100, 100);
 
 			load.audio("IntroMusic", ["assets/music/intro.mp3"]);
 		}

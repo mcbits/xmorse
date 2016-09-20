@@ -4,7 +4,7 @@ var XMorse;
         function Game() {
             var conf = {
                 width: 800,
-                height: 400,
+                height: 480,
                 antialias: true,
                 enableDebug: true,
                 forceSetTimeOut: false,
@@ -27,6 +27,7 @@ var XMorse;
             load.spritesheet("run", "assets/images/player-run.png", 500, 800);
             load.spritesheet("jump", "assets/images/player-jump.png", 490, 845);
             load.spritesheet("land", "assets/images/player-land.png", 559, 764);
+            load.spritesheet("sign", "assets/images/sign.png", 100, 100);
             load.audio("IntroMusic", ["assets/music/intro.mp3"]);
         };
         Game.prototype.create = function () {
@@ -55,26 +56,92 @@ var XMorse;
             this.game = game;
         }
         MainMenuState.prototype.create = function () {
-            var _this = this;
+            this.createBackground();
+            this.createMusic();
+            this.createStartButton();
+        };
+        MainMenuState.prototype.createBackground = function () {
             this.backgroundImage = this.add.sprite(0, 0, "xmorse");
             var widthScale = this.game.width / this.backgroundImage.width;
             var heightScale = this.game.height / this.backgroundImage.height;
             this.backgroundImage.scale.setTo(widthScale, heightScale);
+        };
+        MainMenuState.prototype.createMusic = function () {
             this.music = this.game.add.audio("IntroMusic", 1, true);
             this.music.play();
-            var optionStyle = { font: "30pt Helvetica", fill: "#ffffff", align: "left" };
-            var txt = this.game.add.text(450, 248, "Start", optionStyle);
-            txt.inputEnabled = true;
-            txt.events.onInputUp.add(function () {
+        };
+        MainMenuState.prototype.createStartButton = function () {
+            var _this = this;
+            var startText = this.game.add.text(450, 300, "Start", {
+                font: "30pt Helvetica",
+                fill: "#ffffff",
+                align: "left"
+            });
+            startText.inputEnabled = true;
+            startText.events.onInputOver.add(function (target) { return target.fill = "#ffff99"; });
+            startText.events.onInputOut.add(function (target) { return target.fill = "#ffffff"; });
+            startText.events.onInputUp.add(function () {
                 _this.music.stop();
                 _this.game.state.start("PlayState");
             });
-            txt.events.onInputOver.add(function (target) { return target.fill = "#ffff99"; });
-            txt.events.onInputOut.add(function (target) { return target.fill = "#ffffff"; });
         };
         return MainMenuState;
     }(Phaser.State));
     XMorse.MainMenuState = MainMenuState;
+})(XMorse || (XMorse = {}));
+var XMorse;
+(function (XMorse) {
+    var Obstacle = (function () {
+        function Obstacle(game) {
+            this.game = game;
+            this.sprite = this.game.add.sprite(this.game.world.centerX / .75, this.game.world.centerY / .65, "sign");
+            this.sprite.anchor.setTo(0.5, 0.5);
+            this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+            this.sprite.body.collideWorldBounds = true;
+            this.sprite.animations.add("spin", [0, 1, 2, 3], 12, true);
+            this.sprite.animations.play("spin");
+        }
+        Obstacle.prototype.update = function () {
+            this.sprite.body.velocity.x = -150;
+            this.sprite.body.velocity.y = 2000;
+        };
+        return Obstacle;
+    }());
+    XMorse.Obstacle = Obstacle;
+})(XMorse || (XMorse = {}));
+var XMorse;
+(function (XMorse) {
+    var Player = (function () {
+        function Player(game) {
+            this.game = game;
+        }
+        Player.prototype.preload = function () {
+        };
+        Player.prototype.create = function () {
+            this.sprite = this.game.add.sprite(this.game.world.centerX / 2, this.game.world.centerY, "run");
+            this.sprite.anchor.setTo(0.5, 0.5);
+            this.sprite.scale.setTo(0.125);
+            this.sprite.animations.add("jump", [0], 1, true);
+            this.sprite.animations.add("idle", [0, 1], 2, true);
+            this.sprite.animations.add("run", [0, 1, 2, 3, 4, 5], 12, true);
+            this.sprite.animations.play("run");
+            this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+            this.sprite.body.collideWorldBounds = true;
+        };
+        Player.prototype.update = function () {
+            if (this.game.input.activePointer.isDown) {
+                this.sprite.animations.play("jump");
+                this.sprite.body.velocity.y = -550;
+            }
+            else {
+                this.sprite.animations.play("run");
+                var body = this.sprite.body;
+                body.velocity.y = 2000;
+            }
+        };
+        return Player;
+    }());
+    XMorse.Player = Player;
 })(XMorse || (XMorse = {}));
 var XMorse;
 (function (XMorse) {
@@ -83,33 +150,27 @@ var XMorse;
         function PlayState(game) {
             _super.call(this);
             this.game = game;
+            this.obstacles = [];
         }
         PlayState.prototype.preload = function () {
         };
         PlayState.prototype.create = function () {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.background = this.game.add.tileSprite(0, 0, 800, 400, "swamp");
-            this.player = this.game.add.sprite(this.game.world.centerX / 2, this.game.world.centerY, "run");
-            this.player.anchor.setTo(0.5, 0.5);
-            this.player.scale.setTo(0.125);
-            this.player.animations.add("jump", [0], 1, true);
-            this.player.animations.add("idle", [0, 1], 2, true);
-            this.player.animations.add("run", [0, 1, 2, 3, 4, 5], 12, true);
-            this.player.animations.play("run");
-            this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
-            this.player.body.collideWorldBounds = true;
+            this.background = this.game.add.tileSprite(0, 0, 800, 480, "swamp");
+            var scale = this.game.height / 400;
+            this.background.tileScale.set(scale, scale);
+            this.player = new XMorse.Player(this.game);
+            this.player.create();
         };
         PlayState.prototype.update = function () {
-            this.background.tilePosition.x -= 10;
-            if (this.game.input.activePointer.isDown) {
-                this.player.animations.play("jump");
-                this.player.body.velocity.y = -550;
+            if (this.obstacles.length < 1) {
+                this.obstacles.push(new XMorse.Obstacle(this.game));
             }
-            else {
-                this.player.animations.play("run");
-                var body = this.player.body;
-                body.velocity.y = 2000;
+            this.background.tilePosition.x -= 3;
+            for (var o = 0; o < this.obstacles.length; ++o) {
+                this.obstacles[o].update();
             }
+            this.player.update();
         };
         return PlayState;
     }(Phaser.State));
