@@ -34,10 +34,10 @@ namespace XMorse
 			load.image("desert", "assets/images/desert.png");
 
 			load.spritesheet("idle", "assets/images/player-idle.png", 499, 750);
-			load.spritesheet("run", "assets/images/player-run.png", 500, 800);
+			load.spritesheet("run", "assets/images/player-run.png", 466, 789);
 			load.spritesheet("jump", "assets/images/player-jump.png", 490, 845);
 			load.spritesheet("land", "assets/images/player-land.png", 559, 764);
-			load.spritesheet("sign", "assets/images/sign.png", 100, 100);
+			load.spritesheet("sign", "assets/images/sign.png", 60, 120);
 
 			load.audio("IntroMusic", ["assets/music/intro.mp3"]);
 		}
