@@ -1,8 +1,0 @@
-﻿{
-	"extends": "tslint:recommended",
-	"rules": {
-		"one-line": [ true, "check-catch", "check-finally", "check-else" ]
-	},
-	"rulesDirectory": [
-	]
-}
