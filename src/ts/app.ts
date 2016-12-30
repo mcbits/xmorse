@@ -52,6 +52,7 @@ const allCharacters = Object.keys(charPatterns);
 let pitch = 700;
 let volume = 0.25;
 let wpm = 18;
+let charSpacing = 25;
 let timeUnit = () => 1.2 / wpm * 1000;
 let ramp = 0.012;
 let playing = false;
@@ -70,6 +71,7 @@ const letterElement = document.querySelector(".letter");
 const wpmSlider = <HTMLInputElement>document.getElementById("charWPM");
 const volumeSlider = <HTMLInputElement>document.getElementById("volume");
 const pitchSlider = <HTMLInputElement>document.getElementById("pitch");
+const charSpacingSlider = <HTMLInputElement>document.getElementById("charSpacing");
 
 // Audio parts
 const audioCtx: AudioContext = new (AudioContext || window["webkitAudioContext"])();
@@ -92,7 +94,9 @@ function randomCharacter() {
 }
 
 function setVolume(value: number) {
-    gainNode.gain.setTargetAtTime(value, audioCtx.currentTime, ramp);
+    // NOTE: The +0.02 is only there to (mostly) eliminate clicking due to a bug in Firefox.
+    // It may not be needed in the future.
+    gainNode.gain.setTargetAtTime(value, audioCtx.currentTime+0.02, ramp);
 }
 
 function setButtonStates() {
@@ -147,6 +151,11 @@ function updatePitch(evt: Event) {
     (<HTMLInputElement>document.querySelector("#pitchText")).value = pitch.toString();
 }
 
+function updateCharSpacing(evt: Event) {
+    charSpacing = parseInt(charSpacingSlider.value);
+    (<HTMLInputElement>document.querySelector("#charSpacingText")).value = charSpacing.toString();
+}
+
 function startPlaying() {
     playing = true;
     paused = false;
@@ -167,13 +176,14 @@ function patternComplete() {
         nextPattern();
         setTimeout(function() {
             playPattern(currentPattern);
-        }, timeUnit() * 25);
+        }, timeUnit() * charSpacing);
     }
 }
 
 wpmSlider.addEventListener("input", updateWPM);
 volumeSlider.addEventListener("input", updateVolume);
 pitchSlider.addEventListener("input", updatePitch);
+charSpacingSlider.addEventListener("input", updateCharSpacing);
 document.addEventListener("patterncomplete", patternComplete);
 startButton.addEventListener("click", startPlaying);
 stopButton.addEventListener("click", stopPlaying);
