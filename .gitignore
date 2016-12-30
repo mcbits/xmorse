@@ -253,3 +253,10 @@ paket-files/
 
 **/js/game.js
 **/css/site.css
+
+**/src/css/site.css
+**/src/js/site.js
+**/src/js/site.js.map
+**/src/js/tests.js
+**/src/js/tests.js.map
+**/src/dist/*
