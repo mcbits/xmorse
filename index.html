@@ -1,13 +1,54 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8" />
-	<title>X Morse: Code Runner</title>
-	<link rel="stylesheet" href="css/site.css" type="text/css" />
-	<script defer src="js/phaser.min.js"></script>
-	<script defer src="js/game.js"></script>
+    <title>xMorse Morse Code Learning Aid</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="css/site.css" />
+    <script src="js/app.js" defer></script>
 </head>
+
 <body>
-	<div id="game"></div>
+    <div class="columns">
+        <div class="rows">
+            <div class="letter"></div>
+
+            <div class="controls">
+                <button class="btn btn-start">Start</button>
+                <button class="btn btn-pause" disabled>Pause</button>
+                <button class="btn btn-stop" disabled>Stop</button>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <h1 class="siteName">xMorse</h1>
+            <aside class="sidebarContent">
+                <div class="control">
+                    <label>
+                        Volume: <output for="volume" id="volumeText">50</output>
+                        <br>
+                        <input type="range" id="volume" value="25" min="0" max="50" />
+                    </label>
+                </div>
+
+                <div class="control">
+                    <label>
+                        Character WPM: <output for="charWPM" id="charWPMText">18</output>
+                        <br>
+                        <input type="range" id="charWPM" value="18" min="10" max="50" />
+                    </label>
+                </div>
+
+                <div class="control">
+                    <label>
+                        Pitch: <output for="pitch" id="pitchText">700</output>
+                        <br>
+                        <input type="range" id="pitch" value="700" min="400" max="1000" />
+                    </label>
+                </div>
+            </aside>
+        </div>
+    </div>
 </body>
+
 </html>
