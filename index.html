@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta charset="utf-8" />
     <title>xMorse Morse Code Learning Aid</title>
     <link rel="icon" href="/favicon.ico" />
     <link rel="stylesheet" href="css/site.css" />
@@ -25,15 +26,22 @@
             <aside class="sidebarContent">
                 <div class="control">
                     <label>
-                        Volume: <output for="volume" id="volumeText">50</output>
+                        Volume: <output for="volume" class="volumeText">50</output>
                         <br>
-                        <input type="range" id="volume" value="25" min="0" max="50" />
+                        <input type="range" id="volume" value="0.5" min="0" max="1" step="0.01" />
                     </label>
                 </div>
 
                 <div class="control">
                     <label>
-                        Character WPM: <output for="charWPM" id="charWPMText">18</output>
+                        <input type="checkbox" id="voiceEnabled" checked>
+                        Enable voice
+                    </label>
+                </div>
+
+                <div class="control">
+                    <label>
+                        Character WPM: <output for="charWPM" class="charWPMText">18</output>
                         <br>
                         <input type="range" id="charWPM" value="18" min="10" max="50" />
                     </label>
@@ -41,7 +49,15 @@
 
                 <div class="control">
                     <label>
-                        Pitch: <output for="pitch" id="pitchText">700</output>
+                        Spacing: <output for="charSpacing" class="charSpacingText">25</output>
+                        <br>
+                        <input type="range" id="charSpacing" value="25" min="0" max="50" />
+                    </label>
+                </div>
+
+                <div class="control">
+                    <label>
+                        Pitch: <output for="pitch" class="pitchText">700</output>
                         <br>
                         <input type="range" id="pitch" value="700" min="400" max="1000" />
                     </label>
