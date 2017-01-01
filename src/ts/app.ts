@@ -47,10 +47,13 @@ const charPatterns: { [char: string]: string } = {
     ",": "--..--",
 }
 
+const audioSources: {[char: string]: AudioBuffer} = { };
+
 const allCharacters = Object.keys(charPatterns);
 
 let pitch = 700;
-let volume = 0.25;
+let mainVolume = 0.5;
+let oscillatorVolume = 0.9;
 let wpm = 18;
 let charSpacing = 25;
 let timeUnit = () => 1.2 / wpm * 1000;
@@ -62,28 +65,47 @@ let currentPattern: string = null;
 
 // Events
 const patternCompleteEvent = new Event("patterncomplete");
+const audioLoadedEvent = new Event("audioloaded");
 
 // Page elements
 const startButton = <HTMLButtonElement>document.querySelector(".btn-start");
 const pauseButton = <HTMLButtonElement>document.querySelector(".btn-pause");
 const stopButton = <HTMLButtonElement>document.querySelector(".btn-stop");
 const letterElement = document.querySelector(".letter");
-const wpmSlider = <HTMLInputElement>document.getElementById("charWPM");
+
+// Settings inputs
 const volumeSlider = <HTMLInputElement>document.getElementById("volume");
+const charWPMSlider = <HTMLInputElement>document.getElementById("charWPM");
 const pitchSlider = <HTMLInputElement>document.getElementById("pitch");
 const charSpacingSlider = <HTMLInputElement>document.getElementById("charSpacing");
+const voiceEnabledCheckbox = <HTMLInputElement>document.getElementById("voiceEnabled");
+
+// Settings text labels
+const volumeText = (<HTMLInputElement>document.querySelector(".volumeText"));
+const charWPMText = (<HTMLInputElement>document.querySelector(".charWPMText"));
+const pitchText = (<HTMLInputElement>document.querySelector(".pitchText"));
+const charSpacingText = (<HTMLInputElement>document.querySelector(".charSpacingText"));
 
 // Audio parts
 const audioCtx: AudioContext = new (AudioContext || window["webkitAudioContext"])();
 const oscillator = audioCtx.createOscillator();
-const gainNode = audioCtx.createGain();
+const oscillatorGain = audioCtx.createGain();
+const voiceGain = audioCtx.createGain();
+const masterGain = audioCtx.createGain();
 
 // Wire up audio parts
 oscillator.frequency.value = pitch;
+oscillatorGain.gain.value = 0;
+oscillator.connect(oscillatorGain);
+oscillatorGain.connect(masterGain);
+
+voiceGain.gain.value = 0.6;
+voiceGain.connect(masterGain);
+
+masterGain.gain.value = mainVolume;
+masterGain.connect(audioCtx.destination);
+
 oscillator.start(0);
-gainNode.gain.value = 0;
-oscillator.connect(gainNode);
-gainNode.connect(audioCtx.destination);
 
 function random(first, second) {
     return Math.floor(Math.random() * (second - first)) + first + 1;
@@ -93,10 +115,14 @@ function randomCharacter() {
     return allCharacters[Math.floor(Math.random() * allCharacters.length)];
 }
 
-function setVolume(value: number) {
-    // NOTE: The +0.02 is only there to (mostly) eliminate clicking due to a bug in Firefox.
+function setOscillatorVolume(value: number) {
+    // NOTE: The +0.05 is only there to (mostly) eliminate clicking due to a bug in Firefox.
     // It may not be needed in the future.
-    gainNode.gain.setTargetAtTime(value, audioCtx.currentTime+0.02, ramp);
+    oscillatorGain.gain.setTargetAtTime(value, audioCtx.currentTime+0.05, 0.01);
+}
+
+function setMainVolume(value: number) {
+    masterGain.gain.setTargetAtTime(value, audioCtx.currentTime, 0.01);
 }
 
 function setButtonStates() {
@@ -111,7 +137,7 @@ function playPattern(pattern: string): void {
     function playBlip(index: number) {
         const blip = pattern.charAt(index++);
 
-        setVolume(volume);
+        setOscillatorVolume(oscillatorVolume);
 
         let time: number;
         if (blip === ".")
@@ -119,7 +145,7 @@ function playPattern(pattern: string): void {
         else if (blip === "-")
             time = timeUnit() * 3;
 
-        setTimeout(() => setVolume(0), time);
+        setTimeout(() => setOscillatorVolume(0), time);
 
         if (index < pattern.length)
             setTimeout(() => playBlip(index), time + timeUnit());
@@ -136,24 +162,25 @@ function nextPattern() {
 }
 
 function updateVolume() {
-    volume = parseFloat(volumeSlider.value) / 100.0;
-    (<HTMLInputElement>document.querySelector("#volumeText")).value = Math.floor(volume * 200).toString();
+    mainVolume = parseFloat(volumeSlider.value);
+    setMainVolume(mainVolume);
+    volumeText.value = Math.floor(mainVolume * 100).toString();
 }
 
 function updateWPM(evt: Event) {
-    wpm = parseInt(wpmSlider.value);
-    (<HTMLInputElement>document.querySelector("#charWPMText")).value = wpm.toString();
+    wpm = parseInt(charWPMSlider.value);
+    charWPMText.value = wpm.toString();
 }
 
 function updatePitch(evt: Event) {
     pitch = parseInt(pitchSlider.value);
     oscillator.frequency.value = pitch;
-    (<HTMLInputElement>document.querySelector("#pitchText")).value = pitch.toString();
+    pitchText.value = pitch.toString();
 }
 
 function updateCharSpacing(evt: Event) {
     charSpacing = parseInt(charSpacingSlider.value);
-    (<HTMLInputElement>document.querySelector("#charSpacingText")).value = charSpacing.toString();
+    charSpacingText.value = charSpacing.toString();
 }
 
 function startPlaying() {
@@ -173,17 +200,87 @@ function stopPlaying() {
 function patternComplete() {
     letterElement.innerHTML = currentLetter;
     if (playing && !paused) {
-        nextPattern();
-        setTimeout(function() {
-            playPattern(currentPattern);
-        }, timeUnit() * charSpacing);
+        if (voiceEnabledCheckbox.checked)
+            loadAudio(currentLetter);
+        else {
+            nextPattern();
+            setTimeout(function() {
+                playPattern(currentPattern);
+            }, timeUnit() * charSpacing);
+        }
     }
 }
 
-wpmSlider.addEventListener("input", updateWPM);
+let charAudioBuffer: AudioBuffer;
+
+function getCharName(char: string): string {
+    switch (char) {
+        case "!":
+            return "EXCLAMATION";
+        case "?":
+            return "QUESTION";
+        case ".":
+            return "PERIOD";
+        case ",":
+            return "COMMA";
+        default:
+            return char;
+    }
+}
+
+function loadAudio(char: string) {
+    char = getCharName(char);
+
+    if (typeof audioSources[char] !== "undefined") {
+        document.dispatchEvent(audioLoadedEvent);
+        return audioSources[char];
+    }
+    else {
+        const filename = char.replace(/\W/g, "") + ".mp3";
+        const request = new XMLHttpRequest();
+        request.open("GET", "/audio/" + filename, true);
+        request.responseType = "arraybuffer";
+
+        request.addEventListener("load", () => {
+            const response = request.response;
+            audioCtx.decodeAudioData(response, (buffer: AudioBuffer) => {
+                const audioSource = audioCtx.createBufferSource();
+                audioSources[char] = buffer;
+                document.dispatchEvent(audioLoadedEvent);
+            }, (err) => console.log("Error loading audio source: ", err));
+        });
+
+        request.send();
+    }
+}
+
+function playAudio() {
+    setTimeout(function() {
+        const char = getCharName(currentLetter);
+        const buffer = audioSources[char];
+        if (typeof buffer !== "undefined") {
+            const audioSource = audioCtx.createBufferSource();
+            audioSource.addEventListener("ended", (evt) => {
+                nextPattern();
+                setTimeout(function() {
+                    playPattern(currentPattern);
+                }, timeUnit() * charSpacing);
+            });
+            audioSource.buffer = buffer;
+            audioSource.connect(voiceGain);
+            audioSource.start(0);
+        }
+    }, timeUnit() * charSpacing);
+}
+
+// Settings events
 volumeSlider.addEventListener("input", updateVolume);
-pitchSlider.addEventListener("input", updatePitch);
+charWPMSlider.addEventListener("input", updateWPM);
 charSpacingSlider.addEventListener("input", updateCharSpacing);
+pitchSlider.addEventListener("input", updatePitch);
+
+// Playback events
 document.addEventListener("patterncomplete", patternComplete);
+document.addEventListener("audioloaded", playAudio);
 startButton.addEventListener("click", startPlaying);
 stopButton.addEventListener("click", stopPlaying);

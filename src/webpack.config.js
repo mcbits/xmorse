@@ -1,4 +1,5 @@
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     context: __dirname,
@@ -18,6 +19,9 @@ module.exports = {
         ]
     },
     plugins: [
-        new ExtractTextPlugin("css/site.css")
+        new ExtractTextPlugin("css/site.css"),
+        new CopyWebpackPlugin([
+            { from: "audio", to: "audio" }
+        ])
     ]
 };
