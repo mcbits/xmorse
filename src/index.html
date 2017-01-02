@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
+    <meta description="Learning Morse code has never been easier." />
     <title>xMorse Morse Code Learning Aid</title>
     <link rel="icon" href="/favicon.ico" />
     <link rel="stylesheet" href="css/site.css" />
@@ -12,7 +13,20 @@
 <body>
     <div class="columns">
         <div class="rows">
-            <div class="letter"></div>
+            <div class="main view">
+                <article>
+                    <h1>Learning Morse code has never been easier.</h1>
+                    <hr />
+                    <p>Push <kbd>Start</kbd> to begin playing Morse code characters.</p>
+                    <p>Some tips for success:</p>
+                    <ul>
+                        <li>Learn the characters. Listen with the voice enabled, and try to anticipate the character before the voice says it. Once you have memorized the Morse code sequences, you can disable the voice. (This takes less time than you would think!)</li>
+                        <li>Set the character WPM just faster than your target speed, and set the spacing just wide enough to pose a challenge. For example, if you are aiming for 18 WPM, listen to characters at 20-22 WPM.</li>
+                        <li>Gradually reduce the spacing between characters until you reach your target rate.</li>
+                    </ul>
+                </article>
+            </div>
+            <div class="letter view disabled">x</div>
 
             <div class="controls">
                 <button class="btn btn-start">Start</button>
@@ -60,6 +74,23 @@
                         Pitch: <output for="pitch" class="pitchText">700</output>
                         <br>
                         <input type="range" id="pitch" value="700" min="400" max="1000" />
+                    </label>
+                </div>
+
+                <div class="control">
+                    Enable:
+                    <br>
+                    <label>
+                        <input type="checkbox" id="lettersEnabled" checked />
+                        Letters
+                    </label>
+                    <label>
+                        <input type="checkbox" id="numbersEnabled" />
+                        Numbers
+                    </label>
+                    <label>
+                        <input type="checkbox" id="symbolsEnabled" />
+                        Symbols
                     </label>
                 </div>
             </aside>

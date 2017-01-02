@@ -11,8 +11,8 @@ html, body {
 body {
     margin: 0;
     font-family: Roboto, Helvetica, Arial, sans-serif;
-    background: #49464c;
-    color: #fff;
+    background-color: #f1f1f1;
+    line-height: 1.45;
 }
 
 .columns {
@@ -56,9 +56,12 @@ body {
     }
 }
 
-.letter {
+.view {
     flex: 1;
     display: flex;
+}
+
+.letter {
     justify-content: center;
     align-items: center;
     font-size: 150px;
@@ -78,4 +81,38 @@ body {
     font-size: 20px;
     color: #000;
     background: linear-gradient(#dddddd, #f4f4f4);
+}
+
+.view.disabled {
+    display: none;
+}
+
+.main article {
+    margin: 1rem;
+}
+
+.view {
+    overflow: auto;
+}
+
+.btn[disabled] {
+    color: #999;
+}
+
+kbd {
+    border: 1px solid #a0a0a0;
+    padding: 1px 4px;
+    border-radius: 4px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    font: inherit;
+}
+
+kbd.disabled {
+    color: #999;
+}
+
+hr {
+    border-color: #f00;
+    border-width: 2px;
 }

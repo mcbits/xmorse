@@ -4,52 +4,11 @@ require("file-loader?name=favicon.ico!../favicon.ico");
 require("file-loader?name=robots.txt!../robots.txt");
 require("../less/site.less");
 
-const charPatterns: { [char: string]: string } = {
-    "A": ".-",
-    "B": "-...",
-    "C": "-.-.",
-    "D": "-..",
-    "E": ".",
-    "F": "..-.",
-    "G": "--.",
-    "H": "....",
-    "I": "..",
-    "J": ".---",
-    "K": "-.-",
-    "L": ".-..",
-    "M": "--",
-    "N": "-.",
-    "O": "---",
-    "P": ".--.",
-    "Q": "--.-",
-    "R": ".-.",
-    "S": "...",
-    "T": "-",
-    "U": "..-",
-    "V": "...-",
-    "W": ".--",
-    "X": "-..-",
-    "Y": "-.--",
-    "Z": "--..",
-    "0": "-----",
-    "1": ".----",
-    "2": "..---",
-    "3": "...--",
-    "4": "....-",
-    "5": ".....",
-    "6": "-....",
-    "7": "--...",
-    "8": "---..",
-    "9": "----.",
-    ".": ".-.-.-",
-    "?": "..--..",
-    "!": "-.-.--",
-    ",": "--..--",
-}
+import * as Morse from "./morsetable";
 
-const audioSources: {[char: string]: AudioBuffer} = { };
+const audioSources: { [char: string]: AudioBuffer } = {};
 
-const allCharacters = Object.keys(charPatterns);
+let morseTable = new Morse.Table();
 
 let pitch = 700;
 let mainVolume = 0.5;
@@ -57,34 +16,46 @@ let oscillatorVolume = 0.9;
 let wpm = 18;
 let charSpacing = 25;
 let timeUnit = () => 1.2 / wpm * 1000;
-let ramp = 0.012;
+let ramp = 0.01;
 let playing = false;
 let paused = false;
-let currentLetter: string = null;
-let currentPattern: string = null;
+let currentCharacter: Morse.Character = null;
+//let currentPattern: string = null;
 
 // Events
 const patternCompleteEvent = new Event("patterncomplete");
 const audioLoadedEvent = new Event("audioloaded");
 
-// Page elements
-const startButton = <HTMLButtonElement>document.querySelector(".btn-start");
-const pauseButton = <HTMLButtonElement>document.querySelector(".btn-pause");
-const stopButton = <HTMLButtonElement>document.querySelector(".btn-stop");
-const letterElement = document.querySelector(".letter");
+function query<T extends Element>(selector: string): T {
+    return <T>document.querySelector(selector);
+}
 
-// Settings inputs
-const volumeSlider = <HTMLInputElement>document.getElementById("volume");
-const charWPMSlider = <HTMLInputElement>document.getElementById("charWPM");
-const pitchSlider = <HTMLInputElement>document.getElementById("pitch");
-const charSpacingSlider = <HTMLInputElement>document.getElementById("charSpacing");
-const voiceEnabledCheckbox = <HTMLInputElement>document.getElementById("voiceEnabled");
+function queryAll<T extends Element>(selector: string): NodeListOf<T> {
+    return <NodeListOf<T>>document.querySelectorAll(selector);
+}
+
+function queryId<T extends HTMLElement>(id: string): T {
+    return <T>document.getElementById(id);
+}
+
+// Page elements
+const startButton = query<HTMLButtonElement>(".btn-start");
+const pauseButton = query<HTMLButtonElement>(".btn-pause");
+const stopButton = query<HTMLButtonElement>(".btn-stop");
+const letterElement = query(".letter");
 
 // Settings text labels
-const volumeText = (<HTMLInputElement>document.querySelector(".volumeText"));
-const charWPMText = (<HTMLInputElement>document.querySelector(".charWPMText"));
-const pitchText = (<HTMLInputElement>document.querySelector(".pitchText"));
-const charSpacingText = (<HTMLInputElement>document.querySelector(".charSpacingText"));
+const volumeText = query<HTMLInputElement>(".volumeText");
+const charWPMText = query<HTMLInputElement>(".charWPMText");
+const pitchText = query<HTMLInputElement>(".pitchText");
+const charSpacingText = query<HTMLInputElement>(".charSpacingText");
+
+// Settings inputs
+const volumeSlider = queryId<HTMLInputElement>("volume");
+const charWPMSlider = queryId<HTMLInputElement>("charWPM");
+const pitchSlider = queryId<HTMLInputElement>("pitch");
+const charSpacingSlider = queryId<HTMLInputElement>("charSpacing");
+const voiceEnabledCheckbox = queryId<HTMLInputElement>("voiceEnabled");
 
 // Audio parts
 const audioCtx: AudioContext = new (AudioContext || window["webkitAudioContext"])();
@@ -111,14 +82,9 @@ function random(first, second) {
     return Math.floor(Math.random() * (second - first)) + first + 1;
 }
 
-function randomCharacter() {
-    return allCharacters[Math.floor(Math.random() * allCharacters.length)];
-}
 
 function setOscillatorVolume(value: number) {
-    // NOTE: The +0.05 is only there to (mostly) eliminate clicking due to a bug in Firefox.
-    // It may not be needed in the future.
-    oscillatorGain.gain.setTargetAtTime(value, audioCtx.currentTime+0.05, 0.01);
+    oscillatorGain.gain.setTargetAtTime(value, audioCtx.currentTime, ramp);
 }
 
 function setMainVolume(value: number) {
@@ -157,8 +123,7 @@ function playPattern(pattern: string): void {
 }
 
 function nextPattern() {
-    currentLetter = randomCharacter();
-    currentPattern = charPatterns[currentLetter];
+    currentCharacter = morseTable.randomCharacter();
 }
 
 function updateVolume() {
@@ -184,52 +149,38 @@ function updateCharSpacing(evt: Event) {
 }
 
 function startPlaying() {
+    view(".view.letter");
     playing = true;
     paused = false;
     setButtonStates();
     nextPattern();
-    playPattern(currentPattern);
+    playPattern(currentCharacter.pattern);
 }
 
 function stopPlaying() {
     playing = false;
     paused = false;
     setButtonStates();
+    view(".view.main");
 }
 
 function patternComplete() {
-    letterElement.innerHTML = currentLetter;
+    letterElement.innerHTML = currentCharacter.name;
+
     if (playing && !paused) {
         if (voiceEnabledCheckbox.checked)
-            loadAudio(currentLetter);
+            loadAudio(currentCharacter);
         else {
             nextPattern();
-            setTimeout(function() {
-                playPattern(currentPattern);
+            setTimeout(function () {
+                playPattern(currentCharacter.pattern);
             }, timeUnit() * charSpacing);
         }
     }
 }
 
-let charAudioBuffer: AudioBuffer;
-
-function getCharName(char: string): string {
-    switch (char) {
-        case "!":
-            return "EXCLAMATION";
-        case "?":
-            return "QUESTION";
-        case ".":
-            return "PERIOD";
-        case ",":
-            return "COMMA";
-        default:
-            return char;
-    }
-}
-
-function loadAudio(char: string) {
-    char = getCharName(char);
+function loadAudio(charDef: Morse.Character) {
+    const char = charDef.name;
 
     if (typeof audioSources[char] !== "undefined") {
         document.dispatchEvent(audioLoadedEvent);
@@ -255,22 +206,40 @@ function loadAudio(char: string) {
 }
 
 function playAudio() {
-    setTimeout(function() {
-        const char = getCharName(currentLetter);
-        const buffer = audioSources[char];
-        if (typeof buffer !== "undefined") {
-            const audioSource = audioCtx.createBufferSource();
-            audioSource.addEventListener("ended", (evt) => {
-                nextPattern();
-                setTimeout(function() {
-                    playPattern(currentPattern);
-                }, timeUnit() * charSpacing);
-            });
-            audioSource.buffer = buffer;
-            audioSource.connect(voiceGain);
-            audioSource.start(0);
-        }
-    }, timeUnit() * charSpacing);
+    if (playing && !paused) {
+        setTimeout(function () {
+            if (playing && !paused) {
+                const char = currentCharacter.name;
+                const buffer = audioSources[char];
+                if (typeof buffer !== "undefined") {
+                    const audioSource = audioCtx.createBufferSource();
+                    audioSource.addEventListener("ended", (evt) => {
+                        if (playing && !paused) {
+                            nextPattern();
+                            setTimeout(function () {
+                                playPattern(currentCharacter.pattern);
+                            }, timeUnit() * charSpacing);
+                        }
+                    });
+                    audioSource.buffer = buffer;
+                    audioSource.connect(voiceGain);
+                    audioSource.start(0);
+                }
+            }
+        }, timeUnit() * charSpacing);
+    }
+}
+
+function view(selector: string) {
+    const views = document.querySelectorAll(".view");
+    for (let i = 0; i < views.length; ++i) {
+        const view = views[i];
+        if (!view.classList.contains("disabled"))
+            view.classList.add("disabled");
+    }
+
+    const viewToShow = document.querySelector(selector);
+    viewToShow.classList.remove("disabled");
 }
 
 // Settings events
