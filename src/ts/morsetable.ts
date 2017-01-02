@@ -1,6 +1,7 @@
 export interface Character {
+    name: string,
     pattern: string,
-    name: string
+    fileName: string
 }
 
 export class Table {
@@ -9,65 +10,65 @@ export class Table {
     public numbersEnabled = false;
 
     public symbolsEnabled = false;
-    
+
     private letterPatterns: { [char: string]: Character } = {
-        "A": {pattern: ".-",     name: "A"},
-        "B": {pattern: "-...",   name: "B"},
-        "C": {pattern: "-.-.",   name: "C"},
-        "D": {pattern: "-..",    name: "D"},
-        "E": {pattern: ".",      name: "E"},
-        "F": {pattern: "..-.",   name: "F"},
-        "G": {pattern: "--.",    name: "G"},
-        "H": {pattern: "....",   name: "H"},
-        "I": {pattern: "..",     name: "I"},
-        "J": {pattern: ".---",   name: "J"},
-        "K": {pattern: "-.-",    name: "K"},
-        "L": {pattern: ".-..",   name: "L"},
-        "M": {pattern: "--",     name: "M"},
-        "N": {pattern: "-.",     name: "N"},
-        "O": {pattern: "---",    name: "O"},
-        "P": {pattern: ".--.",   name: "P"},
-        "Q": {pattern: "--.-",   name: "Q"},
-        "R": {pattern: ".-.",    name: "R"},
-        "S": {pattern: "...",    name: "S"},
-        "T": {pattern: "-",      name: "T"},
-        "U": {pattern: "..-",    name: "U"},
-        "V": {pattern: "...-",   name: "V"},
-        "W": {pattern: ".--",    name: "W"},
-        "X": {pattern: "-..-",   name: "X"},
-        "Y": {pattern: "-.--",   name: "Y"},
-        "Z": {pattern: "--..",   name: "Z"}
+        "A": { name: "A", pattern: ".-",   fileName: "A.mp3" },
+        "B": { name: "B", pattern: "-...", fileName: "B.mp3" },
+        "C": { name: "C", pattern: "-.-.", fileName: "C.mp3" },
+        "D": { name: "D", pattern: "-..",  fileName: "D.mp3" },
+        "E": { name: "E", pattern: ".",    fileName: "E.mp3" },
+        "F": { name: "F", pattern: "..-.", fileName: "F.mp3" },
+        "G": { name: "G", pattern: "--.",  fileName: "G.mp3" },
+        "H": { name: "H", pattern: "....", fileName: "H.mp3" },
+        "I": { name: "I", pattern: "..",   fileName: "I.mp3" },
+        "J": { name: "J", pattern: ".---", fileName: "J.mp3" },
+        "K": { name: "K", pattern: "-.-",  fileName: "K.mp3" },
+        "L": { name: "L", pattern: ".-..", fileName: "L.mp3" },
+        "M": { name: "M", pattern: "--",   fileName: "M.mp3" },
+        "N": { name: "N", pattern: "-.",   fileName: "N.mp3" },
+        "O": { name: "O", pattern: "---",  fileName: "O.mp3" },
+        "P": { name: "P", pattern: ".--.", fileName: "P.mp3" },
+        "Q": { name: "Q", pattern: "--.-", fileName: "Q.mp3" },
+        "R": { name: "R", pattern: ".-.",  fileName: "R.mp3" },
+        "S": { name: "S", pattern: "...",  fileName: "S.mp3" },
+        "T": { name: "T", pattern: "-",    fileName: "T.mp3" },
+        "U": { name: "U", pattern: "..-",  fileName: "U.mp3" },
+        "V": { name: "V", pattern: "...-", fileName: "V.mp3" },
+        "W": { name: "W", pattern: ".--",  fileName: "W.mp3" },
+        "X": { name: "X", pattern: "-..-", fileName: "X.mp3" },
+        "Y": { name: "Y", pattern: "-.--", fileName: "Y.mp3" },
+        "Z": { name: "Z", pattern: "--..", fileName: "Z.mp3" }
     };
 
     private numberPatterns: { [char: string]: Character } = {
-        "0": {pattern: "-----",  name: "0"},
-        "1": {pattern: ".----",  name: "1"},
-        "2": {pattern: "..---",  name: "2"},
-        "3": {pattern: "...--",  name: "3"},
-        "4": {pattern: "....-",  name: "4"},
-        "5": {pattern: ".....",  name: "5"},
-        "6": {pattern: "-....",  name: "6"},
-        "7": {pattern: "--...",  name: "7"},
-        "8": {pattern: "---..",  name: "8"},
-        "9": {pattern: "----.",  name: "9"}
+        "0": { name: "0", pattern: "-----", fileName: "0.mp3" },
+        "1": { name: "1", pattern: ".----", fileName: "1.mp3" },
+        "2": { name: "2", pattern: "..---", fileName: "2.mp3" },
+        "3": { name: "3", pattern: "...--", fileName: "3.mp3" },
+        "4": { name: "4", pattern: "....-", fileName: "4.mp3" },
+        "5": { name: "5", pattern: ".....", fileName: "5.mp3" },
+        "6": { name: "6", pattern: "-....", fileName: "6.mp3" },
+        "7": { name: "7", pattern: "--...", fileName: "7.mp3" },
+        "8": { name: "8", pattern: "---..", fileName: "8.mp3" },
+        "9": { name: "9", pattern: "----.", fileName: "9.mp3" }
     };
 
     private symbolPatterns: { [char: string]: Character } = {
-        ".": {pattern: ".-.-.-", name: "PERIOD"},
-        "?": {pattern: "..--..", name: "QUESTION"},
-        "!": {pattern: "-.-.--", name: "EXCLAMATION"},
-        ",": {pattern: "--..--", name: "COMMA"},
-        ":": {pattern: "---...", name: "COLON"},
-        ";": {pattern: "-.-.-.", name: "SEMICOLON"},
-        "'": {pattern: ".----.", name: "APOSTROPHE"},
-        "-": {pattern: "-....-", name: "DASH"},
-        "/": {pattern: "-..-.",  name: "SLASH"},
-        "(": {pattern: "-.--.",  name: "OPEN BRACKET"},
-        ")": {pattern: "-.--.-", name: "CLOSE BRACKET"},
-        "@": {pattern: ".--.-.", name: "AT"},
-        "=": {pattern: "-...-",  name: "EQUALS"},
-        "+": {pattern: ".-.-.",  name: "PLUS"},
-        "\"": {pattern: ".-..-.", name: "QUOTE"}
+        ".": { name: ".",   pattern: ".-.-.-", fileName: "PERIOD.mp3" },
+        "?": { name: "?",   pattern: "..--..", fileName: "QUESTION.mp3" },
+        "!": { name: "!",   pattern: "-.-.--", fileName: "EXCLAMATION.mp3" },
+        ",": { name: ",",   pattern: "--..--", fileName: "COMMA.mp3" },
+        ":": { name: ":",   pattern: "---...", fileName: "COLON.mp3" },
+        ";": { name: ";",   pattern: "-.-.-.", fileName: "SEMICOLON.mp3" },
+        "'": { name: "'",   pattern: ".----.", fileName: "APOSTROPHE.mp3" },
+        "-": { name: "-",   pattern: "-....-", fileName: "DASH.mp3" },
+        "/": { name: "/",   pattern: "-..-.",  fileName: "SLASH.mp3" },
+        "(": { name: "(",   pattern: "-.--.",  fileName: "OPEN_BRACKET.mp3" },
+        ")": { name: ")",   pattern: "-.--.-", fileName: "CLOSE_BRACKET.mp3" },
+        "@": { name: "@",   pattern: ".--.-.", fileName: "AT.mp3" },
+        "=": { name: "=",   pattern: "-...-",  fileName: "EQUALS.mp3" },
+        "+": { name: "+",   pattern: ".-.-.",  fileName: "PLUS.mp3" },
+        "\"": { name: "\"", pattern: ".-..-.", fileName: "QUOTE.mp3" }
     };
 
     private letters = Object.keys(this.letterPatterns);
@@ -94,7 +95,7 @@ export class Table {
                 || this.numberPatterns[char]
                 || this.symbolPatterns[char];
         }
-        
+
         throw "No Morse characters are enabled."
     }
 

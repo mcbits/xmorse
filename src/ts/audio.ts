@@ -8,7 +8,6 @@ export let textBuffer = "";
 export let textBufferIndex = 0;
 
 // Events
-export const patternCompleteEvent = new CustomEvent("patterncomplete", {detail: {}});
 export const audioLoadedEvent = new Event("audioloaded");
 
 export class Player {
@@ -59,7 +58,7 @@ export class Player {
 
         const on = () => this.oscillatorGain.gain.setTargetAtTime(this.oscillatorVolume, this.audioCtx.currentTime, this.ramp);
         const off = () => this.oscillatorGain.gain.setTargetAtTime(0, this.audioCtx.currentTime, this.ramp);
-        const patternComplete = () => document.dispatchEvent(patternCompleteEvent);
+        const patternComplete = (char: Morse.Character) => document.dispatchEvent(new CustomEvent("patterncomplete", { detail: char }));
 
         const playTone = async (index: number): Promise<void> => {
             if (this.playing && !this.paused) {
@@ -79,12 +78,12 @@ export class Player {
                 if (index < pattern.length)
                     playTone(index);
                 else
-                    patternComplete();
+                    patternComplete(char);
             }
         }
 
         if (char == null) {
-            patternComplete();
+            patternComplete(char);
         }
         else {
             pattern = char.pattern;
@@ -181,8 +180,7 @@ export class Player {
         else {
             request = new XMLHttpRequest();
 
-            const filename = char.replace(/\W/g, "") + ".mp3";
-            request.open("GET", "/audio/" + filename, true);
+            request.open("GET", "/audio/" + charDef.fileName, true);
             request.responseType = "arraybuffer";
             request.addEventListener("load", audioDownloaded);
 
@@ -190,7 +188,7 @@ export class Player {
         }
     }
         
-    public patternComplete = () => {
+    public patternComplete = (char: Morse.Character) => {
         if (textBuffer.length > 0) {
             ++textBufferIndex;
 
@@ -200,10 +198,10 @@ export class Player {
 
         if (this.currentCharacter != null)
         {
-            this.letterElement.innerHTML = this.currentCharacter.name;
+            this.letterElement.innerHTML = char.name;
             if (this.playing && !this.paused) {
                 if (this.voiceEnabled)
-                    this.loadAudio(this.currentCharacter);
+                    this.loadAudio(char);
                 else {
                     this.playNextPattern();
                 }

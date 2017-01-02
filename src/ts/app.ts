@@ -98,7 +98,10 @@ voiceEnabledCheckbox.addEventListener("change", () => {
 });
 
 // Playback events
-document.addEventListener("patterncomplete", player.patternComplete);
+document.addEventListener("patterncomplete", (evt: CustomEvent) => {
+    const char = <Morse.Character>evt.detail;
+    player.patternComplete(char);
+});
 
 document.addEventListener("audioloaded", player.playVoice);
 
