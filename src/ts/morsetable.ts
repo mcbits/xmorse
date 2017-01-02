@@ -96,4 +96,18 @@ export class Table {
         
         throw "No Morse characters are enabled."
     }
+
+    public getCharacter(char: string): Character {
+        char = char.toUpperCase();
+        let found = this.letterPatterns[char];
+        if (found != null)
+            return found;
+        found = this.numberPatterns[char];
+        if (found != null)
+            return found;
+        found = this.symbolPatterns[char];
+        if (found != null)
+            return found;
+        return undefined;
+    }
 }

@@ -11,6 +11,9 @@
 </head>
 
 <body>
+    <header>
+        <button class="btn btn-paste">Paste content</button>
+    </header>
     <div class="columns">
         <div class="rows">
             <div class="main view">
@@ -28,7 +31,12 @@
                     </ul>
                 </article>
             </div>
+
             <div class="letter view disabled"></div>
+
+            <div class="paste view disabled">
+                <textarea id="pasteText"></textarea>
+            </div>
 
             <div class="controls">
                 <button class="btn btn-start">Start</button>

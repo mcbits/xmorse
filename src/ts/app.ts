@@ -20,7 +20,8 @@ let ramp = 0.01;
 let playing = false;
 let paused = false;
 let currentCharacter: Morse.Character = null;
-//let currentPattern: string = null;
+let textBuffer = "";
+let textBufferIndex = 0;
 
 // Events
 const patternCompleteEvent = new Event("patterncomplete");
@@ -42,6 +43,7 @@ function queryId<T extends HTMLElement>(id: string): T {
 const startButton = query<HTMLButtonElement>(".btn-start");
 const pauseButton = query<HTMLButtonElement>(".btn-pause");
 const stopButton = query<HTMLButtonElement>(".btn-stop");
+const pasteButton = query<HTMLButtonElement>(".btn-paste");
 const letterElement = query(".letter");
 
 // Settings text labels
@@ -56,6 +58,7 @@ const charWPMSlider = queryId<HTMLInputElement>("charWPM");
 const pitchSlider = queryId<HTMLInputElement>("pitch");
 const charSpacingSlider = queryId<HTMLInputElement>("charSpacing");
 const voiceEnabledCheckbox = queryId<HTMLInputElement>("voiceEnabled");
+const pasteTextBox = queryId<HTMLTextAreaElement>("pasteText");
 
 // Audio parts
 const audioCtx: AudioContext = new (AudioContext || window["webkitAudioContext"])();
@@ -84,8 +87,8 @@ function setButtonStates() {
     stopButton.disabled = !playing;
 }
 
-function playPattern(pattern: string): void {
-    letterElement.innerHTML = pattern;
+function playPattern(char: Morse.Character): void {
+    let pattern: string;
 
     const on = () => oscillatorGain.gain.setTargetAtTime(oscillatorVolume, audioCtx.currentTime, ramp);
     const off = () => oscillatorGain.gain.setTargetAtTime(0, audioCtx.currentTime, ramp);
@@ -112,14 +115,29 @@ function playPattern(pattern: string): void {
         }
     }
 
-    playBlip(0)
+    if (char == null) {
+        patternComplete();
+    }
+    else {
+        pattern = char.pattern;
+        letterElement.innerHTML = pattern;
+
+        playBlip(0)
+    }
 }
 
 function playNextPattern() {
     if (playing && !paused) {
-        currentCharacter = morseTable.randomCharacter();
+        if (textBuffer.length > 0) {
+            if (textBufferIndex >= textBuffer.length)
+                textBufferIndex = 0;
+            currentCharacter = morseTable.getCharacter(textBuffer[textBufferIndex]);
+        }
+        else {
+            currentCharacter = morseTable.randomCharacter();
+        }
         setTimeout(function () {
-            playPattern(currentCharacter.pattern);
+            playPattern(currentCharacter);
         }, timeUnit() * charSpacing);
     }
 }
@@ -146,6 +164,11 @@ function updateCharSpacing(evt: Event) {
     charSpacingText.value = charSpacing.toString();
 }
 
+function updateTextBuffer(evt: Event) {
+    textBuffer = pasteTextBox.value;
+    textBufferIndex = 0;
+}
+
 function startPlaying() {
     view(".view.letter");
     playing = true;
@@ -163,14 +186,26 @@ function stopPlaying() {
 }
 
 function patternComplete() {
-    letterElement.innerHTML = currentCharacter.name;
+    if (textBuffer.length > 0) {
+        ++textBufferIndex;
 
-    if (playing && !paused) {
-        if (voiceEnabledCheckbox.checked)
-            loadAudio(currentCharacter);
-        else {
-            playNextPattern();
+        if (textBufferIndex === textBuffer.length)
+            textBufferIndex = 0;
+    }
+
+    if (currentCharacter != null)
+    {
+        letterElement.innerHTML = currentCharacter.name;
+        if (playing && !paused) {
+            if (voiceEnabledCheckbox.checked)
+                loadAudio(currentCharacter);
+            else {
+                playNextPattern();
+            }
         }
+    }
+    else {
+        playNextPattern();
     }
 }
 
@@ -224,6 +259,10 @@ function playAudio() {
     }, timeUnit() * charSpacing);
 }
 
+function showPasteView() {
+    view(".paste");
+}
+
 function view(selector: string) {
     const views = document.querySelectorAll(".view");
     for (let i = 0; i < views.length; ++i) {
@@ -241,9 +280,11 @@ volumeSlider.addEventListener("input", updateVolume);
 charWPMSlider.addEventListener("input", updateWPM);
 charSpacingSlider.addEventListener("input", updateCharSpacing);
 pitchSlider.addEventListener("input", updatePitch);
+pasteTextBox.addEventListener("input", updateTextBuffer);
 
 // Playback events
 document.addEventListener("patterncomplete", patternComplete);
 document.addEventListener("audioloaded", playAudio);
 startButton.addEventListener("click", startPlaying);
 stopButton.addEventListener("click", stopPlaying);
+pasteButton.addEventListener("click", showPasteView);
