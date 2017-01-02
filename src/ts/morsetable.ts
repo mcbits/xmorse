@@ -58,6 +58,7 @@ export class Table {
         "!": {pattern: "-.-.--", name: "EXCLAMATION"},
         ",": {pattern: "--..--", name: "COMMA"},
         ":": {pattern: "---...", name: "COLON"},
+        ";": {pattern: "-.-.-.", name: "SEMICOLON"},
         "'": {pattern: ".----.", name: "APOSTROPHE"},
         "-": {pattern: "-....-", name: "DASH"},
         "/": {pattern: "-..-.",  name: "SLASH"},
