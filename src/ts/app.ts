@@ -81,37 +81,42 @@ masterGain.connect(audioCtx.destination);
 
 oscillator.start(0);
 
+function delay(milliseconds: number): Promise<void> {
+    return new Promise<void>(resolve => setTimeout(resolve, milliseconds));
+}
+
 function setButtonStates() {
     startButton.disabled = playing && !paused;
     pauseButton.disabled = paused || !playing;
     stopButton.disabled = !playing;
 }
 
-function playPattern(char: Morse.Character): void {
+async function playPattern(char: Morse.Character): Promise<void> {
     let pattern: string;
 
     const on = () => oscillatorGain.gain.setTargetAtTime(oscillatorVolume, audioCtx.currentTime, ramp);
     const off = () => oscillatorGain.gain.setTargetAtTime(0, audioCtx.currentTime, ramp);
     const patternComplete = () => document.dispatchEvent(patternCompleteEvent);
 
-    function playBlip(index: number) {
+    async function playTone(index: number): Promise<void> {
         if (playing && !paused) {
             const blip = pattern.charAt(index++);
 
             on();
 
-            let time: number;
             if (blip === ".")
-                time = timeUnit();
+                await delay(timeUnit());
             else if (blip === "-")
-                time = timeUnit() * 3;
+                await delay(timeUnit() * 3);
 
-            setTimeout(off, time);
+            off();
+
+            await delay(timeUnit());
 
             if (index < pattern.length)
-                setTimeout(() => playBlip(index), time + timeUnit());
+                playTone(index);
             else
-                setTimeout(patternComplete, time + timeUnit());
+                patternComplete();
         }
     }
 
@@ -122,11 +127,11 @@ function playPattern(char: Morse.Character): void {
         pattern = char.pattern;
         letterElement.innerHTML = pattern;
 
-        playBlip(0)
+        await playTone(0)
     }
 }
 
-function playNextPattern() {
+async function playNextPattern(): Promise<void> {
     if (playing && !paused) {
         if (textBuffer.length > 0) {
             if (textBufferIndex >= textBuffer.length)
@@ -136,9 +141,10 @@ function playNextPattern() {
         else {
             currentCharacter = morseTable.randomCharacter();
         }
-        setTimeout(function () {
-            playPattern(currentCharacter);
-        }, timeUnit() * charSpacing);
+
+        await delay(timeUnit() * charSpacing);
+
+        await playPattern(currentCharacter);
     }
 }
 
@@ -243,20 +249,20 @@ function loadAudio(charDef: Morse.Character) {
     }
 }
 
-function playAudio() {
-    setTimeout(function () {
-        if (playing && !paused) {
-            const char = currentCharacter.name;
-            const buffer = audioSources[char];
-            if (typeof buffer !== "undefined") {
-                const audioSource = audioCtx.createBufferSource();
-                audioSource.addEventListener("ended", playNextPattern);
-                audioSource.buffer = buffer;
-                audioSource.connect(voiceGain);
-                audioSource.start(0);
-            }
+async function playVoice(): Promise<void> {
+    await delay(timeUnit() * charSpacing);
+
+    if (playing && !paused) {
+        const char = currentCharacter.name;
+        const buffer = audioSources[char];
+        if (typeof buffer !== "undefined") {
+            const audioSource = audioCtx.createBufferSource();
+            audioSource.addEventListener("ended", playNextPattern);
+            audioSource.buffer = buffer;
+            audioSource.connect(voiceGain);
+            audioSource.start(0);
         }
-    }, timeUnit() * charSpacing);
+    }
 }
 
 function showPasteView() {
@@ -284,7 +290,8 @@ pasteTextBox.addEventListener("input", updateTextBuffer);
 
 // Playback events
 document.addEventListener("patterncomplete", patternComplete);
-document.addEventListener("audioloaded", playAudio);
+document.addEventListener("audioloaded", playVoice);
 startButton.addEventListener("click", startPlaying);
 stopButton.addEventListener("click", stopPlaying);
 pasteButton.addEventListener("click", showPasteView);
+
