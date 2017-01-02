@@ -78,19 +78,6 @@ masterGain.connect(audioCtx.destination);
 
 oscillator.start(0);
 
-function random(first, second) {
-    return Math.floor(Math.random() * (second - first)) + first + 1;
-}
-
-
-function setOscillatorVolume(value: number) {
-    oscillatorGain.gain.setTargetAtTime(value, audioCtx.currentTime, ramp);
-}
-
-function setMainVolume(value: number) {
-    masterGain.gain.setTargetAtTime(value, audioCtx.currentTime, 0.01);
-}
-
 function setButtonStates() {
     startButton.disabled = playing && !paused;
     pauseButton.disabled = paused || !playing;
@@ -100,35 +87,46 @@ function setButtonStates() {
 function playPattern(pattern: string): void {
     letterElement.innerHTML = pattern;
 
+    const on = () => oscillatorGain.gain.setTargetAtTime(oscillatorVolume, audioCtx.currentTime, ramp);
+    const off = () => oscillatorGain.gain.setTargetAtTime(0, audioCtx.currentTime, ramp);
+    const patternComplete = () => document.dispatchEvent(patternCompleteEvent);
+
     function playBlip(index: number) {
-        const blip = pattern.charAt(index++);
+        if (playing && !paused) {
+            const blip = pattern.charAt(index++);
 
-        setOscillatorVolume(oscillatorVolume);
+            on();
 
-        let time: number;
-        if (blip === ".")
-            time = timeUnit();
-        else if (blip === "-")
-            time = timeUnit() * 3;
+            let time: number;
+            if (blip === ".")
+                time = timeUnit();
+            else if (blip === "-")
+                time = timeUnit() * 3;
 
-        setTimeout(() => setOscillatorVolume(0), time);
+            setTimeout(off, time);
 
-        if (index < pattern.length)
-            setTimeout(() => playBlip(index), time + timeUnit());
-        else
-            setTimeout(() => document.dispatchEvent(patternCompleteEvent), time + timeUnit());
+            if (index < pattern.length)
+                setTimeout(() => playBlip(index), time + timeUnit());
+            else
+                setTimeout(patternComplete, time + timeUnit());
+        }
     }
 
     playBlip(0)
 }
 
-function nextPattern() {
-    currentCharacter = morseTable.randomCharacter();
+function playNextPattern() {
+    if (playing && !paused) {
+        currentCharacter = morseTable.randomCharacter();
+        setTimeout(function () {
+            playPattern(currentCharacter.pattern);
+        }, timeUnit() * charSpacing);
+    }
 }
 
 function updateVolume() {
     mainVolume = parseFloat(volumeSlider.value);
-    setMainVolume(mainVolume);
+    masterGain.gain.setTargetAtTime(mainVolume, audioCtx.currentTime, 0.01);
     volumeText.value = Math.floor(mainVolume * 100).toString();
 }
 
@@ -153,13 +151,13 @@ function startPlaying() {
     playing = true;
     paused = false;
     setButtonStates();
-    nextPattern();
-    playPattern(currentCharacter.pattern);
+    playNextPattern();
 }
 
 function stopPlaying() {
     playing = false;
     paused = false;
+    letterElement.innerHTML = "";
     setButtonStates();
     view(".view.main");
 }
@@ -171,63 +169,59 @@ function patternComplete() {
         if (voiceEnabledCheckbox.checked)
             loadAudio(currentCharacter);
         else {
-            nextPattern();
-            setTimeout(function () {
-                playPattern(currentCharacter.pattern);
-            }, timeUnit() * charSpacing);
+            playNextPattern();
         }
     }
 }
 
 function loadAudio(charDef: Morse.Character) {
     const char = charDef.name;
+    let request: XMLHttpRequest;
+
+    function decodeSuccess(buffer: AudioBuffer) {
+        audioSources[char] = buffer;
+        document.dispatchEvent(audioLoadedEvent);
+    }
+
+    function decodeFail(err: DOMException) {
+        console.log("Error loading audio source: ", err)
+    }
+
+    function audioDownloaded(evt: Event) {
+        const response = request.response;
+        audioCtx.decodeAudioData(response, decodeSuccess, decodeFail);
+    }
 
     if (typeof audioSources[char] !== "undefined") {
         document.dispatchEvent(audioLoadedEvent);
         return audioSources[char];
     }
     else {
+        request = new XMLHttpRequest();
+
         const filename = char.replace(/\W/g, "") + ".mp3";
-        const request = new XMLHttpRequest();
         request.open("GET", "/audio/" + filename, true);
         request.responseType = "arraybuffer";
-
-        request.addEventListener("load", () => {
-            const response = request.response;
-            audioCtx.decodeAudioData(response, (buffer: AudioBuffer) => {
-                const audioSource = audioCtx.createBufferSource();
-                audioSources[char] = buffer;
-                document.dispatchEvent(audioLoadedEvent);
-            }, (err) => console.log("Error loading audio source: ", err));
-        });
+        request.addEventListener("load", audioDownloaded);
 
         request.send();
     }
 }
 
 function playAudio() {
-    if (playing && !paused) {
-        setTimeout(function () {
-            if (playing && !paused) {
-                const char = currentCharacter.name;
-                const buffer = audioSources[char];
-                if (typeof buffer !== "undefined") {
-                    const audioSource = audioCtx.createBufferSource();
-                    audioSource.addEventListener("ended", (evt) => {
-                        if (playing && !paused) {
-                            nextPattern();
-                            setTimeout(function () {
-                                playPattern(currentCharacter.pattern);
-                            }, timeUnit() * charSpacing);
-                        }
-                    });
-                    audioSource.buffer = buffer;
-                    audioSource.connect(voiceGain);
-                    audioSource.start(0);
-                }
+    setTimeout(function () {
+        if (playing && !paused) {
+            const char = currentCharacter.name;
+            const buffer = audioSources[char];
+            if (typeof buffer !== "undefined") {
+                const audioSource = audioCtx.createBufferSource();
+                audioSource.addEventListener("ended", playNextPattern);
+                audioSource.buffer = buffer;
+                audioSource.connect(voiceGain);
+                audioSource.start(0);
             }
-        }, timeUnit() * charSpacing);
-    }
+        }
+    }, timeUnit() * charSpacing);
 }
 
 function view(selector: string) {
