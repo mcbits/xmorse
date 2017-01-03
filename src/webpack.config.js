@@ -21,7 +21,8 @@ module.exports = {
     plugins: [
         new ExtractTextPlugin("css/site.css"),
         new CopyWebpackPlugin([
-            { from: "audio", to: "audio" }
+            { from: "audio", to: "audio" },
+            { from: "text", to: "text" }
         ])
     ]
 };
