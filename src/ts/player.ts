@@ -85,7 +85,7 @@ export class Player {
 
         if (this.params.currentCharacter != null) {
             this.params.letterElement.innerHTML = char.name;
-            if (this.params.started && !this.params.paused) {
+            if (this.params.nowPlaying()) {
                 if (this.voiceEnabled)
                     this.voicePlayer.loadAudio(char);
                 else {

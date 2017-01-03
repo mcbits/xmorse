@@ -35,16 +35,19 @@ body > header.header-top {
         background: linear-gradient(#f1f1f1, #999);
         display: flex;
 
-        .btn-paste {
+        .btn {
             flex: 1;
             margin: 0.5rem;
+
+            &:not(:first-child){
+                margin-left: 0;
+            }
         }
     }
 }
 
 #pasteText {
-    width: 100%;
-    margin: 1rem;
+    flex: 1;
 }
 
 .columns {
@@ -82,7 +85,30 @@ body > header.header-top {
 
 .view {
     flex: 1;
+    padding: 1rem;
+    overflow: auto;
+}
+
+.view.disabled {
+    display: none !important;
+}
+
+.view.paste {
     display: flex;
+}
+
+.view.stories {
+    .story {
+        margin-bottom: 1rem;
+
+        .author {
+            font-weight: bold;
+        }
+
+        .title {
+            margin-left: 1rem;
+        }
+    }
 }
 
 .letter {
@@ -90,6 +116,7 @@ body > header.header-top {
     align-items: center;
     font-size: 150px;
     font-weight: bold;
+    display: flex;
 }
 
 .controls {
@@ -107,16 +134,8 @@ body > header.header-top {
     background: linear-gradient(#dddddd, #f4f4f4);
 }
 
-.view.disabled {
-    display: none;
-}
-
-.main article {
-    margin: 1rem;
-}
-
-.view {
-    overflow: auto;
+.main article h1 {
+    margin: 0 0 1rem 0;
 }
 
 .btn[disabled] {
@@ -139,4 +158,5 @@ kbd.disabled {
 hr {
     border-color: #f00;
     border-width: 2px;
+    margin: 1rem 0;
 }

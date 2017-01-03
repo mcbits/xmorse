@@ -25,6 +25,7 @@ const startButton = query<HTMLButtonElement>(".btn-start");
 const pauseButton = query<HTMLButtonElement>(".btn-pause");
 const stopButton = query<HTMLButtonElement>(".btn-stop");
 const pasteButton = query<HTMLButtonElement>(".btn-paste");
+const storiesButton = query<HTMLButtonElement>(".btn-stories");
 const letterElement = query<HTMLElement>(".letter");
 
 // Settings text labels
@@ -53,6 +54,10 @@ function setButtonStates() {
 
 function showPasteView() {
     view(".paste");
+}
+
+function showStoriesView() {
+    view(".stories");
 }
 
 function view(selector: string) {
@@ -112,3 +117,5 @@ stopButton.addEventListener("click", () => {
 });
 
 pasteButton.addEventListener("click", showPasteView);
+
+storiesButton.addEventListener("click", showStoriesView);
