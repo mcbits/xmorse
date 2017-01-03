@@ -17,6 +17,36 @@ body {
     flex-direction: column;
 }
 
+body > header.header-top {
+    display: flex;
+    flex-direction: row-reverse;
+    border-bottom: 10px solid #000;
+
+    .siteName {
+        background: #000;
+        color: #e0e0e0;
+        text-align: center;
+        margin: 0;
+        width: 320px;
+    }
+
+    .menu-top {
+        flex: 1;
+        background: linear-gradient(#f1f1f1, #999);
+        display: flex;
+
+        .btn-paste {
+            flex: 1;
+            margin: 0.5rem;
+        }
+    }
+}
+
+#pasteText {
+    width: 100%;
+    margin: 1rem;
+}
+
 .columns {
     display: flex;
     height: 100%;
@@ -34,14 +64,6 @@ body {
     display: flex;
     flex-direction: column;
     border-left: @borderThickness solid #000;
-
-    .siteName {
-        background: #000;
-        color: #e0e0e0;
-        text-align: center;
-        margin: 0;
-        padding: 1rem;
-    }
 
     .sidebarContent {
         flex: 1;

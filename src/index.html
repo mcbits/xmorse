@@ -11,8 +11,11 @@
 </head>
 
 <body>
-    <header>
-        <button class="btn btn-paste">Paste content</button>
+    <header class="header-top">
+        <h1 class="siteName">xMorse</h1>
+        <div class="menu-top">
+            <button class="btn btn-paste">Paste content</button>
+        </div>
     </header>
     <div class="columns">
         <div class="rows">
@@ -20,7 +23,7 @@
                 <article>
                     <h1>Learning Morse code has never been easier.</h1>
                     <hr />
-                    <p>Push <kbd>Start</kbd> to begin playing Morse code characters.</p>
+                    <p>Press <kbd>Start</kbd> to begin playing Morse code characters.</p>
                     <p>Some tips for success:</p>
                     <ul>
                         <li>Learn the characters. Listen with the voice enabled, and try to anticipate the character before the voice says it. Once you have memorized the Morse code sequences, you can disable the voice. (This takes less time than you would think!)</li>
@@ -35,7 +38,7 @@
             <div class="letter view disabled"></div>
 
             <div class="paste view disabled">
-                <textarea id="pasteText"></textarea>
+                <textarea id="pasteText" placeholder="Paste text here"></textarea>
             </div>
 
             <div class="controls">
@@ -46,7 +49,6 @@
         </div>
 
         <div class="sidebar">
-            <h1 class="siteName">xMorse</h1>
             <aside class="sidebarContent">
                 <div class="control">
                     <label>
