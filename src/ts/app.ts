@@ -124,6 +124,12 @@ startButton.addEventListener("click", () => {
     setButtonStates();
 });
 
+pauseButton.addEventListener("click", () => {
+    player.stopPlaying();
+    letterElement.innerHTML = "";
+    setButtonStates();
+});
+
 stopButton.addEventListener("click", () => {
     player.stopPlaying();
     letterElement.innerHTML = "";
