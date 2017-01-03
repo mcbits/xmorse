@@ -41,6 +41,9 @@ const pitchSlider = queryId<HTMLInputElement>("pitch");
 const charSpacingSlider = queryId<HTMLInputElement>("charSpacing");
 const voiceEnabledCheckbox = queryId<HTMLInputElement>("voiceEnabled");
 const pasteTextBox = queryId<HTMLTextAreaElement>("pasteText");
+const lettersEnabledCheckbox = queryId<HTMLInputElement>("lettersEnabled");
+const numbersEnabledCheckbox = queryId<HTMLInputElement>("numbersEnabled");
+const symbolsEnabledCheckbox = queryId<HTMLInputElement>("symbolsEnabled");
 
 const morseTable = new Morse.Table();
 const morseParams = new MorseParams(letterElement);
@@ -96,6 +99,18 @@ pasteTextBox.addEventListener("input", () => player.updateTextBuffer(pasteTextBo
 
 voiceEnabledCheckbox.addEventListener("change", () => {
     player.voiceEnabled = voiceEnabledCheckbox.checked;
+});
+
+lettersEnabledCheckbox.addEventListener("change", () => {
+    morseTable.lettersEnabled = lettersEnabledCheckbox.checked;
+});
+
+numbersEnabledCheckbox.addEventListener("change", () => {
+    morseTable.numbersEnabled = numbersEnabledCheckbox.checked;
+});
+
+symbolsEnabledCheckbox.addEventListener("change", () => {
+    morseTable.symbolsEnabled = symbolsEnabledCheckbox.checked;
 });
 
 document.addEventListener("patterncomplete", (evt: CustomEvent) => {

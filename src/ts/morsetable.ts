@@ -96,7 +96,7 @@ export class Table {
                 || this.symbolPatterns[char];
         }
 
-        throw "No Morse characters are enabled."
+        return null;
     }
 
     public getCharacter(char: string): CharacterInfo {

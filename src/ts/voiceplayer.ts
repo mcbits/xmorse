@@ -10,7 +10,7 @@ export class VoicePlayer {
     public voiceGain = this.audioCtx.createGain();
 
     constructor(private audioCtx: AudioContext, private params: MorseParams) {
-        this.voiceGain.gain.value = 0.6;
+        this.voiceGain.gain.value = 0.75;
     }
 
     public playVoice = async (): Promise<void> => {
