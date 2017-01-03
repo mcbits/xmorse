@@ -5,12 +5,8 @@ require("file-loader?name=robots.txt!../robots.txt");
 require("../less/site.less");
 
 import * as Morse from "./morsetable";
-import * as Audio from "./audio";
-
-function updateTextBuffer(evt: Event) {
-    this.textBuffer = pasteTextBox.value;
-    this.textBufferIndex = 0;
-}
+import { Player } from "./player";
+import { MorseParams } from "./morseparams";
 
 function query<T extends Element>(selector: string): T {
     return <T>document.querySelector(selector);
@@ -46,12 +42,13 @@ const voiceEnabledCheckbox = queryId<HTMLInputElement>("voiceEnabled");
 const pasteTextBox = queryId<HTMLTextAreaElement>("pasteText");
 
 const morseTable = new Morse.Table();
-const player = new Audio.Player(letterElement, morseTable);
+const morseParams = new MorseParams(letterElement);
+const player = new Player(morseTable, morseParams);
 
 function setButtonStates() {
-    startButton.disabled = player.playing && !player.paused;
-    pauseButton.disabled = player.paused || !player.playing;
-    stopButton.disabled = !player.playing;
+    startButton.disabled = morseParams.nowPlaying();
+    pauseButton.disabled = !morseParams.nowPlaying();
+    stopButton.disabled = !morseParams.nowPlaying();
 }
 
 function showPasteView() {
@@ -70,40 +67,36 @@ function view(selector: string) {
     viewToShow.classList.remove("disabled");
 }
 
-// Settings events
 volumeSlider.addEventListener("input", () => {
     player.updateVolume(parseFloat(volumeSlider.value));
     volumeText.value = Math.floor(player.mainVolume * 100).toString();
 });
 
 charWPMSlider.addEventListener("input", () => {
-    player.updateWPM(parseInt(charWPMSlider.value));
-    charWPMText.value = player.wpm.toString();
+    morseParams.updateWPM(parseInt(charWPMSlider.value));
+    charWPMText.value = morseParams.wpm.toString();
 });
 
 charSpacingSlider.addEventListener("input", () => {
-    player.updateCharSpacing(parseInt(charSpacingSlider.value));
-    charSpacingText.value = player.charSpacing.toString();
+    morseParams.updateCharSpacing(parseInt(charSpacingSlider.value));
+    charSpacingText.value = morseParams.charSpacing.toString();
 });
 
 pitchSlider.addEventListener("input", () => {
-    player.updatePitch(parseInt(pitchSlider.value));
-    pitchText.value = player.pitch.toString();
+    morseParams.updatePitch(parseInt(pitchSlider.value));
+    pitchText.value = morseParams.pitch.toString();
 });
 
-pasteTextBox.addEventListener("input", updateTextBuffer);
+pasteTextBox.addEventListener("input", () => player.updateTextBuffer(pasteTextBox.value));
 
 voiceEnabledCheckbox.addEventListener("change", () => {
     player.voiceEnabled = voiceEnabledCheckbox.checked;
 });
 
-// Playback events
 document.addEventListener("patterncomplete", (evt: CustomEvent) => {
-    const char = <Morse.Character>evt.detail;
+    const char = <Morse.CharacterInfo>evt.detail;
     player.patternComplete(char);
 });
-
-document.addEventListener("audioloaded", player.playVoice);
 
 startButton.addEventListener("click", () => {
     view(".view.letter");
