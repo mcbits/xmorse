@@ -22,7 +22,8 @@ module.exports = {
         new ExtractTextPlugin("css/site.css"),
         new CopyWebpackPlugin([
             { from: "audio", to: "audio" },
-            { from: "text", to: "text" }
+            { from: "text", to: "text" },
+            { from: "img", to: "img" }
         ])
     ]
 };

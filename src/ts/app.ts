@@ -20,6 +20,8 @@ function queryId<T extends HTMLElement>(id: string): T {
     return <T>document.getElementById(id);
 }
 
+let isFullScreen = false;
+
 // Page elements
 const startButton = query<HTMLButtonElement>(".btn-start");
 const pauseButton = query<HTMLButtonElement>(".btn-pause");
@@ -27,6 +29,7 @@ const stopButton = query<HTMLButtonElement>(".btn-stop");
 const pasteButton = query<HTMLButtonElement>(".btn-paste");
 const storiesButton = query<HTMLButtonElement>(".btn-stories");
 const letterElement = query<HTMLElement>(".letter");
+const enableFullScreenButton = query<HTMLButtonElement>(".btn-fullscreen");
 
 // Settings text labels
 const volumeText = query<HTMLInputElement>(".volumeText");
@@ -48,6 +51,12 @@ const symbolsEnabledCheckbox = queryId<HTMLInputElement>("symbolsEnabled");
 const morseTable = new Morse.Table();
 const morseParams = new MorseParams(letterElement);
 const player = new Player(morseTable, morseParams);
+
+function fullScreenAvailable() {
+    return document.fullscreenEnabled
+        || document["webkitFullscreenEnabled"]
+        || document["mozFullScreenEnabled"];
+}
 
 function setButtonStates() {
     startButton.disabled = morseParams.nowPlaying();
@@ -119,18 +128,21 @@ document.addEventListener("patterncomplete", (evt: CustomEvent) => {
 });
 
 startButton.addEventListener("click", () => {
-    view(".view.letter");
+    enableFullScreenButton.classList.remove("disabled");
+    view(".view.playing");
     player.startPlaying();
     setButtonStates();
 });
 
 pauseButton.addEventListener("click", () => {
+    enableFullScreenButton.classList.add("disabled");
     player.stopPlaying();
     letterElement.innerHTML = "";
     setButtonStates();
 });
 
 stopButton.addEventListener("click", () => {
+    enableFullScreenButton.classList.add("disabled");
     player.stopPlaying();
     letterElement.innerHTML = "";
     setButtonStates();
@@ -140,3 +152,48 @@ stopButton.addEventListener("click", () => {
 pasteButton.addEventListener("click", showPasteView);
 
 storiesButton.addEventListener("click", showStoriesView);
+
+enableFullScreenButton.addEventListener("click", () => {
+    if (isFullScreen) {
+        if (document.exitFullscreen)
+            document.exitFullscreen();
+        else if (document["webkitExitFullscreen"])
+            document["webkitExitFullscreen"]();
+        else if (document["mozCancelFullScreen"]) {
+            document["mozCancelFullScreen"]();
+        }
+    }
+    else {
+        if (document.fullscreenEnabled)
+            query<HTMLElement>(".view.playing").requestFullscreen();
+        else if (document["webkitFullscreenEnabled"])
+            query<HTMLElement>(".view.playing")["webkitRequestFullscreen"]();
+        else if (document["mozFullScreenEnabled"])
+            query<HTMLElement>(".view.playing")["mozRequestFullScreen"]();
+    }
+});
+
+
+function fullScreenChanged() {
+    enableFullScreenButton.classList.toggle("disabled");
+    isFullScreen = !isFullScreen;
+}
+
+["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange"].forEach(
+    eventType => document.addEventListener(eventType, fullScreenChanged)
+);
+
+let cursorHidingTimeout: number;
+function revealOnMouseMove() {
+    clearTimeout(cursorHidingTimeout);
+    enableFullScreenButton.classList.remove("disabled");
+    document.body.style.cursor = "default";
+
+    cursorHidingTimeout = setTimeout(() => {
+        if (isFullScreen) {
+            document.body.style.cursor = "none"
+            enableFullScreenButton.classList.add("disabled");
+        }
+    }, 1500);
+}
+document.addEventListener("mousemove", revealOnMouseMove);
