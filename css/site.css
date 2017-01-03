@@ -8,8 +8,37 @@ body {
 body {
   margin: 0;
   font-family: Roboto, Helvetica, Arial, sans-serif;
-  background: #49464c;
-  color: #fff;
+  background-color: #f1f1f1;
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+}
+body > header.header-top {
+  display: flex;
+  flex-direction: row-reverse;
+  border-bottom: 10px solid #000;
+}
+body > header.header-top .siteName {
+  background: #000;
+  color: #e0e0e0;
+  text-align: center;
+  margin: 0;
+  width: 320px;
+}
+body > header.header-top .menu-top {
+  flex: 1;
+  background: linear-gradient(#f1f1f1, #999);
+  display: flex;
+}
+body > header.header-top .menu-top .btn {
+  flex: 1;
+  margin: 0.5rem;
+}
+body > header.header-top .menu-top .btn:not(:first-child) {
+  margin-left: 0;
+}
+#pasteText {
+  flex: 1;
 }
 .columns {
   display: flex;
@@ -27,13 +56,6 @@ body {
   flex-direction: column;
   border-left: 10px solid #000;
 }
-.sidebar .siteName {
-  background: #000;
-  color: #e0e0e0;
-  text-align: center;
-  margin: 0;
-  padding: 1rem;
-}
 .sidebar .sidebarContent {
   flex: 1;
   padding: 10px;
@@ -45,13 +67,32 @@ body {
   width: 100%;
   margin: 5px 0;
 }
-.letter {
+.view {
   flex: 1;
+  padding: 1rem;
+  overflow: auto;
+}
+.view.disabled {
+  display: none !important;
+}
+.view.paste {
   display: flex;
+}
+.view.stories .story {
+  margin-bottom: 1rem;
+}
+.view.stories .story .author {
+  font-weight: bold;
+}
+.view.stories .story .title {
+  margin-left: 1rem;
+}
+.letter {
   justify-content: center;
   align-items: center;
   font-size: 150px;
   font-weight: bold;
+  display: flex;
 }
 .controls {
   display: flex;
@@ -65,6 +106,28 @@ body {
   font-size: 20px;
   color: #000;
   background: linear-gradient(#dddddd, #f4f4f4);
+}
+.main article h1 {
+  margin: 0 0 1rem 0;
+}
+.btn[disabled] {
+  color: #999;
+}
+kbd {
+  border: 1px solid #a0a0a0;
+  padding: 1px 4px;
+  border-radius: 4px;
+  border-right-width: 2px;
+  border-bottom-width: 2px;
+  font: inherit;
+}
+kbd.disabled {
+  color: #999;
+}
+hr {
+  border-color: #f00;
+  border-width: 2px;
+  margin: 1rem 0;
 }
 
 /*# sourceMappingURL=site.css.map*/
