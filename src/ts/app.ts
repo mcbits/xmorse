@@ -30,6 +30,7 @@ const pasteButton = query<HTMLButtonElement>(".btn-paste");
 const storiesButton = query<HTMLButtonElement>(".btn-stories");
 const letterElement = query<HTMLElement>(".letter");
 const enableFullScreenButton = query<HTMLButtonElement>(".btn-fullscreen");
+const outputBufferElement = query<HTMLElement>(".outputBuffer");
 
 // Settings text labels
 const volumeText = query<HTMLInputElement>(".volumeText");
@@ -125,6 +126,9 @@ symbolsEnabledCheckbox.addEventListener("change", () => {
 document.addEventListener("patterncomplete", (evt: CustomEvent) => {
     const char = <Morse.CharacterInfo>evt.detail;
     player.patternComplete(char);
+
+    outputBufferElement.innerHTML += char == null ? " " : char.name;
+    outputBufferElement.scrollIntoView(false);
 });
 
 startButton.addEventListener("click", () => {
@@ -179,9 +183,8 @@ function fullScreenChanged() {
     isFullScreen = !isFullScreen;
 }
 
-["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange"].forEach(
-    eventType => document.addEventListener(eventType, fullScreenChanged)
-);
+["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange"].forEach(type =>
+    document.addEventListener(type, fullScreenChanged));
 
 let cursorHidingTimeout: number;
 function revealOnMouseMove() {
