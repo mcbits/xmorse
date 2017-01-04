@@ -8,7 +8,6 @@ function delay(milliseconds: number): Promise<void> {
 }
 
 export class Player {
-    public mainVolume = 0.5;
     public voiceEnabled = true;
 
     // Audio parts
@@ -18,14 +17,10 @@ export class Player {
     public textBuffer = "";
     public textBufferIndex = 0;
 
-    private morseTable: Morse.Table;
-
     private tonePlayer: TonePlayer;
     private voicePlayer: VoicePlayer;
 
-    constructor(morseTable: Morse.Table, private params: MorseParams) {
-        this.morseTable = morseTable;
-
+    constructor(private morseTable: Morse.Table, private params: MorseParams) {
         this.tonePlayer = new TonePlayer(this.audioCtx, this.params);
         this.voicePlayer = new VoicePlayer(this.audioCtx, this.params);
 
@@ -34,10 +29,9 @@ export class Player {
 
         this.tonePlayer.oscillatorGain.connect(this.masterGain);
         this.voicePlayer.voiceGain.connect(this.masterGain);
-        this.masterGain.gain.value = this.mainVolume;
+        this.masterGain.gain.value = 0.5;
         this.masterGain.connect(this.audioCtx.destination);
     }
-
 
     public playNextPattern = async (): Promise<void> => {
         if (this.params.nowPlaying()) {
@@ -57,17 +51,16 @@ export class Player {
     }
 
     public updateVolume = (value: number) => {
-        this.mainVolume = value;
-        this.masterGain.gain.setTargetAtTime(this.mainVolume, this.audioCtx.currentTime, 0.01);
+        this.masterGain.gain.setTargetAtTime(value, this.audioCtx.currentTime, 0.01);
     }
 
     public startPlaying = async () => {
-        this.params.start();
+        this.params.nowPlaying(true);
         await this.playNextPattern();
     }
 
     public stopPlaying = () => {
-        this.params.stop();
+        this.params.nowPlaying(false);
     }
 
     public updateTextBuffer(text: string) {

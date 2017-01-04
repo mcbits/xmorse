@@ -24,7 +24,6 @@ let isFullScreen = false;
 
 // Page elements
 const startButton = query<HTMLButtonElement>(".btn-start");
-const pauseButton = query<HTMLButtonElement>(".btn-pause");
 const stopButton = query<HTMLButtonElement>(".btn-stop");
 const pasteButton = query<HTMLButtonElement>(".btn-paste");
 const storiesButton = query<HTMLButtonElement>(".btn-stories");
@@ -61,7 +60,6 @@ function fullScreenAvailable() {
 
 function setButtonStates() {
     startButton.disabled = morseParams.nowPlaying();
-    pauseButton.disabled = !morseParams.nowPlaying();
     stopButton.disabled = !morseParams.nowPlaying();
 }
 
@@ -87,7 +85,7 @@ function view(selector: string) {
 
 volumeSlider.addEventListener("input", () => {
     player.updateVolume(parseFloat(volumeSlider.value));
-    volumeText.value = Math.floor(player.mainVolume * 100).toString();
+    volumeText.value = Math.floor(player.masterGain.gain.value * 100).toString();
 });
 
 charWPMSlider.addEventListener("input", () => {
@@ -135,13 +133,6 @@ startButton.addEventListener("click", () => {
     enableFullScreenButton.classList.remove("disabled");
     view(".view.playing");
     player.startPlaying();
-    setButtonStates();
-});
-
-pauseButton.addEventListener("click", () => {
-    enableFullScreenButton.classList.add("disabled");
-    player.stopPlaying();
-    letterElement.innerHTML = "";
     setButtonStates();
 });
 

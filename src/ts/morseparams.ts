@@ -2,7 +2,6 @@ import * as Morse from "./morsetable";
 
 export class MorseParams {
     private started = false;
-    private paused = false;
 
     public wpm = 18;
     public charSpacing = 25;
@@ -26,21 +25,10 @@ export class MorseParams {
         document.dispatchEvent(new Event("pitchchanged"));
     }
 
-    public nowPlaying(): boolean {
-        return this.started && !this.paused;
-    }
+    public nowPlaying(value?: boolean): boolean {
+        if (typeof value !== "undefined")
+            this.started = value;
 
-    public start() {
-        this.started = true;
-        this.paused = false;
-    }
-
-    public stop() {
-        this.started = false;
-        this.paused = false;
-    }
-
-    public pause() {
-        this.paused = true;
+        return this.started;
     }
 }
