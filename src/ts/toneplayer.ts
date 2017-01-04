@@ -20,26 +20,22 @@ export class TonePlayer {
 
         this.oscillator.start(0);
 
-        document.addEventListener("pitchchanged", evt => { this.oscillator.frequency.value = params.pitch });
+        document.addEventListener("pitchchange", (evt: CustomEvent) => { this.oscillator.frequency.value = evt.detail });
     }
 
     public playPattern = async (char: Morse.CharacterInfo): Promise<void> => {
-        let pattern: string;
-
         const on = () => this.oscillatorGain.gain.setTargetAtTime(this.oscillatorVolume, this.audioCtx.currentTime, this.ramp);
         const off = () => this.oscillatorGain.gain.setTargetAtTime(0, this.audioCtx.currentTime, this.ramp);
         const patternComplete = (char: Morse.CharacterInfo) => document.dispatchEvent(new CustomEvent("patterncomplete", { detail: char }));
         const playTone = async (index: number): Promise<void> => {
             if (this.params.nowPlaying()) {
-                const delayFactor = pattern.charAt(index++) === "." ? 1 : 3;
+                const delayFactor = char.pattern.charAt(index++) === "." ? 1 : 3;
 
                 on();
-
                 await delay(this.params.unitTime() * delayFactor);
-
                 off();
 
-                if (index >= pattern.length)
+                if (index >= char.pattern.length)
                     patternComplete(char);
                 else {
                     await delay(this.params.unitTime());
@@ -49,11 +45,10 @@ export class TonePlayer {
         }
 
         if (char == null) {
-            patternComplete(char);
+            patternComplete(null);
         }
         else {
-            pattern = char.pattern;
-            this.params.letterElement.innerHTML = pattern;
+            document.dispatchEvent(new CustomEvent("letterchange", { detail: char.pattern }));
 
             await playTone(0)
         }

@@ -77,6 +77,12 @@ export class Table {
 
     private symbols = Object.keys(this.symbolPatterns);
 
+    constructor() {
+        document.addEventListener("lettersenabledchange", (evt: CustomEvent) => this.lettersEnabled = <boolean>evt.detail);
+        document.addEventListener("numbersenabledchange", (evt: CustomEvent) => this.numbersEnabled = <boolean>evt.detail);
+        document.addEventListener("symbolsenabledchange", (evt: CustomEvent) => this.symbolsEnabled = <boolean>evt.detail);
+    }
+
     public randomCharacter(): CharacterInfo {
         let chars = [];
 

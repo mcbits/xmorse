@@ -9,20 +9,10 @@ export class MorseParams {
     public currentCharacter: Morse.CharacterInfo = null;
     public pitch = 700;
 
-    constructor(public letterElement: HTMLElement) {
-    }
-
-    public updateWPM = (value: number) => {
-        this.wpm = value;
-    }
-
-    public updateCharSpacing = (value: number) => {
-        this.charSpacing = value;
-    }
-
-    public updatePitch = (value: number) => {
-        this.pitch = value;
-        document.dispatchEvent(new Event("pitchchanged"));
+    constructor() {
+        document.addEventListener("wpmchange", (evt: CustomEvent) => this.wpm = evt.detail);
+        document.addEventListener("charspacingchange", (evt: CustomEvent) => this.charSpacing = evt.detail);
+        document.addEventListener("pitchchange", (evt: CustomEvent) => this.pitch = evt.detail);
     }
 
     public nowPlaying(value?: boolean): boolean {

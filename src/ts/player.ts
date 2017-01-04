@@ -24,13 +24,19 @@ export class Player {
         this.tonePlayer = new TonePlayer(this.audioCtx, this.params);
         this.voicePlayer = new VoicePlayer(this.audioCtx, this.params);
 
-        document.addEventListener("audioloaded", this.voicePlayer.playVoice);
-        document.addEventListener("voicedoneplaying", this.playNextPattern);
-
         this.tonePlayer.oscillatorGain.connect(this.masterGain);
         this.voicePlayer.voiceGain.connect(this.masterGain);
         this.masterGain.gain.value = 0.5;
         this.masterGain.connect(this.audioCtx.destination);
+
+        document.addEventListener("audioloaded", this.voicePlayer.playVoice);
+        document.addEventListener("voicedoneplaying", this.playNextPattern);
+        document.addEventListener("stoprequested", this.stopPlaying);
+        document.addEventListener("startrequested", this.startPlaying);
+        document.addEventListener("patterncomplete", (evt: CustomEvent) => this.patternComplete(<Morse.CharacterInfo>evt.detail));
+        document.addEventListener("volumechange", (evt: CustomEvent) => this.updateVolume(<number>evt.detail));
+        document.addEventListener("textbufferchange", (evt: CustomEvent) => this.updateTextBuffer(<string>evt.detail));
+        document.addEventListener("voiceenabledchange", (evt: CustomEvent) => this.voiceEnabled = <boolean>evt.detail);
     }
 
     public playNextPattern = async (): Promise<void> => {
@@ -77,7 +83,8 @@ export class Player {
         }
 
         if (this.params.currentCharacter != null) {
-            this.params.letterElement.innerHTML = char.name;
+            document.dispatchEvent(new CustomEvent("letterchange", { detail: char.name }));
+
             if (this.params.nowPlaying()) {
                 if (this.voiceEnabled)
                     this.voicePlayer.loadAudio(char);
