@@ -128,7 +128,7 @@ document.addEventListener("patterncomplete", (evt: CustomEvent) => {
     player.patternComplete(char);
 
     outputBufferElement.innerHTML += char == null ? " " : char.name;
-    outputBufferElement.scrollIntoView(false);
+    outputBufferElement.scrollTop = outputBufferElement.scrollHeight;
 });
 
 startButton.addEventListener("click", () => {

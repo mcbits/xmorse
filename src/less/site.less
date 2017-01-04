@@ -1,4 +1,5 @@
 @borderThickness: 10px;
+@gradient: linear-gradient(#f1f1f1, #999);
 
 * {
     box-sizing: border-box;
@@ -15,11 +16,21 @@ body {
     line-height: 1.45;
     display: flex;
     flex-direction: column;
+
+    @media (min-width: 0) { font-size: 15px; }
+    @media (min-width: 640px) { font-size: 16px; }
+    @media (min-width: 768px) { font-size: 15px; }
+    @media (min-width: 1024px) { font-size: 16px; }
+    @media (min-width: 1280px) { font-size: 17px; }
+    @media (min-width: 1600px) { font-size: 18px; }
+    @media (min-width: 1920px) { font-size: 19px; }
 }
 
 body > header.header-top {
-    display: flex;
-    flex-direction: row-reverse;
+    @media (min-width: 768px) {
+        display: flex;
+        flex-direction: row-reverse;
+    }
     border-bottom: 10px solid #000;
 
     .siteName {
@@ -27,12 +38,15 @@ body > header.header-top {
         color: #e0e0e0;
         text-align: center;
         margin: 0;
-        width: 320px;
+
+        @media (min-width: 768px) {
+            width: 320px;
+        }
     }
 
     .menu-top {
         flex: 1;
-        background: linear-gradient(#f1f1f1, #999);
+        background: @gradient;
         display: flex;
 
         .btn {
@@ -51,7 +65,9 @@ body > header.header-top {
 }
 
 .columns {
-    display: flex;
+    @media (min-width: 768px) {
+        display: flex;
+    }
     height: 100%;
 }
 
@@ -63,10 +79,14 @@ body > header.header-top {
 }
 
 .sidebar {
-    width: 320px;
     display: flex;
     flex-direction: column;
-    border-left: @borderThickness solid #000;
+
+    @media (min-width: 768px) {
+        width: 320px;
+        border-left: @borderThickness solid #000;
+        overflow: auto;
+    }
 
     .sidebarContent {
         flex: 1;
@@ -129,17 +149,20 @@ body > header.header-top {
 
 .controls {
     display: flex;
+    background: @gradient;
     border-top: @borderThickness solid #000;
-    border-left: @borderThickness solid #000;
 }
 
 .controls .btn {
     flex: 1;
-    height: 100px;
     font-weight: bold;
     font-size: 20px;
     color: #000;
     background: linear-gradient(#dddddd, #f4f4f4);
+    padding: 0.5rem;
+
+    margin: 0.5rem;
+    &:not(:first-child) { margin-left: 0; }
 }
 
 .main article h1 {
@@ -196,8 +219,8 @@ hr {
 .outputBuffer {
     background: #e1e1e1;
     flex: 1;
-    border: 1px solid #000;
     overflow-wrap: break-word;
-    overflow-y: auto;
+    overflow-y: hidden;
     width: 0;
+    padding: 0.5rem;
 }
