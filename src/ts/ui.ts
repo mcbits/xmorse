@@ -1,13 +1,20 @@
+import {
+    Trigger, Handle,
+    WPM, VOLUME, CHAR_SPACING, PITCH, LETTERS_ENABLED, NUMBERS_ENABLED,
+    SYMBOLS_ENABLED, LETTER, PATTERN_COMPLETE, VOICE_ENABLED, START, STOP,
+    TEXT_BUFFER
+} from "./events";
 import { CharacterInfo } from "./morsetable";
 import { query, queryId, queryAll } from "./query";
+import * as FullScreen from "./fullscreen"; FullScreen
 
 // Page elements
-const startButton = query<HTMLButtonElement>(".btn-start");
-const stopButton = query<HTMLButtonElement>(".btn-stop");
-const pasteButton = query<HTMLButtonElement>(".btn-paste");
-const storiesButton = query<HTMLButtonElement>(".btn-stories");
+const start = query<HTMLButtonElement>(".btn-start");
+const stop = query<HTMLButtonElement>(".btn-stop");
+const paste = query<HTMLButtonElement>(".btn-paste");
+const stories = query<HTMLButtonElement>(".btn-stories");
 const letterElement = query<HTMLElement>(".letter");
-const outputBufferElement = query<HTMLElement>(".outputBuffer");
+const outputBuffer = query<HTMLElement>(".outputBuffer");
 
 // Settings text labels
 const volumeText = query<HTMLInputElement>(".volumeText");
@@ -16,29 +23,15 @@ const pitchText = query<HTMLInputElement>(".pitchText");
 const charSpacingText = query<HTMLInputElement>(".charSpacingText");
 
 // Settings inputs
-const volumeSlider = queryId<HTMLInputElement>("volume");
-const charWPMSlider = queryId<HTMLInputElement>("charWPM");
-const pitchSlider = queryId<HTMLInputElement>("pitch");
-const charSpacingSlider = queryId<HTMLInputElement>("charSpacing");
-const voiceEnabledCheckbox = queryId<HTMLInputElement>("voiceEnabled");
+const volume = queryId<HTMLInputElement>("volume");
+const charWPM = queryId<HTMLInputElement>("charWPM");
+const pitch = queryId<HTMLInputElement>("pitch");
+const charSpacing = queryId<HTMLInputElement>("charSpacing");
+const voiceEnabled = queryId<HTMLInputElement>("voiceEnabled");
 const pasteTextBox = queryId<HTMLTextAreaElement>("pasteText");
-const lettersEnabledCheckbox = queryId<HTMLInputElement>("lettersEnabled");
-const numbersEnabledCheckbox = queryId<HTMLInputElement>("numbersEnabled");
-const symbolsEnabledCheckbox = queryId<HTMLInputElement>("symbolsEnabled");
-
-function fullScreenAvailable() {
-    return document.fullscreenEnabled
-        || document["webkitFullscreenEnabled"]
-        || document["mozFullScreenEnabled"];
-}
-
-function showPasteView() {
-    view(".paste");
-}
-
-function showStoriesView() {
-    view(".stories");
-}
+const lettersEnabled = queryId<HTMLInputElement>("lettersEnabled");
+const numbersEnabled = queryId<HTMLInputElement>("numbersEnabled");
+const symbolsEnabled = queryId<HTMLInputElement>("symbolsEnabled");
 
 function view(selector: string) {
     const views = document.querySelectorAll(".view");
@@ -53,70 +46,80 @@ function view(selector: string) {
 }
 
 export function init() {
-    volumeSlider.addEventListener("input", () => {
-        const value = parseFloat(volumeSlider.value);
-        document.dispatchEvent(new CustomEvent("volumechange", { detail: value }));
+    volume.addEventListener("input", () => {
+        const value = parseFloat(volume.value);
+        Trigger(VOLUME, value);
         volumeText.value = Math.floor(value * 100).toString();
     });
 
-    charWPMSlider.addEventListener("input", () => {
-        const value = parseInt(charWPMSlider.value);
-        document.dispatchEvent(new CustomEvent("wpmchange", { detail: value }));
+    charWPM.addEventListener("input", () => {
+        const value = parseInt(charWPM.value);
+        Trigger(WPM, value);
         charWPMText.value = value.toString();
     });
 
-    charSpacingSlider.addEventListener("input", () => {
-        const value = parseInt(charSpacingSlider.value);
-        document.dispatchEvent(new CustomEvent("charspacingchange", { detail: value }));
+    charSpacing.addEventListener("input", () => {
+        const value = parseInt(charSpacing.value);
+        Trigger(CHAR_SPACING, value);
         charSpacingText.value = value.toString();
     });
 
-    pitchSlider.addEventListener("input", () => {
-        const value = parseInt(pitchSlider.value);
-        document.dispatchEvent(new CustomEvent("pitchchange", { detail: value }));
+    pitch.addEventListener("input", () => {
+        const value = parseInt(pitch.value);
+        Trigger(PITCH, value);
         pitchText.value = value.toString();
     });
 
     pasteTextBox.addEventListener("input", () =>
-        document.dispatchEvent(new CustomEvent("textbufferchange", { detail: pasteTextBox.value })));
+        Trigger(TEXT_BUFFER, pasteTextBox.value));
 
-    voiceEnabledCheckbox.addEventListener("change", () =>
-        document.dispatchEvent(new CustomEvent("voiceenabledchange", { detail: voiceEnabledCheckbox.checked })));
+    voiceEnabled.addEventListener("change", () =>
+        Trigger(VOICE_ENABLED, voiceEnabled.checked));
 
-    lettersEnabledCheckbox.addEventListener("change", () =>
-        document.dispatchEvent(new CustomEvent("lettersenabledchange", { detail: lettersEnabledCheckbox.checked })));
+    lettersEnabled.addEventListener("change", () =>
+        Trigger(LETTERS_ENABLED, lettersEnabled.checked));
 
-    numbersEnabledCheckbox.addEventListener("change", () =>
-        document.dispatchEvent(new CustomEvent("numbersenabledchange", { detail: numbersEnabledCheckbox.checked })));
+    numbersEnabled.addEventListener("change", () =>
+        Trigger(NUMBERS_ENABLED, numbersEnabled.checked));
 
-    symbolsEnabledCheckbox.addEventListener("change", () =>
-        document.dispatchEvent(new CustomEvent("symbolsenabledchange", { detail: numbersEnabledCheckbox.checked })));
+    symbolsEnabled.addEventListener("change", () =>
+        Trigger(SYMBOLS_ENABLED, numbersEnabled.checked));
 
-    document.addEventListener("patterncomplete", (evt: CustomEvent) => {
-        const char = <CharacterInfo>evt.detail;
-
-        outputBufferElement.innerHTML += char == null ? " " : char.name;
-        outputBufferElement.scrollTop = outputBufferElement.scrollHeight;
-    });
-
-    startButton.addEventListener("click", () => {
+    start.addEventListener("click", () => {
         view(".view.playing");
-        startButton.disabled = true;
-        stopButton.disabled = false;
-        document.dispatchEvent(new Event("startrequested"));
+        start.disabled = true;
+        stop.disabled = false;
+        document.dispatchEvent(new Event(START));
     });
 
-    stopButton.addEventListener("click", () => {
-        document.dispatchEvent(new Event("stoprequested"));
+    stop.addEventListener("click", () => {
+        document.dispatchEvent(new Event(STOP));
         letterElement.innerHTML = "";
-        startButton.disabled = false;
-        stopButton.disabled = true;
+        start.disabled = false;
+        stop.disabled = true;
         view(".view.main");
     });
 
-    pasteButton.addEventListener("click", showPasteView);
+    paste.addEventListener("click", () =>
+        view(".paste"));
 
-    storiesButton.addEventListener("click", showStoriesView);
+    stories.addEventListener("click", () =>
+        view(".stories"));
 
-    document.addEventListener("letterchange", (evt: CustomEvent) => letterElement.innerHTML = <string>evt.detail);
+    Handle(LETTER, (value: string) =>
+        letterElement.innerHTML = value);
+
+    Handle(PATTERN_COMPLETE, (char: CharacterInfo) => {
+        outputBuffer.innerHTML += char == null ? " " : char.name;
+        outputBuffer.scrollTop = outputBuffer.scrollHeight;
+    });
+
+    Trigger(VOLUME, volume.value);
+    Trigger(WPM, charWPM.value);
+    Trigger(CHAR_SPACING, charSpacing.value);
+    Trigger(VOICE_ENABLED, voiceEnabled.checked);
+    Trigger(PITCH, pitch.value);
+    Trigger(LETTERS_ENABLED, lettersEnabled.checked);
+    Trigger(NUMBERS_ENABLED, numbersEnabled.checked);
+    Trigger(SYMBOLS_ENABLED, symbolsEnabled.checked);
 }

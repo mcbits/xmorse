@@ -1,3 +1,5 @@
+import { Handle, LETTERS_ENABLED, NUMBERS_ENABLED, SYMBOLS_ENABLED } from "./events";
+
 export interface CharacterInfo {
     name: string,
     pattern: string,
@@ -78,9 +80,9 @@ export class Table {
     private symbols = Object.keys(this.symbolPatterns);
 
     constructor() {
-        document.addEventListener("lettersenabledchange", (evt: CustomEvent) => this.lettersEnabled = <boolean>evt.detail);
-        document.addEventListener("numbersenabledchange", (evt: CustomEvent) => this.numbersEnabled = <boolean>evt.detail);
-        document.addEventListener("symbolsenabledchange", (evt: CustomEvent) => this.symbolsEnabled = <boolean>evt.detail);
+        Handle(LETTERS_ENABLED, (value: boolean) => this.lettersEnabled = value);
+        Handle(NUMBERS_ENABLED, (value: boolean) => this.numbersEnabled = value);
+        Handle(SYMBOLS_ENABLED, (value: boolean) => this.symbolsEnabled = value);
     }
 
     public randomCharacter(): CharacterInfo {

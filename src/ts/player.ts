@@ -1,5 +1,9 @@
 import * as Morse from "./morsetable";
-import { MorseParams } from "./morseparams";
+import {
+    Trigger, Handle,
+    NOW_PLAYING, WPM, CHAR_SPACING, PATTERN_COMPLETE, VOLUME, LETTER,
+    VOICE_ENABLED, VOICE_DONE, START, STOP, TEXT_BUFFER
+} from "./events";
 import { TonePlayer } from "./toneplayer";
 import { VoicePlayer } from "./voiceplayer";
 
@@ -8,6 +12,13 @@ function delay(milliseconds: number): Promise<void> {
 }
 
 export class Player {
+    private tonePlayer: TonePlayer;
+    private voicePlayer: VoicePlayer;
+    private nowPlaying: boolean;
+    private charSpacing: number;
+    private unitTime: number;
+    private currentCharacter: Morse.CharacterInfo = null;
+
     public voiceEnabled = true;
 
     // Audio parts
@@ -17,42 +28,41 @@ export class Player {
     public textBuffer = "";
     public textBufferIndex = 0;
 
-    private tonePlayer: TonePlayer;
-    private voicePlayer: VoicePlayer;
-
-    constructor(private morseTable: Morse.Table, private params: MorseParams) {
-        this.tonePlayer = new TonePlayer(this.audioCtx, this.params);
-        this.voicePlayer = new VoicePlayer(this.audioCtx, this.params);
+    constructor(private morseTable: Morse.Table) {
+        this.tonePlayer = new TonePlayer(this.audioCtx);
+        this.voicePlayer = new VoicePlayer(this.audioCtx);
 
         this.tonePlayer.oscillatorGain.connect(this.masterGain);
         this.voicePlayer.voiceGain.connect(this.masterGain);
         this.masterGain.gain.value = 0.5;
         this.masterGain.connect(this.audioCtx.destination);
 
-        document.addEventListener("audioloaded", this.voicePlayer.playVoice);
-        document.addEventListener("voicedoneplaying", this.playNextPattern);
-        document.addEventListener("stoprequested", this.stopPlaying);
-        document.addEventListener("startrequested", this.startPlaying);
-        document.addEventListener("patterncomplete", (evt: CustomEvent) => this.patternComplete(<Morse.CharacterInfo>evt.detail));
-        document.addEventListener("volumechange", (evt: CustomEvent) => this.updateVolume(<number>evt.detail));
-        document.addEventListener("textbufferchange", (evt: CustomEvent) => this.updateTextBuffer(<string>evt.detail));
-        document.addEventListener("voiceenabledchange", (evt: CustomEvent) => this.voiceEnabled = <boolean>evt.detail);
+        Handle(NOW_PLAYING, (value: boolean) => this.nowPlaying = value);
+        Handle(WPM, (value: number) => this.unitTime = 1.2 / value * 1000);
+        Handle(CHAR_SPACING, (value: number) => this.charSpacing = value);
+        Handle(VOICE_DONE, this.playNextPattern);
+        Handle(STOP, this.stopPlaying);
+        Handle(START, this.startPlaying);
+        Handle(PATTERN_COMPLETE, this.patternComplete);
+        Handle(VOLUME, this.updateVolume);
+        Handle(TEXT_BUFFER, this.updateTextBuffer);
+        Handle(VOICE_ENABLED, (value: boolean) => this.voiceEnabled = value);
     }
 
     public playNextPattern = async (): Promise<void> => {
-        if (this.params.nowPlaying()) {
+        if (this.nowPlaying) {
             if (this.textBuffer.length > 0) {
                 if (this.textBufferIndex >= this.textBuffer.length)
                     this.textBufferIndex = 0;
-                this.params.currentCharacter = this.morseTable.getCharacter(this.textBuffer[this.textBufferIndex]);
+                this.currentCharacter = this.morseTable.getCharacter(this.textBuffer[this.textBufferIndex]);
             }
             else {
-                this.params.currentCharacter = this.morseTable.randomCharacter();
+                this.currentCharacter = this.morseTable.randomCharacter();
             }
 
-            await delay(this.params.unitTime() * this.params.charSpacing);
+            await delay(this.unitTime * this.charSpacing);
 
-            await this.tonePlayer.playPattern(this.params.currentCharacter);
+            await this.tonePlayer.playPattern(this.currentCharacter);
         }
     }
 
@@ -61,15 +71,15 @@ export class Player {
     }
 
     public startPlaying = async () => {
-        this.params.nowPlaying(true);
+        Trigger(NOW_PLAYING, true);
         await this.playNextPattern();
     }
 
     public stopPlaying = () => {
-        this.params.nowPlaying(false);
+        Trigger(NOW_PLAYING, false);
     }
 
-    public updateTextBuffer(text: string) {
+    public updateTextBuffer = (text: string) => {
         this.textBuffer = text;
         this.textBufferIndex = 0;
     }
@@ -82,10 +92,10 @@ export class Player {
                 this.textBufferIndex = 0;
         }
 
-        if (this.params.currentCharacter != null) {
-            document.dispatchEvent(new CustomEvent("letterchange", { detail: char.name }));
+        if (this.currentCharacter != null) {
+            Trigger(LETTER, char.name);
 
-            if (this.params.nowPlaying()) {
+            if (this.nowPlaying) {
                 if (this.voiceEnabled)
                     this.voicePlayer.loadAudio(char);
                 else {
