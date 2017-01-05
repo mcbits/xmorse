@@ -5,8 +5,8 @@ import {
 } from "./events";
 import { Audio, MasterGain } from "./audiocontext";
 import { CharacterInfo, GetCharacter, RandomCharacter } from "./morsetable";
-import { playPattern } from "./toneplayer";
-import { loadAudio } from "./voiceplayer";
+import { PlayPattern } from "./toneplayer";
+import { LoadVoice, IsVoiceLoaded, PlayVoice } from "./voiceplayer";
 
 // State
 let nowPlaying: boolean;
@@ -32,9 +32,12 @@ async function playNextPattern(): Promise<void> {
             currentCharacter = RandomCharacter();
         }
 
+        if (voiceEnabled && !IsVoiceLoaded(currentCharacter.name))
+            LoadVoice(currentCharacter);
+
         await delay(unitTime * charSpacing);
 
-        await playPattern(currentCharacter);
+        await PlayPattern(currentCharacter);
     }
 }
 
@@ -58,7 +61,7 @@ function updateTextBuffer(text: string) {
     textBufferIndex = 0;
 }
 
-function patternComplete(char: CharacterInfo) {
+async function patternComplete(char: CharacterInfo) {
     if (textBuffer.length > 0) {
         ++textBufferIndex;
 
@@ -70,8 +73,12 @@ function patternComplete(char: CharacterInfo) {
         Trigger(LETTER, char.name);
 
         if (nowPlaying) {
-            if (voiceEnabled)
-                loadAudio(char);
+            if (voiceEnabled) {
+                await delay(unitTime * charSpacing);
+
+                if (IsVoiceLoaded(currentCharacter.name))
+                    PlayVoice(currentCharacter.name);
+            }
             else
                 playNextPattern();
         }
@@ -82,20 +89,17 @@ function patternComplete(char: CharacterInfo) {
 }
 
 function loadBook(href: string) {
-    let request: XMLHttpRequest;
+    let request = new XMLHttpRequest();
 
-    const bookDownloaded = (evt: Event) => {
+    function bookDownloaded(evt: ProgressEvent) {
         const response = request.response;
         Trigger(TEXT_BUFFER, response);
         Trigger(START, null);
     }
 
-    request = new XMLHttpRequest();
-
-    request.open("GET", href, true);
+    request.open("GET", href);
     request.responseType = "text";
     request.addEventListener("load", bookDownloaded);
-
     request.send();
 }
 

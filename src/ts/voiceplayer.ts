@@ -13,12 +13,8 @@ let nowPlaying: boolean;
 let charSpacing: number;
 let unitTime: number;
 
-function delay(milliseconds: number): Promise<void> {
-    return new Promise<void>(resolve => setTimeout(resolve, milliseconds));
-}
-
-async function playVoice(char: string): Promise<void> {
-    await delay(unitTime * charSpacing);
+export function PlayVoice(char: string): void {
+    //await delay(unitTime * charSpacing);
 
     if (nowPlaying) {
         const buffer = audioSources[char];
@@ -32,7 +28,11 @@ async function playVoice(char: string): Promise<void> {
     }
 }
 
-export function loadAudio(charDef: CharacterInfo) {
+export function IsVoiceLoaded(char: string): boolean {
+    return audioSources.hasOwnProperty(char);
+}
+
+export function LoadVoice(charDef: CharacterInfo): void {
     let request: XMLHttpRequest;
 
     const audioDownloaded = (evt: Event) => {
@@ -41,16 +41,11 @@ export function loadAudio(charDef: CharacterInfo) {
             response,
             (buffer: AudioBuffer) => {
                 audioSources[charDef.name] = buffer;
-                playVoice(charDef.name);
             },
             (err: DOMException) => console.log("Error loading audio source: ", err));
     }
 
-    if (typeof audioSources[charDef.name] !== "undefined") {
-        playVoice(charDef.name);
-        return audioSources[charDef.name];
-    }
-    else {
+    if (typeof audioSources[charDef.name] === "undefined") {
         request = new XMLHttpRequest();
 
         request.open("GET", "/audio/" + charDef.fileName, true);

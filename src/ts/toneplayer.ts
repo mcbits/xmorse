@@ -26,7 +26,7 @@ function delay(milliseconds: number): Promise<void> {
     return new Promise<void>(resolve => setTimeout(resolve, milliseconds));
 }
 
-export async function playPattern(char: CharacterInfo): Promise<void> {
+export async function PlayPattern(char: CharacterInfo): Promise<void> {
     const on = () => oscillatorGain.gain.setTargetAtTime(oscillatorVolume, Audio.currentTime + firefoxAntiClickDelay, ramp);
     const off = () => oscillatorGain.gain.setTargetAtTime(0, Audio.currentTime + firefoxAntiClickDelay, ramp);
     const patternComplete = (char: CharacterInfo) => Trigger(PATTERN_COMPLETE, char);
