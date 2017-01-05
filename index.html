@@ -36,7 +36,11 @@
                 </article>
             </div>
 
-            <div class="letter view disabled"></div>
+            <div class="playing view disabled">
+                <div class="outputBuffer"></div>
+                <div class="letter"></div>
+                <button class="btn btn-fullscreen disabled" title="Full screen"></button>
+            </div>
 
             <div class="paste view disabled">
                 <textarea id="pasteText" placeholder="Paste text here"></textarea>
@@ -46,6 +50,11 @@
                 <div class="story" vocab="http://schema.org/" typeof="TextDigitalDocument">
                     <div class="author" property="author">Ben Bova</div>
                     <div class="title"><a property="title" href="/text/ben_bova-the_next_logical_step.txt">The Next Logical Step</a></div>
+                </div>
+
+                <div class="story" vocab="http://schema.org/" typeof="TextDigitalDocument">
+                    <div class="author" property="author">Philip K. Dick</div>
+                    <div class="title"><a property="title" href="/text/philip_k_dick-beyond_lies_the_wub.txt">Beyond Lies the Wub</a></div>
                 </div>
 
                 <div class="story" vocab="http://schema.org/" typeof="TextDigitalDocument">
@@ -66,7 +75,6 @@
 
             <div class="controls">
                 <button class="btn btn-start">Start</button>
-                <button class="btn btn-pause" disabled>Pause</button>
                 <button class="btn btn-stop" disabled>Stop</button>
             </div>
         </div>
@@ -92,7 +100,7 @@
                     <label>
                         Character WPM: <output for="charWPM" class="charWPMText">18</output>
                         <br>
-                        <input type="range" id="charWPM" value="18" min="10" max="50" />
+                        <input type="range" id="charWPM" value="18" min="5" max="40" />
                     </label>
                 </div>
 
@@ -100,7 +108,7 @@
                     <label>
                         Spacing: <output for="charSpacing" class="charSpacingText">25</output>
                         <br>
-                        <input type="range" id="charSpacing" value="25" min="0" max="50" />
+                        <input type="range" id="charSpacing" value="25" min="3" max="50" />
                     </label>
                 </div>
 
@@ -131,6 +139,16 @@
             </aside>
         </div>
     </div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-89858630-1', 'auto');
+  ga('send', 'pageview');
+</script>
 </body>
 
 </html>
