@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var CopyWebpackPlugin = require("copy-webpack-plugin");
 
@@ -24,6 +25,11 @@ module.exports = {
             { from: "audio", to: "audio" },
             { from: "text", to: "text" },
             { from: "img", to: "img" }
-        ])
+        ]),
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: true
+            }
+        })
     ]
 };
