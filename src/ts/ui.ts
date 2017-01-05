@@ -6,7 +6,6 @@ import {
 } from "./events";
 import { CharacterInfo } from "./morsetable";
 import { query, queryId, queryAll } from "./query";
-import * as FullScreen from "./fullscreen"; FullScreen
 
 // Page elements
 const start = query<HTMLButtonElement>(".btn-start");
@@ -35,6 +34,7 @@ const symbolsEnabled = queryId<HTMLInputElement>("symbolsEnabled");
 
 function view(selector: string) {
     const views = document.querySelectorAll(".view");
+
     for (let i = 0; i < views.length; ++i) {
         const view = views[i];
         if (!view.classList.contains("disabled"))
@@ -45,54 +45,49 @@ function view(selector: string) {
     viewToShow.classList.remove("disabled");
 }
 
-export function init() {
-    volume.addEventListener("input", () => {
-        const value = parseFloat(volume.value);
-        Trigger(VOLUME, value);
-        volumeText.value = Math.floor(value * 100).toString();
-    });
+volume.addEventListener("input",
+    () => Trigger(VOLUME, parseFloat(volume.value)));
 
-    charWPM.addEventListener("input", () => {
-        const value = parseInt(charWPM.value);
-        Trigger(WPM, value);
-        charWPMText.value = value.toString();
-    });
+charWPM.addEventListener("input",
+    () => Trigger(WPM, parseInt(charWPM.value)));
 
-    charSpacing.addEventListener("input", () => {
-        const value = parseInt(charSpacing.value);
-        Trigger(CHAR_SPACING, value);
-        charSpacingText.value = value.toString();
-    });
+charSpacing.addEventListener("input",
+    () => Trigger(CHAR_SPACING, parseInt(charSpacing.value)));
 
-    pitch.addEventListener("input", () => {
-        const value = parseInt(pitch.value);
-        Trigger(PITCH, value);
-        pitchText.value = value.toString();
-    });
+pitch.addEventListener("input",
+    () => Trigger(PITCH, parseInt(pitch.value)));
 
-    pasteTextBox.addEventListener("input", () =>
-        Trigger(TEXT_BUFFER, pasteTextBox.value));
+pasteTextBox.addEventListener("input",
+    () => Trigger(TEXT_BUFFER, pasteTextBox.value));
 
-    voiceEnabled.addEventListener("change", () =>
-        Trigger(VOICE_ENABLED, voiceEnabled.checked));
+voiceEnabled.addEventListener("change",
+    () => Trigger(VOICE_ENABLED, voiceEnabled.checked));
 
-    lettersEnabled.addEventListener("change", () =>
-        Trigger(LETTERS_ENABLED, lettersEnabled.checked));
+lettersEnabled.addEventListener("change",
+    () => Trigger(LETTERS_ENABLED, lettersEnabled.checked));
 
-    numbersEnabled.addEventListener("change", () =>
-        Trigger(NUMBERS_ENABLED, numbersEnabled.checked));
+numbersEnabled.addEventListener("change",
+    () => Trigger(NUMBERS_ENABLED, numbersEnabled.checked));
 
-    symbolsEnabled.addEventListener("change", () =>
-        Trigger(SYMBOLS_ENABLED, numbersEnabled.checked));
+symbolsEnabled.addEventListener("change",
+    () => Trigger(SYMBOLS_ENABLED, symbolsEnabled.checked));
 
-    start.addEventListener("click", () => {
+paste.addEventListener("click",
+    () => view(".paste"));
+
+stories.addEventListener("click",
+    () => view(".stories"));
+
+start.addEventListener("click",
+    () => {
         view(".view.playing");
         start.disabled = true;
         stop.disabled = false;
         document.dispatchEvent(new Event(START));
     });
 
-    stop.addEventListener("click", () => {
+stop.addEventListener("click",
+    () => {
         document.dispatchEvent(new Event(STOP));
         letterElement.innerHTML = "";
         start.disabled = false;
@@ -100,26 +95,33 @@ export function init() {
         view(".view.main");
     });
 
-    paste.addEventListener("click", () =>
-        view(".paste"));
+Handle(VOLUME,
+    (value: number) => volumeText.value = Math.floor(value * 100).toString());
 
-    stories.addEventListener("click", () =>
-        view(".stories"));
+Handle(WPM,
+    (value: number) => charWPMText.value = value.toString());
 
-    Handle(LETTER, (value: string) =>
-        letterElement.innerHTML = value);
+Handle(CHAR_SPACING,
+    (value: number) => charSpacingText.value = value.toString());
 
-    Handle(PATTERN_COMPLETE, (char: CharacterInfo) => {
+Handle(PITCH,
+    (value: number) => pitchText.value = value.toString());
+
+Handle(LETTER,
+    (value: string) => letterElement.innerHTML = value);
+
+Handle(PATTERN_COMPLETE,
+    (char: CharacterInfo) => {
         outputBuffer.innerHTML += char == null ? " " : char.name;
         outputBuffer.scrollTop = outputBuffer.scrollHeight;
     });
 
-    Trigger(VOLUME, volume.value);
-    Trigger(WPM, charWPM.value);
-    Trigger(CHAR_SPACING, charSpacing.value);
-    Trigger(VOICE_ENABLED, voiceEnabled.checked);
-    Trigger(PITCH, pitch.value);
-    Trigger(LETTERS_ENABLED, lettersEnabled.checked);
-    Trigger(NUMBERS_ENABLED, numbersEnabled.checked);
-    Trigger(SYMBOLS_ENABLED, symbolsEnabled.checked);
-}
+// Trigger events to initialize state
+Trigger(VOLUME, volume.value);
+Trigger(WPM, charWPM.value);
+Trigger(CHAR_SPACING, charSpacing.value);
+Trigger(VOICE_ENABLED, voiceEnabled.checked);
+Trigger(PITCH, pitch.value);
+Trigger(LETTERS_ENABLED, lettersEnabled.checked);
+Trigger(NUMBERS_ENABLED, numbersEnabled.checked);
+Trigger(SYMBOLS_ENABLED, symbolsEnabled.checked);
