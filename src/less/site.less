@@ -142,9 +142,13 @@ body > header.header-top {
     flex: 1;
     justify-content: center;
     align-items: center;
-    font-size: 150px;
     font-weight: bold;
     display: flex;
+    @media (min-width: 0) { font-size: 50px; }
+    @media (min-width: 640px) { font-size: 100px; }
+    @media (min-width: 768px) { font-size: 50px; }
+    @media (min-width: 1024px) { font-size: 100px; }
+    @media (min-width: 1600px) { font-size: 150px; }
 }
 
 .controls {

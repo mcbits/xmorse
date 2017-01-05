@@ -7,6 +7,7 @@ export function Handle<T>(name: string, handler: (value?: T) => any) {
 }
 
 export const WPM = "wpm";
+export const BOOK = "book";
 export const STOP = "stop";
 export const START = "start";
 export const PITCH = "pitch";

@@ -2,7 +2,7 @@ import {
     Trigger, Handle,
     WPM, VOLUME, CHAR_SPACING, PITCH, LETTERS_ENABLED, NUMBERS_ENABLED,
     SYMBOLS_ENABLED, LETTER, PATTERN_COMPLETE, VOICE_ENABLED, START, STOP,
-    TEXT_BUFFER
+    TEXT_BUFFER, BOOK
 } from "./events";
 import { CharacterInfo } from "./morsetable";
 import { query, queryId, queryAll } from "./query";
@@ -14,6 +14,7 @@ const paste = query<HTMLButtonElement>(".btn-paste");
 const stories = query<HTMLButtonElement>(".btn-stories");
 const letterElement = query<HTMLElement>(".letter");
 const outputBuffer = query<HTMLElement>(".outputBuffer");
+const bookLinks = queryAll<HTMLAnchorElement>(".story a");
 
 // Settings text labels
 const volumeText = query<HTMLInputElement>(".volumeText");
@@ -79,21 +80,37 @@ stories.addEventListener("click",
     () => view(".stories"));
 
 start.addEventListener("click",
-    () => {
-        view(".view.playing");
-        start.disabled = true;
-        stop.disabled = false;
-        document.dispatchEvent(new Event(START));
-    });
+    () => Trigger(START, null));
 
 stop.addEventListener("click",
-    () => {
-        document.dispatchEvent(new Event(STOP));
-        letterElement.innerHTML = "";
-        start.disabled = false;
-        stop.disabled = true;
-        view(".view.main");
+    () => Trigger(STOP, null));
+
+for (let i = 0; i < bookLinks.length; ++i) {
+    const bookLink = bookLinks[i];
+    bookLink.addEventListener("click", (evt: MouseEvent) => {
+        evt.preventDefault();
+        const anchor = <HTMLAnchorElement>evt.target;
+        const href = anchor.href;
+        Trigger(BOOK, href);
     });
+}
+
+Handle(START, () => {
+    outputBuffer.innerHTML = "";
+    view(".view.playing");
+    start.disabled = true;
+    stop.disabled = false;
+});
+
+Handle(STOP, () => {
+    letterElement.innerHTML = "";
+    start.disabled = false;
+    stop.disabled = true;
+    view(".view.main");
+});
+
+Handle(TEXT_BUFFER,
+    (value: string) => pasteTextBox.value = value);
 
 Handle(VOLUME,
     (value: number) => volumeText.value = Math.floor(value * 100).toString());

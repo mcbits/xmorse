@@ -1,7 +1,7 @@
 import {
     Trigger, Handle,
     NOW_PLAYING, WPM, CHAR_SPACING, PATTERN_COMPLETE, VOLUME, LETTER,
-    VOICE_ENABLED, VOICE_DONE, START, STOP, TEXT_BUFFER
+    VOICE_ENABLED, VOICE_DONE, START, STOP, TEXT_BUFFER, BOOK
 } from "./events";
 import { Audio, MasterGain } from "./audiocontext";
 import { CharacterInfo, GetCharacter, RandomCharacter } from "./morsetable";
@@ -43,8 +43,10 @@ function updateVolume(value: number) {
 }
 
 async function startPlaying() {
-    Trigger(NOW_PLAYING, true);
-    await playNextPattern();
+    if (!nowPlaying) {
+        Trigger(NOW_PLAYING, true);
+        await playNextPattern();
+    }
 }
 
 function stopPlaying() {
@@ -79,6 +81,24 @@ function patternComplete(char: CharacterInfo) {
     }
 }
 
+function loadBook(href: string) {
+    let request: XMLHttpRequest;
+
+    const bookDownloaded = (evt: Event) => {
+        const response = request.response;
+        Trigger(TEXT_BUFFER, response);
+        Trigger(START, null);
+    }
+
+    request = new XMLHttpRequest();
+
+    request.open("GET", href, true);
+    request.responseType = "text";
+    request.addEventListener("load", bookDownloaded);
+
+    request.send();
+}
+
 Handle(NOW_PLAYING, (value: boolean) => nowPlaying = value);
 Handle(WPM, (value: number) => unitTime = 1.2 / value * 1000);
 Handle(CHAR_SPACING, (value: number) => charSpacing = value);
@@ -89,3 +109,4 @@ Handle(PATTERN_COMPLETE, patternComplete);
 Handle(VOLUME, updateVolume);
 Handle(TEXT_BUFFER, updateTextBuffer);
 Handle(VOICE_ENABLED, (value: boolean) => voiceEnabled = value);
+Handle(BOOK, loadBook)
