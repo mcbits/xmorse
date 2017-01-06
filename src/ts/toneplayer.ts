@@ -7,9 +7,9 @@ import { Audio, MasterGain } from "./audiocontext";
 import { CharacterInfo } from "./morsetable";
 import { UnitTime, NowPlaying } from "./timing";
 
-const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") != -1 ? 0.05 : 0.001;
+const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") != -1 ? 0.05 : 0.0001;
 const oscillatorVolume = 0.9;
-const ramp = 0.008;
+const ramp = 0.005;
 
 // Wire up audio parts.
 // Oscillator frequency will be initialized by UI.
