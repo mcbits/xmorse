@@ -2,7 +2,7 @@ import {
     Notify, Listen,
     WPM, VOLUME, CHAR_SPACING, PITCH, LETTERS_ENABLED, NUMBERS_ENABLED,
     SYMBOLS_ENABLED, LETTER, PATTERN_COMPLETE, VOICE_ENABLED, START, STOP,
-    TEXT_BUFFER, STORY, OUTPUT
+    OUTPUT, STORY, TEXT_BUFFER, TONE_OFF, TONE_ON
 } from "./events";
 import { CharacterInfo } from "./morsetable";
 import { Query, QueryId, QueryAll } from "./query";
@@ -138,6 +138,12 @@ Listen(PATTERN_COMPLETE,
         outputBuffer.innerHTML += char == null ? " " : char.name;
         outputBuffer.scrollTop = outputBuffer.scrollHeight;
     });
+
+Listen(TONE_OFF,
+    () => Query("body").classList.remove("toneOn"));
+
+Listen(TONE_ON,
+    () => Query("body").classList.add("toneOn"));
 
 // Trigger events to initialize state
 Notify(VOLUME, volume.value);

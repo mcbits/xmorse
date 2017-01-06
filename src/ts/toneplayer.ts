@@ -1,6 +1,6 @@
 import {
     Notify, Listen,
-    PITCH, PATTERN_COMPLETE, LETTER
+    LETTER, PATTERN_COMPLETE, PITCH, TONE_OFF, TONE_ON
 } from "./events";
 import { Sleep } from "./sleep";
 import { Audio, MasterGain } from "./audiocontext";
@@ -22,10 +22,12 @@ oscillator.start(0);
 
 function on() {
     oscillatorGain.gain.setTargetAtTime(oscillatorVolume, Audio.currentTime + firefoxAntiClickDelay, ramp);
+    Notify(TONE_ON, null);
 }
 
 function off() {
     oscillatorGain.gain.setTargetAtTime(0, Audio.currentTime + firefoxAntiClickDelay, ramp);
+    Notify(TONE_OFF, null);
 }
 
 async function playTone(char: CharacterInfo, index: number): Promise<void> {

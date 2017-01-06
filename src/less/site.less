@@ -1,5 +1,6 @@
 @borderThickness: 10px;
 @gradient: linear-gradient(#f1f1f1, #999);
+@flashColor: #227;
 
 * {
     box-sizing: border-box;
@@ -103,6 +104,24 @@ body > header.header-top {
     }
 }
 
+body.toneOn {
+    .sidebar {
+        border-color: @flashColor;
+    }
+
+    .controls {
+        border-color: @flashColor;
+    }
+
+    > header.header-top {
+        border-color: @flashColor;
+
+        .siteName {
+            background-color: @flashColor;
+        }
+    }
+}
+    
 .view {
     position: relative;
     flex: 1;
@@ -175,6 +194,7 @@ body > header.header-top {
 
 .btn[disabled] {
     color: #999;
+    display: none;
 }
 
 kbd {
