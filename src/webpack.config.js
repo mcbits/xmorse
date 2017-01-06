@@ -26,10 +26,6 @@ module.exports = {
             { from: "text", to: "text" },
             { from: "img", to: "img" }
         ]),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: true
-            }
-        })
+        //new webpack.optimize.UglifyJsPlugin({ compress: { warnings: true } })
     ]
 };
