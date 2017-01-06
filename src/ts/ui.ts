@@ -2,7 +2,7 @@ import {
     Trigger, Handle,
     WPM, VOLUME, CHAR_SPACING, PITCH, LETTERS_ENABLED, NUMBERS_ENABLED,
     SYMBOLS_ENABLED, LETTER, PATTERN_COMPLETE, VOICE_ENABLED, START, STOP,
-    TEXT_BUFFER, BOOK
+    TEXT_BUFFER, BOOK, OUTPUT
 } from "./events";
 import { CharacterInfo } from "./morsetable";
 import { query, queryId, queryAll } from "./query";
@@ -126,6 +126,12 @@ Handle(PITCH,
 
 Handle(LETTER,
     (value: string) => letterElement.innerHTML = value);
+
+Handle(OUTPUT,
+    (value: string) => {
+        outputBuffer.innerHTML += value
+        outputBuffer.scrollTop = outputBuffer.scrollHeight;
+    });
 
 Handle(PATTERN_COMPLETE,
     (char: CharacterInfo) => {

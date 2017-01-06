@@ -1,43 +1,42 @@
 import {
     Trigger, Handle,
     NOW_PLAYING, WPM, CHAR_SPACING, PATTERN_COMPLETE, VOLUME, LETTER,
-    VOICE_ENABLED, VOICE_DONE, START, STOP, TEXT_BUFFER, BOOK
+    VOICE_ENABLED, VOICE_DONE, START, STOP, TEXT_BUFFER, BOOK, OUTPUT
 } from "./events";
+import { Sleep } from "./sleep";
 import { Audio, MasterGain } from "./audiocontext";
 import { CharacterInfo, GetCharacter, RandomCharacter } from "./morsetable";
 import { PlayPattern } from "./toneplayer";
 import { LoadVoice, IsVoiceLoaded, PlayVoice } from "./voiceplayer";
+import { Next } from "./text";
 
 // State
 let nowPlaying: boolean;
 let charSpacing: number;
 let unitTime: number;
-let currentCharacter: CharacterInfo = null;
 let voiceEnabled = true;
-let textBuffer = "";
-let textBufferIndex = 0;
-
-function delay(milliseconds: number): Promise<void> {
-    return new Promise<void>(resolve => setTimeout(resolve, milliseconds));
-}
 
 async function playNextPattern(): Promise<void> {
     if (nowPlaying) {
-        if (textBuffer.length > 0) {
-            if (textBufferIndex >= textBuffer.length)
-                textBufferIndex = 0;
-            currentCharacter = GetCharacter(textBuffer[textBufferIndex]);
+        // Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
+        const nextCharacter = Next();
+
+        // If there is unplayable text, send it to the output buffer and delay for one word-break.
+        if (nextCharacter[0] != nextCharacter[1].name) {
+            Trigger(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
+
+            // The 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
+            await Sleep(unitTime * charSpacing * (7/3));
         }
-        else {
-            currentCharacter = RandomCharacter();
-        }
+ 
+        const currentCharacter = nextCharacter[1];
 
         if (voiceEnabled && !IsVoiceLoaded(currentCharacter.name))
             LoadVoice(currentCharacter);
 
-        await delay(unitTime * charSpacing);
-
         await PlayPattern(currentCharacter);
+
+        await Sleep(unitTime * charSpacing);
     }
 }
 
@@ -56,28 +55,26 @@ function stopPlaying() {
     Trigger(NOW_PLAYING, false);
 }
 
-function updateTextBuffer(text: string) {
-    textBuffer = text;
-    textBufferIndex = 0;
-}
-
 async function patternComplete(char: CharacterInfo) {
-    if (textBuffer.length > 0) {
-        ++textBufferIndex;
-
-        if (textBufferIndex === textBuffer.length)
-            textBufferIndex = 0;
-    }
-
-    if (currentCharacter != null) {
+    if (char != null) {
         Trigger(LETTER, char.name);
 
         if (nowPlaying) {
-            if (voiceEnabled) {
-                await delay(unitTime * charSpacing);
+            await Sleep(unitTime * charSpacing);
 
-                if (IsVoiceLoaded(currentCharacter.name))
-                    PlayVoice(currentCharacter.name);
+            if (voiceEnabled) {
+                // Sometimes the voice won't be loaded. Usually this will be when the user changes
+                // the checkbox after a pattern starts, so the voice-load wasn't already triggered.
+                // In that case, load the voice now.
+                //
+                // TODO: It's also possible that the voice wasn't loaded because the user's
+                // connection is very slow. Here, reloading just makes it worse. Need to keep track
+                // of progress in the voice loader to differentiate between "never loaded" and
+                // "still loading".
+                if (IsVoiceLoaded(char.name))
+                    PlayVoice(char.name);
+                else
+                    LoadVoice(char, () => PlayVoice(char.name));
             }
             else
                 playNextPattern();
@@ -111,6 +108,5 @@ Handle(STOP, stopPlaying);
 Handle(START, startPlaying);
 Handle(PATTERN_COMPLETE, patternComplete);
 Handle(VOLUME, updateVolume);
-Handle(TEXT_BUFFER, updateTextBuffer);
 Handle(VOICE_ENABLED, (value: boolean) => voiceEnabled = value);
 Handle(BOOK, loadBook)

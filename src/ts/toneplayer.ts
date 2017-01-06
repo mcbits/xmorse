@@ -1,9 +1,10 @@
-import { Audio, MasterGain } from "./audiocontext";
-import { CharacterInfo } from "./morsetable";
 import {
     Trigger, Handle,
     WPM, CHAR_SPACING, PITCH, NOW_PLAYING, PATTERN_COMPLETE, LETTER
 } from "./events";
+import { Sleep } from "./sleep";
+import { Audio, MasterGain } from "./audiocontext";
+import { CharacterInfo } from "./morsetable";
 
 const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") != -1 ? 0.05 : 0.001;
 const oscillatorVolume = 0.9;
@@ -22,38 +23,44 @@ oscillator.connect(oscillatorGain);
 oscillatorGain.connect(MasterGain);
 oscillator.start(0);
 
-function delay(milliseconds: number): Promise<void> {
-    return new Promise<void>(resolve => setTimeout(resolve, milliseconds));
+function on() {
+    oscillatorGain.gain.setTargetAtTime(oscillatorVolume, Audio.currentTime + firefoxAntiClickDelay, ramp);
+}
+
+function off() {
+    oscillatorGain.gain.setTargetAtTime(0, Audio.currentTime + firefoxAntiClickDelay, ramp);
+}
+
+function patternComplete(char: CharacterInfo) {
+    Trigger(PATTERN_COMPLETE, char);
+}
+
+async function playTone(char: CharacterInfo, index: number): Promise<void> {
+    if (nowPlaying) {
+        const delayFactor = char.pattern.charAt(index++) === "." ? 1 : 3;
+
+        on();
+        await Sleep(unitTime * delayFactor);
+        off();
+
+        if (index >= char.pattern.length)
+            patternComplete(char);
+        else {
+            await Sleep(unitTime);
+            await playTone(char, index);
+        }
+    }
 }
 
 export async function PlayPattern(char: CharacterInfo): Promise<void> {
-    const on = () => oscillatorGain.gain.setTargetAtTime(oscillatorVolume, Audio.currentTime + firefoxAntiClickDelay, ramp);
-    const off = () => oscillatorGain.gain.setTargetAtTime(0, Audio.currentTime + firefoxAntiClickDelay, ramp);
-    const patternComplete = (char: CharacterInfo) => Trigger(PATTERN_COMPLETE, char);
-    const playTone = async (index: number): Promise<void> => {
-        if (nowPlaying) {
-            const delayFactor = char.pattern.charAt(index++) === "." ? 1 : 3;
-
-            on();
-            await delay(unitTime * delayFactor);
-            off();
-
-            if (index >= char.pattern.length)
-                patternComplete(char);
-            else {
-                await delay(unitTime);
-                await playTone(index);
-            }
-        }
-    }
-
     if (char == null) {
+        console.log("char was null!");
         patternComplete(null);
     }
     else {
         Trigger(LETTER, char.pattern);
 
-        await playTone(0)
+        await playTone(char, 0)
     }
 }
 

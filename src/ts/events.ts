@@ -13,6 +13,7 @@ export const START = "start";
 export const PITCH = "pitch";
 export const VOLUME = "volume";
 export const LETTER = "letter";
+export const OUTPUT = "output";
 export const VOICE_DONE = "voiceDone";
 export const NOW_PLAYING = "nowPlaying";
 export const TEXT_BUFFER = "textBuffer";

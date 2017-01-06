@@ -32,7 +32,7 @@ export function IsVoiceLoaded(char: string): boolean {
     return audioSources.hasOwnProperty(char);
 }
 
-export function LoadVoice(charDef: CharacterInfo): void {
+export function LoadVoice(charDef: CharacterInfo, callback?: Function): void {
     let request: XMLHttpRequest;
 
     const audioDownloaded = (evt: Event) => {
@@ -41,6 +41,8 @@ export function LoadVoice(charDef: CharacterInfo): void {
             response,
             (buffer: AudioBuffer) => {
                 audioSources[charDef.name] = buffer;
+                if (typeof callback === "function")
+                    callback();
             },
             (err: DOMException) => console.log("Error loading audio source: ", err));
     }
