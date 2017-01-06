@@ -1,5 +1,5 @@
 import { CharacterInfo } from "./morsetable";
-import { Listen, VOICE_DONE } from "./events";
+import { Listen, VOICE_DONE, VOICE_ENABLED } from "./events";
 import { Audio, MasterGain } from "./audiocontext";
 import { NowPlaying } from "./timing";
 
@@ -8,13 +8,18 @@ const voiceGain = Audio.createGain();
 voiceGain.gain.value = 0.85;
 voiceGain.connect(MasterGain);
 
-const audioSources: { [char: string]: AudioBuffer } = {};
+const audioBuffers: { [char: string]: AudioBuffer } = {};
+
+let voiceEnabled = true;
 
 export function PlayVoice(char: string): void {
-    //await delay(unitTime * charSpacing);
-
     if (NowPlaying) {
-        const buffer = audioSources[char];
+        if (!voiceEnabled) {
+            document.dispatchEvent(new Event(VOICE_DONE));
+            return;
+        }
+
+        const buffer = audioBuffers[char];
         if (typeof buffer !== "undefined") {
             const audioSource = Audio.createBufferSource();
             audioSource.addEventListener("ended", () => document.dispatchEvent(new Event(VOICE_DONE)));
@@ -25,32 +30,33 @@ export function PlayVoice(char: string): void {
     }
 }
 
-export function IsVoiceLoaded(char: string): boolean {
-    return audioSources.hasOwnProperty(char);
-}
+export function PreloadVoice(charDef: CharacterInfo, callback?: Function): void {
+    if (!voiceEnabled || audioBuffers.hasOwnProperty(charDef.name)) {
+        if (typeof callback === "function")
+            callback();
 
-export function LoadVoice(charDef: CharacterInfo, callback?: Function): void {
-    let request: XMLHttpRequest;
+        return;
+    }
+
+    const request = new XMLHttpRequest();
 
     const audioDownloaded = (evt: Event) => {
         const response = request.response;
         Audio.decodeAudioData(
             response,
             (buffer: AudioBuffer) => {
-                audioSources[charDef.name] = buffer;
+                audioBuffers[charDef.name] = buffer;
                 if (typeof callback === "function")
                     callback();
             },
             (err: DOMException) => console.log("Error loading audio source: ", err));
     }
 
-    if (typeof audioSources[charDef.name] === "undefined") {
-        request = new XMLHttpRequest();
+    request.open("GET", "/audio/" + charDef.fileName, true);
+    request.responseType = "arraybuffer";
+    request.addEventListener("load", audioDownloaded);
 
-        request.open("GET", "/audio/" + charDef.fileName, true);
-        request.responseType = "arraybuffer";
-        request.addEventListener("load", audioDownloaded);
-
-        request.send();
-    }
+    request.send();
 }
+
+Listen(VOICE_ENABLED, (value: boolean) => voiceEnabled = value);

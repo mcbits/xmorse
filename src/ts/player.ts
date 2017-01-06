@@ -1,17 +1,15 @@
 import {
     Notify, Listen,
     PATTERN_COMPLETE, VOLUME, LETTER, NOW_PLAYING,
-    VOICE_ENABLED, VOICE_DONE, START, STOP, TEXT_BUFFER, STORY, OUTPUT
+    VOICE_DONE, START, STOP, TEXT_BUFFER, STORY, OUTPUT
 } from "./events";
 import { Sleep } from "./sleep";
 import { Audio, MasterGain } from "./audiocontext";
-import { CharacterInfo, GetCharacter, RandomCharacter } from "./morsetable";
+import { CharacterInfo } from "./morsetable";
 import { PlayPattern } from "./toneplayer";
-import { LoadVoice, IsVoiceLoaded, PlayVoice } from "./voiceplayer";
+import { PreloadVoice, PlayVoice } from "./voiceplayer";
 import { Next } from "./text";
 import { UnitTime, CharSpacing, NowPlaying } from "./timing";
-
-let voiceEnabled = true;
 
 async function playNextPattern(): Promise<void> {
     if (NowPlaying) {
@@ -29,8 +27,7 @@ async function playNextPattern(): Promise<void> {
 
             const currentCharacter = nextCharacter[1];
 
-            if (voiceEnabled && !IsVoiceLoaded(currentCharacter.name))
-                LoadVoice(currentCharacter);
+            PreloadVoice(currentCharacter);
 
             await PlayPattern(currentCharacter);
         }
@@ -57,34 +54,30 @@ function stopPlaying() {
 }
 
 async function patternComplete(char: CharacterInfo) {
-    if (char != null) {
-        Notify(LETTER, char.name);
-
-        if (NowPlaying) {
+    if (NowPlaying) {
+        if (char == null) {
             await Sleep(UnitTime * CharSpacing);
 
-            if (voiceEnabled) {
-                // Sometimes the voice won't be loaded. Usually this will be when the user changes
-                // the checkbox after a pattern starts, so the voice-load wasn't already triggered.
-                // In that case, load the voice now.
-                //
-                // TODO: It's also possible that the voice wasn't loaded because the user's
-                // connection is very slow. Here, reloading just makes it worse. Need to keep track
-                // of progress in the voice loader to differentiate between "never loaded" and
-                // "still loading".
-                if (IsVoiceLoaded(char.name))
-                    PlayVoice(char.name);
-                else
-                    LoadVoice(char, () => PlayVoice(char.name));
-            }
-            else
-                playNextPattern();
+            playNextPattern();
         }
-    }
-    else {
-        await Sleep(UnitTime * CharSpacing);
+        else {
+            Notify(LETTER, char.name);
 
-        playNextPattern();
+            await Sleep(UnitTime * CharSpacing);
+
+            // Sometimes the voice won't be loaded. Usually this will be when the user changes
+            // the checkbox after a pattern starts, so the voice-load wasn't already triggered.
+            // In that case, load the voice now.
+            // 
+            // No need to call playNextPattern(), as it will be called by VOICE_DONE (which is
+            // triggered whether the voice is enabled or not).
+            //
+            // TODO: It's also possible that the voice wasn't loaded because the user's
+            // connection is very slow. Here, reloading just makes it worse. Need to keep track
+            // of progress in the voice loader to differentiate between "never loaded" and
+            // "still loading".
+            PreloadVoice(char, () => PlayVoice(char.name));
+        }
     }
 }
 
@@ -108,5 +101,4 @@ Listen(STOP, stopPlaying);
 Listen(START, startPlaying);
 Listen(PATTERN_COMPLETE, patternComplete);
 Listen(VOLUME, updateVolume);
-Listen(VOICE_ENABLED, (value: boolean) => voiceEnabled = value);
 Listen(STORY, loadBook)
