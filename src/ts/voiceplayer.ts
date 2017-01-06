@@ -2,6 +2,7 @@ import { CharacterInfo } from "./morsetable";
 import { Listen, VOICE_DONE, VOICE_ENABLED } from "./events";
 import { Audio, MasterGain } from "./audiocontext";
 import { NowPlaying } from "./timing";
+import { Load } from "./xhr";
 
 // Wire up audio
 const voiceGain = Audio.createGain();
@@ -16,6 +17,7 @@ export function PlayVoice(char: string): void {
     if (NowPlaying) {
         if (!voiceEnabled) {
             document.dispatchEvent(new Event(VOICE_DONE));
+
             return;
         }
 
@@ -30,7 +32,7 @@ export function PlayVoice(char: string): void {
     }
 }
 
-export function PreloadVoice(charDef: CharacterInfo, callback?: Function): void {
+export async function PreloadVoice(charDef: CharacterInfo, callback?: Function): Promise<void> {
     if (!voiceEnabled || audioBuffers.hasOwnProperty(charDef.name)) {
         if (typeof callback === "function")
             callback();
@@ -38,25 +40,17 @@ export function PreloadVoice(charDef: CharacterInfo, callback?: Function): void 
         return;
     }
 
-    const request = new XMLHttpRequest();
+    const response = await Load("/audio/" + charDef.fileName, "arraybuffer");
 
-    const audioDownloaded = (evt: Event) => {
-        const response = request.response;
-        Audio.decodeAudioData(
-            response,
-            (buffer: AudioBuffer) => {
-                audioBuffers[charDef.name] = buffer;
-                if (typeof callback === "function")
-                    callback();
-            },
-            (err: DOMException) => console.log("Error loading audio source: ", err));
-    }
+    Audio.decodeAudioData(
+        response,
+        (buffer: AudioBuffer) => {
+            audioBuffers[charDef.name] = buffer;
 
-    request.open("GET", "/audio/" + charDef.fileName, true);
-    request.responseType = "arraybuffer";
-    request.addEventListener("load", audioDownloaded);
-
-    request.send();
+            if (typeof callback === "function")
+                callback();
+        },
+        (err: DOMException) => console.log("Error loading audio source: ", err));
 }
 
 Listen(VOICE_ENABLED, (value: boolean) => voiceEnabled = value);

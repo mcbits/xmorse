@@ -1,7 +1,7 @@
 import {
     Notify, Listen,
     PATTERN_COMPLETE, VOLUME, LETTER, NOW_PLAYING,
-    VOICE_DONE, START, STOP, TEXT_BUFFER, STORY, OUTPUT
+    VOICE_DONE, START, STOP, OUTPUT
 } from "./events";
 import { Sleep } from "./sleep";
 import { Audio, MasterGain } from "./audiocontext";
@@ -81,24 +81,8 @@ async function patternComplete(char: CharacterInfo) {
     }
 }
 
-function loadBook(href: string) {
-    let request = new XMLHttpRequest();
-
-    function bookDownloaded(evt: ProgressEvent) {
-        const response = request.response;
-        Notify(TEXT_BUFFER, response);
-        Notify(START, null);
-    }
-
-    request.open("GET", href);
-    request.responseType = "text";
-    request.addEventListener("load", bookDownloaded);
-    request.send();
-}
-
 Listen(VOICE_DONE, playNextPattern);
 Listen(STOP, stopPlaying);
 Listen(START, startPlaying);
 Listen(PATTERN_COMPLETE, patternComplete);
 Listen(VOLUME, updateVolume);
-Listen(STORY, loadBook)
