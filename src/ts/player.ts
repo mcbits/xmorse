@@ -1,7 +1,7 @@
 import {
-    Trigger, Handle,
+    Notify, Listen,
     PATTERN_COMPLETE, VOLUME, LETTER, NOW_PLAYING,
-    VOICE_ENABLED, VOICE_DONE, START, STOP, TEXT_BUFFER, BOOK, OUTPUT
+    VOICE_ENABLED, VOICE_DONE, START, STOP, TEXT_BUFFER, STORY, OUTPUT
 } from "./events";
 import { Sleep } from "./sleep";
 import { Audio, MasterGain } from "./audiocontext";
@@ -21,7 +21,7 @@ async function playNextPattern(): Promise<void> {
         if (nextCharacter[1]) {
             // If there is unplayable text, send it to the output buffer and delay for one word-break.
             if (nextCharacter[0] != nextCharacter[1].name) {
-                Trigger(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
+                Notify(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
 
                 // The 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
                 await Sleep(UnitTime * CharSpacing * (7 / 3));
@@ -35,7 +35,7 @@ async function playNextPattern(): Promise<void> {
             await PlayPattern(currentCharacter);
         }
         else
-            Trigger(PATTERN_COMPLETE, null);
+            Notify(PATTERN_COMPLETE, null);
 
         await Sleep(UnitTime * CharSpacing);
     }
@@ -47,18 +47,18 @@ function updateVolume(value: number) {
 
 async function startPlaying() {
     if (!NowPlaying) {
-        Trigger(NOW_PLAYING, true);
+        Notify(NOW_PLAYING, true);
         await playNextPattern();
     }
 }
 
 function stopPlaying() {
-    Trigger(NOW_PLAYING, false);
+    Notify(NOW_PLAYING, false);
 }
 
 async function patternComplete(char: CharacterInfo) {
     if (char != null) {
-        Trigger(LETTER, char.name);
+        Notify(LETTER, char.name);
 
         if (NowPlaying) {
             await Sleep(UnitTime * CharSpacing);
@@ -93,8 +93,8 @@ function loadBook(href: string) {
 
     function bookDownloaded(evt: ProgressEvent) {
         const response = request.response;
-        Trigger(TEXT_BUFFER, response);
-        Trigger(START, null);
+        Notify(TEXT_BUFFER, response);
+        Notify(START, null);
     }
 
     request.open("GET", href);
@@ -103,10 +103,10 @@ function loadBook(href: string) {
     request.send();
 }
 
-Handle(VOICE_DONE, playNextPattern);
-Handle(STOP, stopPlaying);
-Handle(START, startPlaying);
-Handle(PATTERN_COMPLETE, patternComplete);
-Handle(VOLUME, updateVolume);
-Handle(VOICE_ENABLED, (value: boolean) => voiceEnabled = value);
-Handle(BOOK, loadBook)
+Listen(VOICE_DONE, playNextPattern);
+Listen(STOP, stopPlaying);
+Listen(START, startPlaying);
+Listen(PATTERN_COMPLETE, patternComplete);
+Listen(VOLUME, updateVolume);
+Listen(VOICE_ENABLED, (value: boolean) => voiceEnabled = value);
+Listen(STORY, loadBook)

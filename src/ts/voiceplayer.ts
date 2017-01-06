@@ -1,5 +1,5 @@
 import { CharacterInfo } from "./morsetable";
-import { Handle, VOICE_DONE } from "./events";
+import { Listen, VOICE_DONE } from "./events";
 import { Audio, MasterGain } from "./audiocontext";
 import { NowPlaying } from "./timing";
 

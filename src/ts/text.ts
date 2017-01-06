@@ -1,4 +1,4 @@
-import { Handle, TEXT_BUFFER } from "./events";
+import { Listen, TEXT_BUFFER } from "./events";
 import { CharacterInfo, RandomCharacter, GetCharacter } from "./morsetable";
 
 let textBuffer = "";
@@ -40,4 +40,4 @@ export function MoveNext() {
 
 }
 
-Handle(TEXT_BUFFER, updateTextBuffer);
+Listen(TEXT_BUFFER, updateTextBuffer);

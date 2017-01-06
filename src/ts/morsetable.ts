@@ -1,4 +1,4 @@
-import { Handle, LETTERS_ENABLED, NUMBERS_ENABLED, SYMBOLS_ENABLED } from "./events";
+import { Listen, LETTERS_ENABLED, NUMBERS_ENABLED, SYMBOLS_ENABLED } from "./events";
 
 export interface CharacterInfo {
     name: string,
@@ -117,6 +117,6 @@ export function GetCharacter(char: string): CharacterInfo {
     return undefined;
 }
 
-Handle(LETTERS_ENABLED, (value: boolean) => lettersEnabled = value);
-Handle(NUMBERS_ENABLED, (value: boolean) => numbersEnabled = value);
-Handle(SYMBOLS_ENABLED, (value: boolean) => symbolsEnabled = value);
+Listen(LETTERS_ENABLED, (value: boolean) => lettersEnabled = value);
+Listen(NUMBERS_ENABLED, (value: boolean) => numbersEnabled = value);
+Listen(SYMBOLS_ENABLED, (value: boolean) => symbolsEnabled = value);

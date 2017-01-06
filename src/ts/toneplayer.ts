@@ -1,5 +1,5 @@
 import {
-    Trigger, Handle,
+    Notify, Listen,
     PITCH, PATTERN_COMPLETE, LETTER
 } from "./events";
 import { Sleep } from "./sleep";
@@ -37,7 +37,7 @@ async function playTone(char: CharacterInfo, index: number): Promise<void> {
         off();
 
         if (index >= char.pattern.length)
-            Trigger(PATTERN_COMPLETE, char);
+            Notify(PATTERN_COMPLETE, char);
         else {
             await Sleep(UnitTime);
             await playTone(char, index);
@@ -48,13 +48,13 @@ async function playTone(char: CharacterInfo, index: number): Promise<void> {
 export async function PlayPattern(char: CharacterInfo): Promise<void> {
     if (char == null) {
         console.log("char was null!");
-        Trigger(PATTERN_COMPLETE, null);
+        Notify(PATTERN_COMPLETE, null);
     }
     else {
-        Trigger(LETTER, char.pattern);
+        Notify(LETTER, char.pattern);
 
         await playTone(char, 0)
     }
 }
 
-Handle(PITCH, (value: number) => { oscillator.frequency.value = value });
+Listen(PITCH, (value: number) => { oscillator.frequency.value = value });

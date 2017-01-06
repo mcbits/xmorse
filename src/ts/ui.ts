@@ -1,8 +1,8 @@
 import {
-    Trigger, Handle,
+    Notify, Listen,
     WPM, VOLUME, CHAR_SPACING, PITCH, LETTERS_ENABLED, NUMBERS_ENABLED,
     SYMBOLS_ENABLED, LETTER, PATTERN_COMPLETE, VOICE_ENABLED, START, STOP,
-    TEXT_BUFFER, BOOK, OUTPUT
+    TEXT_BUFFER, STORY, OUTPUT
 } from "./events";
 import { CharacterInfo } from "./morsetable";
 import { Query, QueryId, QueryAll } from "./query";
@@ -10,11 +10,11 @@ import { Query, QueryId, QueryAll } from "./query";
 // Page elements
 const start = Query<HTMLButtonElement>(".btn-start");
 const stop = Query<HTMLButtonElement>(".btn-stop");
-const paste = Query<HTMLButtonElement>(".btn-paste");
-const stories = Query<HTMLButtonElement>(".btn-stories");
-const letterElement = Query<HTMLElement>(".letter");
-const outputBuffer = Query<HTMLElement>(".outputBuffer");
-const bookLinks = QueryAll<HTMLAnchorElement>(".story a");
+const paste = Query(".btn-paste");
+const stories = Query(".btn-stories");
+const letterElement = Query(".letter");
+const outputBuffer = Query(".outputBuffer");
+const storyLinks = QueryAll(".story a");
 
 // Settings text labels
 const volumeText = Query<HTMLInputElement>(".volumeText");
@@ -47,31 +47,31 @@ function view(selector: string) {
 }
 
 volume.addEventListener("input",
-    () => Trigger(VOLUME, parseFloat(volume.value)));
+    () => Notify(VOLUME, parseFloat(volume.value)));
 
 charWPM.addEventListener("input",
-    () => Trigger(WPM, parseInt(charWPM.value)));
+    () => Notify(WPM, parseInt(charWPM.value)));
 
 charSpacing.addEventListener("input",
-    () => Trigger(CHAR_SPACING, parseInt(charSpacing.value)));
+    () => Notify(CHAR_SPACING, parseInt(charSpacing.value)));
 
 pitch.addEventListener("input",
-    () => Trigger(PITCH, parseInt(pitch.value)));
+    () => Notify(PITCH, parseInt(pitch.value)));
 
 pasteTextBox.addEventListener("input",
-    () => Trigger(TEXT_BUFFER, pasteTextBox.value));
+    () => Notify(TEXT_BUFFER, pasteTextBox.value));
 
 voiceEnabled.addEventListener("change",
-    () => Trigger(VOICE_ENABLED, voiceEnabled.checked));
+    () => Notify(VOICE_ENABLED, voiceEnabled.checked));
 
 lettersEnabled.addEventListener("change",
-    () => Trigger(LETTERS_ENABLED, lettersEnabled.checked));
+    () => Notify(LETTERS_ENABLED, lettersEnabled.checked));
 
 numbersEnabled.addEventListener("change",
-    () => Trigger(NUMBERS_ENABLED, numbersEnabled.checked));
+    () => Notify(NUMBERS_ENABLED, numbersEnabled.checked));
 
 symbolsEnabled.addEventListener("change",
-    () => Trigger(SYMBOLS_ENABLED, symbolsEnabled.checked));
+    () => Notify(SYMBOLS_ENABLED, symbolsEnabled.checked));
 
 paste.addEventListener("click",
     () => view(".paste"));
@@ -80,71 +80,71 @@ stories.addEventListener("click",
     () => view(".stories"));
 
 start.addEventListener("click",
-    () => Trigger(START, null));
+    () => Notify(START, null));
 
 stop.addEventListener("click",
-    () => Trigger(STOP, null));
+    () => Notify(STOP, null));
 
-for (let i = 0; i < bookLinks.length; ++i) {
-    const bookLink = bookLinks[i];
-    bookLink.addEventListener("click", (evt: MouseEvent) => {
+for (let i = 0; i < storyLinks.length; ++i) {
+    const storyLink = storyLinks[i];
+    storyLink.addEventListener("click", (evt: MouseEvent) => {
         evt.preventDefault();
         const anchor = <HTMLAnchorElement>evt.target;
         const href = anchor.href;
-        Trigger(BOOK, href);
+        Notify(STORY, href);
     });
 }
 
-Handle(START, () => {
+Listen(START, () => {
     outputBuffer.innerHTML = "";
     view(".view.playing");
     start.disabled = true;
     stop.disabled = false;
 });
 
-Handle(STOP, () => {
+Listen(STOP, () => {
     letterElement.innerHTML = "";
     start.disabled = false;
     stop.disabled = true;
     view(".view.main");
 });
 
-Handle(TEXT_BUFFER,
+Listen(TEXT_BUFFER,
     (value: string) => pasteTextBox.value = value);
 
-Handle(VOLUME,
+Listen(VOLUME,
     (value: number) => volumeText.value = Math.floor(value * 100).toString());
 
-Handle(WPM,
+Listen(WPM,
     (value: number) => charWPMText.value = value.toString());
 
-Handle(CHAR_SPACING,
+Listen(CHAR_SPACING,
     (value: number) => charSpacingText.value = value.toString());
 
-Handle(PITCH,
+Listen(PITCH,
     (value: number) => pitchText.value = value.toString());
 
-Handle(LETTER,
+Listen(LETTER,
     (value: string) => letterElement.innerHTML = value);
 
-Handle(OUTPUT,
+Listen(OUTPUT,
     (value: string) => {
         outputBuffer.innerHTML += value
         outputBuffer.scrollTop = outputBuffer.scrollHeight;
     });
 
-Handle(PATTERN_COMPLETE,
+Listen(PATTERN_COMPLETE,
     (char: CharacterInfo) => {
         outputBuffer.innerHTML += char == null ? " " : char.name;
         outputBuffer.scrollTop = outputBuffer.scrollHeight;
     });
 
 // Trigger events to initialize state
-Trigger(VOLUME, volume.value);
-Trigger(WPM, charWPM.value);
-Trigger(CHAR_SPACING, charSpacing.value);
-Trigger(VOICE_ENABLED, voiceEnabled.checked);
-Trigger(PITCH, pitch.value);
-Trigger(LETTERS_ENABLED, lettersEnabled.checked);
-Trigger(NUMBERS_ENABLED, numbersEnabled.checked);
-Trigger(SYMBOLS_ENABLED, symbolsEnabled.checked);
+Notify(VOLUME, volume.value);
+Notify(WPM, charWPM.value);
+Notify(CHAR_SPACING, charSpacing.value);
+Notify(VOICE_ENABLED, voiceEnabled.checked);
+Notify(PITCH, pitch.value);
+Notify(LETTERS_ENABLED, lettersEnabled.checked);
+Notify(NUMBERS_ENABLED, numbersEnabled.checked);
+Notify(SYMBOLS_ENABLED, symbolsEnabled.checked);
