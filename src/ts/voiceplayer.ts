@@ -1,6 +1,7 @@
 import { CharacterInfo } from "./morsetable";
-import { Handle, WPM, CHAR_SPACING, NOW_PLAYING, VOICE_DONE } from "./events";
+import { Handle, VOICE_DONE } from "./events";
 import { Audio, MasterGain } from "./audiocontext";
+import { nowPlaying } from "./timing";
 
 // Wire up audio
 const voiceGain = Audio.createGain();
@@ -8,10 +9,6 @@ voiceGain.gain.value = 0.85;
 voiceGain.connect(MasterGain);
 
 const audioSources: { [char: string]: AudioBuffer } = {};
-
-let nowPlaying: boolean;
-let charSpacing: number;
-let unitTime: number;
 
 export function PlayVoice(char: string): void {
     //await delay(unitTime * charSpacing);
@@ -57,7 +54,3 @@ export function LoadVoice(charDef: CharacterInfo, callback?: Function): void {
         request.send();
     }
 }
-
-Handle(WPM, (value: number) => unitTime = 1.2 / value * 1000);
-Handle(CHAR_SPACING, (value: number) => charSpacing = value);
-Handle(NOW_PLAYING, (value: boolean) => nowPlaying = value);

@@ -1,18 +1,15 @@
 import {
     Trigger, Handle,
-    WPM, CHAR_SPACING, PITCH, NOW_PLAYING, PATTERN_COMPLETE, LETTER
+    PITCH, PATTERN_COMPLETE, LETTER
 } from "./events";
 import { Sleep } from "./sleep";
 import { Audio, MasterGain } from "./audiocontext";
 import { CharacterInfo } from "./morsetable";
+import { unitTime, nowPlaying } from "./timing";
 
 const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") != -1 ? 0.05 : 0.001;
 const oscillatorVolume = 0.9;
 const ramp = 0.008;
-
-let nowPlaying: boolean;
-let charSpacing = 25;
-let unitTime: number;
 
 // Wire up audio parts.
 // Oscillator frequency will be initialized by UI.
@@ -60,7 +57,4 @@ export async function PlayPattern(char: CharacterInfo): Promise<void> {
     }
 }
 
-Handle(WPM, (value: number) => unitTime = 1.2 / value * 1000);
-Handle(CHAR_SPACING, (value: number) => charSpacing = value);
 Handle(PITCH, (value: number) => { oscillator.frequency.value = value });
-Handle(NOW_PLAYING, (value: boolean) => nowPlaying = value);

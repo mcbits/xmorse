@@ -1,6 +1,6 @@
 import {
     Trigger, Handle,
-    NOW_PLAYING, WPM, CHAR_SPACING, PATTERN_COMPLETE, VOLUME, LETTER,
+    PATTERN_COMPLETE, VOLUME, LETTER, NOW_PLAYING,
     VOICE_ENABLED, VOICE_DONE, START, STOP, TEXT_BUFFER, BOOK, OUTPUT
 } from "./events";
 import { Sleep } from "./sleep";
@@ -9,11 +9,8 @@ import { CharacterInfo, GetCharacter, RandomCharacter } from "./morsetable";
 import { PlayPattern } from "./toneplayer";
 import { LoadVoice, IsVoiceLoaded, PlayVoice } from "./voiceplayer";
 import { Next } from "./text";
+import { unitTime, charSpacing, nowPlaying } from "./timing";
 
-// State
-let nowPlaying: boolean;
-let charSpacing: number;
-let unitTime: number;
 let voiceEnabled = true;
 
 async function playNextPattern(): Promise<void> {
@@ -27,9 +24,9 @@ async function playNextPattern(): Promise<void> {
                 Trigger(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
 
                 // The 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
-                await Sleep(unitTime * charSpacing * (7/3));
+                await Sleep(unitTime * charSpacing * (7 / 3));
             }
-    
+
             const currentCharacter = nextCharacter[1];
 
             if (voiceEnabled && !IsVoiceLoaded(currentCharacter.name))
@@ -106,9 +103,6 @@ function loadBook(href: string) {
     request.send();
 }
 
-Handle(NOW_PLAYING, (value: boolean) => nowPlaying = value);
-Handle(WPM, (value: number) => unitTime = 1.2 / value * 1000);
-Handle(CHAR_SPACING, (value: number) => charSpacing = value);
 Handle(VOICE_DONE, playNextPattern);
 Handle(STOP, stopPlaying);
 Handle(START, startPlaying);
