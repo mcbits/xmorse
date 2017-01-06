@@ -31,10 +31,6 @@ function off() {
     oscillatorGain.gain.setTargetAtTime(0, Audio.currentTime + firefoxAntiClickDelay, ramp);
 }
 
-function patternComplete(char: CharacterInfo) {
-    Trigger(PATTERN_COMPLETE, char);
-}
-
 async function playTone(char: CharacterInfo, index: number): Promise<void> {
     if (nowPlaying) {
         const delayFactor = char.pattern.charAt(index++) === "." ? 1 : 3;
@@ -44,7 +40,7 @@ async function playTone(char: CharacterInfo, index: number): Promise<void> {
         off();
 
         if (index >= char.pattern.length)
-            patternComplete(char);
+            Trigger(PATTERN_COMPLETE, char);
         else {
             await Sleep(unitTime);
             await playTone(char, index);
@@ -55,7 +51,7 @@ async function playTone(char: CharacterInfo, index: number): Promise<void> {
 export async function PlayPattern(char: CharacterInfo): Promise<void> {
     if (char == null) {
         console.log("char was null!");
-        patternComplete(null);
+        Trigger(PATTERN_COMPLETE, null);
     }
     else {
         Trigger(LETTER, char.pattern);

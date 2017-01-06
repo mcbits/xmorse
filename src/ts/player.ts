@@ -21,20 +21,24 @@ async function playNextPattern(): Promise<void> {
         // Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
         const nextCharacter = Next();
 
-        // If there is unplayable text, send it to the output buffer and delay for one word-break.
-        if (nextCharacter[0] != nextCharacter[1].name) {
-            Trigger(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
+        if (nextCharacter[1]) {
+            // If there is unplayable text, send it to the output buffer and delay for one word-break.
+            if (nextCharacter[0] != nextCharacter[1].name) {
+                Trigger(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
 
-            // The 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
-            await Sleep(unitTime * charSpacing * (7/3));
+                // The 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
+                await Sleep(unitTime * charSpacing * (7/3));
+            }
+    
+            const currentCharacter = nextCharacter[1];
+
+            if (voiceEnabled && !IsVoiceLoaded(currentCharacter.name))
+                LoadVoice(currentCharacter);
+
+            await PlayPattern(currentCharacter);
         }
- 
-        const currentCharacter = nextCharacter[1];
-
-        if (voiceEnabled && !IsVoiceLoaded(currentCharacter.name))
-            LoadVoice(currentCharacter);
-
-        await PlayPattern(currentCharacter);
+        else
+            Trigger(PATTERN_COMPLETE, null);
 
         await Sleep(unitTime * charSpacing);
     }
@@ -81,6 +85,8 @@ async function patternComplete(char: CharacterInfo) {
         }
     }
     else {
+        await Sleep(unitTime * charSpacing);
+
         playNextPattern();
     }
 }

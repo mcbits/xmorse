@@ -9,12 +9,12 @@ function updateTextBuffer(text: string) {
     textBufferIndex = textBuffer.length > 0 ? 0 : -1;
 }
 
-export function Next(): [ string, CharacterInfo ] {
+export function Next(): [string, CharacterInfo] {
     if (textBuffer.length > 0) {
-        const startingIndex = textBufferIndex - 1;
+        const startingIndex = textBufferIndex;
         let text = "";
 
-        while (textBufferIndex != startingIndex) {
+        do {
             text += textBuffer[textBufferIndex];
             const morseChar = GetCharacter(textBuffer[textBufferIndex]);
 
@@ -24,14 +24,16 @@ export function Next(): [ string, CharacterInfo ] {
                 textBufferIndex = 0;
 
             if (morseChar)
-                return [ text, morseChar ];
+                return [text, morseChar];
         }
+        while (textBufferIndex != startingIndex);
 
+        return ["", null];
     }
 
     const char = RandomCharacter();
 
-    return [ char.name, char ];
+    return [char.name, char];
 }
 
 export function MoveNext() {
