@@ -1,11 +1,11 @@
-export function query<T extends Element>(selector: string): T {
-    return <T>document.querySelector(selector);
+export function Query<T extends Element>(selector: string, element?: Element): T {
+    return <T>(element || document).querySelector(selector);
 }
 
-export function queryAll<T extends Element>(selector: string): NodeListOf<T> {
-    return <NodeListOf<T>>document.querySelectorAll(selector);
+export function QueryAll<T extends Element>(selector: string, element?: Element): NodeListOf<T> {
+    return <NodeListOf<T>>(element || document).querySelectorAll(selector);
 }
 
-export function queryId<T extends HTMLElement>(id: string): T {
+export function QueryId<T extends HTMLElement>(id: string): T {
     return <T>document.getElementById(id);
 }

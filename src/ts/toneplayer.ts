@@ -5,7 +5,7 @@ import {
 import { Sleep } from "./sleep";
 import { Audio, MasterGain } from "./audiocontext";
 import { CharacterInfo } from "./morsetable";
-import { unitTime, nowPlaying } from "./timing";
+import { UnitTime, NowPlaying } from "./timing";
 
 const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") != -1 ? 0.05 : 0.001;
 const oscillatorVolume = 0.9;
@@ -29,17 +29,17 @@ function off() {
 }
 
 async function playTone(char: CharacterInfo, index: number): Promise<void> {
-    if (nowPlaying) {
+    if (NowPlaying) {
         const delayFactor = char.pattern.charAt(index++) === "." ? 1 : 3;
 
         on();
-        await Sleep(unitTime * delayFactor);
+        await Sleep(UnitTime * delayFactor);
         off();
 
         if (index >= char.pattern.length)
             Trigger(PATTERN_COMPLETE, char);
         else {
-            await Sleep(unitTime);
+            await Sleep(UnitTime);
             await playTone(char, index);
         }
     }

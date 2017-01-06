@@ -1,10 +1,10 @@
-import { query, queryId, queryAll } from "./query";
+import { Query } from "./query";
 
 let isFullScreen = false;
 
-const enableFullScreenButton = query<HTMLButtonElement>(".btn-fullscreen");
-const startButton = query<HTMLButtonElement>(".btn-start");
-const stopButton = query<HTMLButtonElement>(".btn-stop");
+const enableFullScreenButton = Query(".btn-fullscreen");
+const startButton = Query(".btn-start");
+const stopButton = Query(".btn-stop");
 
 enableFullScreenButton.addEventListener("click", () => {
     if (isFullScreen) {
@@ -18,11 +18,11 @@ enableFullScreenButton.addEventListener("click", () => {
     }
     else {
         if (document.fullscreenEnabled)
-            query<HTMLElement>(".view.playing").requestFullscreen();
+            Query(".view.playing").requestFullscreen();
         else if (document["webkitFullscreenEnabled"])
-            query<HTMLElement>(".view.playing")["webkitRequestFullscreen"]();
+            Query(".view.playing")["webkitRequestFullscreen"]();
         else if (document["mozFullScreenEnabled"])
-            query<HTMLElement>(".view.playing")["mozRequestFullScreen"]();
+            Query(".view.playing")["mozRequestFullScreen"]();
     }
 });
 

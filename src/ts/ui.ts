@@ -5,36 +5,36 @@ import {
     TEXT_BUFFER, BOOK, OUTPUT
 } from "./events";
 import { CharacterInfo } from "./morsetable";
-import { query, queryId, queryAll } from "./query";
+import { Query, QueryId, QueryAll } from "./query";
 
 // Page elements
-const start = query<HTMLButtonElement>(".btn-start");
-const stop = query<HTMLButtonElement>(".btn-stop");
-const paste = query<HTMLButtonElement>(".btn-paste");
-const stories = query<HTMLButtonElement>(".btn-stories");
-const letterElement = query<HTMLElement>(".letter");
-const outputBuffer = query<HTMLElement>(".outputBuffer");
-const bookLinks = queryAll<HTMLAnchorElement>(".story a");
+const start = Query<HTMLButtonElement>(".btn-start");
+const stop = Query<HTMLButtonElement>(".btn-stop");
+const paste = Query<HTMLButtonElement>(".btn-paste");
+const stories = Query<HTMLButtonElement>(".btn-stories");
+const letterElement = Query<HTMLElement>(".letter");
+const outputBuffer = Query<HTMLElement>(".outputBuffer");
+const bookLinks = QueryAll<HTMLAnchorElement>(".story a");
 
 // Settings text labels
-const volumeText = query<HTMLInputElement>(".volumeText");
-const charWPMText = query<HTMLInputElement>(".charWPMText");
-const pitchText = query<HTMLInputElement>(".pitchText");
-const charSpacingText = query<HTMLInputElement>(".charSpacingText");
+const volumeText = Query<HTMLInputElement>(".volumeText");
+const charWPMText = Query<HTMLInputElement>(".charWPMText");
+const pitchText = Query<HTMLInputElement>(".pitchText");
+const charSpacingText = Query<HTMLInputElement>(".charSpacingText");
 
 // Settings inputs
-const volume = queryId<HTMLInputElement>("volume");
-const charWPM = queryId<HTMLInputElement>("charWPM");
-const pitch = queryId<HTMLInputElement>("pitch");
-const charSpacing = queryId<HTMLInputElement>("charSpacing");
-const voiceEnabled = queryId<HTMLInputElement>("voiceEnabled");
-const pasteTextBox = queryId<HTMLTextAreaElement>("pasteText");
-const lettersEnabled = queryId<HTMLInputElement>("lettersEnabled");
-const numbersEnabled = queryId<HTMLInputElement>("numbersEnabled");
-const symbolsEnabled = queryId<HTMLInputElement>("symbolsEnabled");
+const volume = QueryId<HTMLInputElement>("volume");
+const charWPM = QueryId<HTMLInputElement>("charWPM");
+const pitch = QueryId<HTMLInputElement>("pitch");
+const charSpacing = QueryId<HTMLInputElement>("charSpacing");
+const voiceEnabled = QueryId<HTMLInputElement>("voiceEnabled");
+const pasteTextBox = QueryId<HTMLTextAreaElement>("pasteText");
+const lettersEnabled = QueryId<HTMLInputElement>("lettersEnabled");
+const numbersEnabled = QueryId<HTMLInputElement>("numbersEnabled");
+const symbolsEnabled = QueryId<HTMLInputElement>("symbolsEnabled");
 
 function view(selector: string) {
-    const views = document.querySelectorAll(".view");
+    const views = QueryAll(".view");
 
     for (let i = 0; i < views.length; ++i) {
         const view = views[i];
@@ -42,7 +42,7 @@ function view(selector: string) {
             view.classList.add("disabled");
     }
 
-    const viewToShow = document.querySelector(selector);
+    const viewToShow = Query(selector);
     viewToShow.classList.remove("disabled");
 }
 

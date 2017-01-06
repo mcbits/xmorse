@@ -1,9 +1,9 @@
 import { Handle, NOW_PLAYING, WPM, CHAR_SPACING } from "./events";
 
-export let nowPlaying: boolean;
-export let unitTime: number;
-export let charSpacing: number;
+export let NowPlaying: boolean;
+export let UnitTime: number;
+export let CharSpacing: number;
 
-Handle(NOW_PLAYING, (value: boolean) => nowPlaying = value);
-Handle(WPM, (value: number) => unitTime = 1.2 / value * 1000);
-Handle(CHAR_SPACING, (value: number) => charSpacing = value);
+Handle(NOW_PLAYING, (value: boolean) => NowPlaying = value);
+Handle(WPM, (value: number) => UnitTime = 1.2 / value * 1000);
+Handle(CHAR_SPACING, (value: number) => CharSpacing = value);

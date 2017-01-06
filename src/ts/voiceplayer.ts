@@ -1,7 +1,7 @@
 import { CharacterInfo } from "./morsetable";
 import { Handle, VOICE_DONE } from "./events";
 import { Audio, MasterGain } from "./audiocontext";
-import { nowPlaying } from "./timing";
+import { NowPlaying } from "./timing";
 
 // Wire up audio
 const voiceGain = Audio.createGain();
@@ -13,7 +13,7 @@ const audioSources: { [char: string]: AudioBuffer } = {};
 export function PlayVoice(char: string): void {
     //await delay(unitTime * charSpacing);
 
-    if (nowPlaying) {
+    if (NowPlaying) {
         const buffer = audioSources[char];
         if (typeof buffer !== "undefined") {
             const audioSource = Audio.createBufferSource();

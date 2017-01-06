@@ -9,12 +9,12 @@ import { CharacterInfo, GetCharacter, RandomCharacter } from "./morsetable";
 import { PlayPattern } from "./toneplayer";
 import { LoadVoice, IsVoiceLoaded, PlayVoice } from "./voiceplayer";
 import { Next } from "./text";
-import { unitTime, charSpacing, nowPlaying } from "./timing";
+import { UnitTime, CharSpacing, NowPlaying } from "./timing";
 
 let voiceEnabled = true;
 
 async function playNextPattern(): Promise<void> {
-    if (nowPlaying) {
+    if (NowPlaying) {
         // Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
         const nextCharacter = Next();
 
@@ -24,7 +24,7 @@ async function playNextPattern(): Promise<void> {
                 Trigger(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
 
                 // The 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
-                await Sleep(unitTime * charSpacing * (7 / 3));
+                await Sleep(UnitTime * CharSpacing * (7 / 3));
             }
 
             const currentCharacter = nextCharacter[1];
@@ -37,7 +37,7 @@ async function playNextPattern(): Promise<void> {
         else
             Trigger(PATTERN_COMPLETE, null);
 
-        await Sleep(unitTime * charSpacing);
+        await Sleep(UnitTime * CharSpacing);
     }
 }
 
@@ -46,7 +46,7 @@ function updateVolume(value: number) {
 }
 
 async function startPlaying() {
-    if (!nowPlaying) {
+    if (!NowPlaying) {
         Trigger(NOW_PLAYING, true);
         await playNextPattern();
     }
@@ -60,8 +60,8 @@ async function patternComplete(char: CharacterInfo) {
     if (char != null) {
         Trigger(LETTER, char.name);
 
-        if (nowPlaying) {
-            await Sleep(unitTime * charSpacing);
+        if (NowPlaying) {
+            await Sleep(UnitTime * CharSpacing);
 
             if (voiceEnabled) {
                 // Sometimes the voice won't be loaded. Usually this will be when the user changes
@@ -82,7 +82,7 @@ async function patternComplete(char: CharacterInfo) {
         }
     }
     else {
-        await Sleep(unitTime * charSpacing);
+        await Sleep(UnitTime * CharSpacing);
 
         playNextPattern();
     }
