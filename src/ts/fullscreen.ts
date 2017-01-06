@@ -42,7 +42,7 @@ function revealOnMouseMove() {
 
     cursorHidingTimeout = setTimeout(() => {
         if (isFullScreen) {
-            document.body.style.cursor = "none"
+            document.body.style.cursor = "none";
             enableFullScreenButton.classList.add("disabled");
         }
     }, 1500);

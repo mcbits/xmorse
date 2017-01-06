@@ -7,7 +7,7 @@ import { Audio, MasterGain } from "./audiocontext";
 import { CharacterInfo } from "./morsetable";
 import { UnitTime, NowPlaying } from "./timing";
 
-const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") != -1 ? 0.05 : 0.0001;
+const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") !== -1 ? 0.05 : 0.0001;
 const oscillatorVolume = 0.9;
 const ramp = 0.005;
 
@@ -53,8 +53,8 @@ export async function PlayPattern(char: CharacterInfo): Promise<void> {
     else {
         Notify(LETTER, char.pattern);
 
-        await playTone(char, 0)
+        await playTone(char, 0);
     }
 }
 
-Listen(PITCH, (value: number) => { oscillator.frequency.value = value });
+Listen(PITCH, (value: number) => oscillator.frequency.value = value);

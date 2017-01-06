@@ -1,9 +1,9 @@
 import { Listen, LETTERS_ENABLED, NUMBERS_ENABLED, SYMBOLS_ENABLED } from "./events";
 
 export interface CharacterInfo {
-    name: string,
-    pattern: string,
-    fileName: string
+    name: string;
+    pattern: string;
+    fileName: string;
 }
 
 const letterPatterns: { [char: string]: CharacterInfo } = {

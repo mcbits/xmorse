@@ -18,7 +18,7 @@ async function playNextPattern(): Promise<void> {
 
         if (nextCharacter[1]) {
             // If there is unplayable text, send it to the output buffer and delay for one word-break.
-            if (nextCharacter[0] != nextCharacter[1].name) {
+            if (nextCharacter[0] !== nextCharacter[1].name) {
                 Notify(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
 
                 // The 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.

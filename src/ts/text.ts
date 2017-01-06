@@ -11,7 +11,7 @@ function updateTextBuffer(text: string) {
 }
 
 async function loadBook(href: string) {
-    var response = await Load(href, "text");
+    const response = await Load(href, "text");
 
     Notify(TEXT_BUFFER, response);
     Notify(START, null);
@@ -28,13 +28,13 @@ export function Next(): [string, CharacterInfo] {
 
             // Increment and wrap around if necessary
             ++textBufferIndex;
-            if (textBufferIndex == textBuffer.length)
+            if (textBufferIndex === textBuffer.length)
                 textBufferIndex = 0;
 
             if (morseChar)
                 return [text, morseChar];
         }
-        while (textBufferIndex != startingIndex);
+        while (textBufferIndex !== startingIndex);
 
         return ["", null];
     }
@@ -44,9 +44,5 @@ export function Next(): [string, CharacterInfo] {
     return [char.name, char];
 }
 
-export function MoveNext() {
-
-}
-
 Listen(TEXT_BUFFER, updateTextBuffer);
-Listen(STORY, loadBook)
+Listen(STORY, loadBook);

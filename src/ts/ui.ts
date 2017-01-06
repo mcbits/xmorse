@@ -129,7 +129,7 @@ Listen(LETTER,
 
 Listen(OUTPUT,
     (value: string) => {
-        outputBuffer.innerHTML += value
+        outputBuffer.innerHTML += value;
         outputBuffer.scrollTop = outputBuffer.scrollHeight;
     });
 
