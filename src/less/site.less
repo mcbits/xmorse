@@ -153,15 +153,12 @@ button {
 }
 
 .sidebar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    //background: linear-gradient(#d0d0d0, #f1f1f1);
     background: @black;
     flex-shrink: 0;
     overflow-y: auto;
     margin-left: auto;
     margin-right: auto;
+    text-align: center;
 
     @media (min-width: 0) {
         width: 100%;
@@ -170,8 +167,21 @@ button {
         width: 340px;
     }
 
+    .social {
+        margin-top: 20px;
+        margin-bottom: 40px;
+        height: 28px;
+    }
+
     .sidebarContent {
-        padding: 20px;
+        padding: 20px 0;
+
+        .ad {
+            display: inline-block;
+            width: 300px;
+            height: 250px;
+            background: @black;
+        }
     }
 
     .control {
@@ -180,6 +190,15 @@ button {
         input[type=range] {
             width: 100%;
             margin: 5px 0;
+        }
+    }
+
+    .info {
+        margin-top: 40px;
+        margin-bottom: 20px;
+
+        a {
+            color: #999;
         }
     }
 }
@@ -322,6 +341,11 @@ nav.controls .btn {
     @media (min-width: 1024px) {
         padding: 0.5rem;
         font-size: 1.4rem;
+    }
+
+    &:focus {
+        background: #ccc;
+        color: #111;
     }
 }
 

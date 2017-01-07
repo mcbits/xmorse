@@ -1,13 +1,17 @@
-import { Listen, Notify, START, STORY, TEXT_BUFFER } from "./events";
+import { Listen, Notify, START, STOP, STORY, TEXT_BUFFER } from "./events";
 import { CharacterInfo, RandomCharacter, GetCharacter } from "./morsetable";
 import { Load } from "./xhr";
 
 let textBuffer = "";
 let textBufferIndex = -1;
 
+function resetPosition() {
+    textBufferIndex = textBuffer.length > 0 ? 0 : -1;
+}
+
 function updateTextBuffer(text: string) {
     textBuffer = text.toUpperCase() + "\n";
-    textBufferIndex = textBuffer.length > 0 ? 0 : -1;
+    resetPosition();
 }
 
 async function loadBook(href: string) {
@@ -46,3 +50,4 @@ export function Next(): [string, CharacterInfo] {
 
 Listen(TEXT_BUFFER, updateTextBuffer);
 Listen(STORY, loadBook);
+Listen(STOP, resetPosition);
