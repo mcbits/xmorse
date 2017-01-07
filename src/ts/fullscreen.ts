@@ -1,54 +1,107 @@
 import { Query } from "./query";
 
-let isFullScreen = false;
-
-const enableFullScreenButton = Query(".btn-fullscreen");
+const fullScreenButton = Query(".btn-fullscreen");
 const startButton = Query(".btn-start");
 const stopButton = Query(".btn-stop");
+const playingView = Query<HTMLElement>(".view.playing");
 
-enableFullScreenButton.addEventListener("click", () => {
+let isFullScreen = false;
+let hideControlsInterval: number;
+let lastActivity = Date.now();
+let hideControlsMS = 2000;
+let controlsVisible = false;
+let cursorVisible = false;
+
+function changeFullScreen() {
     if (isFullScreen) {
         if (document.exitFullscreen)
             document.exitFullscreen();
         else if (document["webkitExitFullscreen"])
             document["webkitExitFullscreen"]();
-        else if (document["mozCancelFullScreen"]) {
+        else if (document["mozCancelFullScreen"])
             document["mozCancelFullScreen"]();
-        }
     }
     else {
         if (document.fullscreenEnabled)
-            Query(".view.playing").requestFullscreen();
+            playingView.requestFullscreen();
         else if (document["webkitFullscreenEnabled"])
-            Query(".view.playing")["webkitRequestFullscreen"]();
+            playingView["webkitRequestFullscreen"]();
         else if (document["mozFullScreenEnabled"])
-            Query(".view.playing")["mozRequestFullScreen"]();
+            playingView["mozRequestFullScreen"]();
     }
-});
+}
 
 function fullScreenChanged() {
-    enableFullScreenButton.classList.toggle("disabled");
     isFullScreen = !isFullScreen;
+    lastActivity = Date.now();
 }
 
-["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange"].forEach(type =>
-    document.addEventListener(type, fullScreenChanged));
-
-let cursorHidingTimeout: number;
-function revealOnMouseMove() {
-    clearTimeout(cursorHidingTimeout);
-    enableFullScreenButton.classList.remove("disabled");
-    document.body.style.cursor = "default";
-
-    cursorHidingTimeout = setTimeout(() => {
-        if (isFullScreen) {
-            document.body.style.cursor = "none";
-            enableFullScreenButton.classList.add("disabled");
-        }
-    }, 1500);
+function markTime() {
+    lastActivity = Date.now();
 }
-document.addEventListener("mousemove", revealOnMouseMove);
 
-startButton.addEventListener("click", () => enableFullScreenButton.classList.remove("disabled"));
+function hideOrReveal() {
+    if (Date.now() - lastActivity > hideControlsMS) {
+        hideControls();
+        if (isFullScreen)
+            hideCursor();
+    }
+    else {
+        showControls();
+        showCursor();
+    }
+}
 
-stopButton.addEventListener("click", () => enableFullScreenButton.classList.add("disabled"));
+function hideCursor() {
+    if (cursorVisible)
+        playingView.style.cursor = "none";
+
+    cursorVisible = false;
+}
+
+function showCursor() {
+    if (!cursorVisible)
+        playingView.style.cursor = "default";
+
+    cursorVisible = true;
+}
+
+function hideControls() {
+    if (controlsVisible)
+        fullScreenButton.classList.add("disabled");
+
+    controlsVisible = false;
+}
+
+function showControls() {
+    if (!controlsVisible)
+        fullScreenButton.classList.remove("disabled");
+
+    controlsVisible = true;
+}
+
+function start() {
+    showControls();
+    document.addEventListener("mousemove", markTime);
+    hideControlsInterval = setInterval(hideOrReveal, 200);
+}
+
+function stop() {
+    clearInterval(hideControlsInterval);
+    document.removeEventListener("mousemove", markTime);
+    showCursor();
+    hideControls();
+}
+
+startButton.addEventListener("click", start);
+
+stopButton.addEventListener("click", stop);
+
+if (document.fullscreenEnabled)
+    document.addEventListener("fullscreenchange", fullScreenChanged);
+else if (document["webkitFullscreenEnabled"])
+    document.addEventListener("webkitfullscreenchange", fullScreenChanged);
+else if (document["mozFullScreenEnabled"])
+    document.addEventListener("mozfullscreenchange", fullScreenChanged);
+
+fullScreenButton.addEventListener("click", changeFullScreen);
