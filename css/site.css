@@ -119,6 +119,18 @@ body > header.header-top .menu-top .btn:not(:first-child) {
   width: 100%;
   margin: 5px 0;
 }
+body.toneOn .sidebar {
+  border-color: #227;
+}
+body.toneOn .controls {
+  border-color: #227;
+}
+body.toneOn > header.header-top {
+  border-color: #227;
+}
+body.toneOn > header.header-top .siteName {
+  background-color: #227;
+}
 .view {
   position: relative;
   flex: 1;
@@ -199,6 +211,7 @@ body > header.header-top .menu-top .btn:not(:first-child) {
 }
 .btn[disabled] {
   color: #999;
+  display: none;
 }
 kbd {
   border: 1px solid #a0a0a0;
@@ -238,12 +251,14 @@ hr {
   display: none;
 }
 .outputBuffer {
+  font-family: monospace;
   background: #e1e1e1;
   flex: 1;
   overflow-wrap: break-word;
   overflow-y: hidden;
   width: 0;
   padding: 0.5rem;
+  white-space: pre-wrap;
 }
 
 /*# sourceMappingURL=site.css.map*/
