@@ -1,5 +1,5 @@
 import { CharacterInfo } from "./morsetable";
-import { Listen, VOICE_DONE, VOICE_ENABLED } from "./events";
+import { Listen, Notify, VOICE_DONE, VOICE_ENABLED, VOICE_LOADED } from "./events";
 import { Audio, MasterGain } from "./audiocontext";
 import { NowPlaying } from "./timing";
 import { Load } from "./xhr";
@@ -12,45 +12,75 @@ voiceGain.connect(MasterGain);
 const audioBuffers: { [char: string]: AudioBuffer } = {};
 
 let voiceEnabled = true;
+let loading = <string[]>[];
+let loaded = <string[]>[];
+let playWhenDone = false;
 
-export function PlayVoice(char: string): void {
-    if (NowPlaying) {
-        if (!voiceEnabled) {
-            document.dispatchEvent(new Event(VOICE_DONE));
+async function LoadVoice(char: CharacterInfo, playImmediately: boolean): Promise<void> {
+    playWhenDone = playImmediately;
 
-            return;
-        }
-
-        const buffer = audioBuffers[char];
-        if (typeof buffer !== "undefined") {
-            const audioSource = Audio.createBufferSource();
-            audioSource.addEventListener("ended", () => document.dispatchEvent(new Event(VOICE_DONE)));
-            audioSource.buffer = buffer;
-            audioSource.connect(voiceGain);
-            audioSource.start(0);
-        }
-    }
-}
-
-export async function PreloadVoice(charDef: CharacterInfo, callback?: Function): Promise<void> {
-    if (!voiceEnabled || audioBuffers.hasOwnProperty(charDef.name)) {
-        if (typeof callback === "function")
-            callback();
-
+    if (loaded.indexOf(char.name) > -1) {
+        Notify(VOICE_LOADED, char);
         return;
     }
 
-    const response = await Load("/audio/" + charDef.fileName, "arraybuffer");
+    const response = await Load("/audio/" + char.fileName, "arraybuffer");
 
     Audio.decodeAudioData(
         response,
-        (buffer: AudioBuffer) => {
-            audioBuffers[charDef.name] = buffer;
+        function (buffer: AudioBuffer) {
+            audioBuffers[char.name] = buffer;
 
-            if (typeof callback === "function")
-                callback();
+            // Remove character from loading list
+            const loadingIndex = loading.indexOf(char.name);
+            if (loadingIndex > -1)
+                loading.splice(loadingIndex, 1);
+
+            // Add character to loaded list
+            if (loaded.indexOf(char.name) < 0)
+                loaded.push(char.name);
+
+            Notify(VOICE_LOADED, char);
         },
         (err: DOMException) => console.log("Error loading audio source: ", err));
 }
 
+export function PreloadVoice(char: CharacterInfo) {
+    if (voiceEnabled && loaded.indexOf(char.name) < 0 && loading.indexOf(char.name) < 0) {
+        loading.push(char.name);
+        LoadVoice(char, false);
+    }
+}
+
+export async function PlayVoice(char: CharacterInfo): Promise<void> {
+    if (!NowPlaying)
+        return;
+
+    if (!voiceEnabled) {
+        document.dispatchEvent(new Event(VOICE_DONE));
+        return;
+    }
+
+    if (loading.indexOf(char.name) > -1) {
+        playWhenDone = true;
+    }
+    else if (loaded.indexOf(char.name) < 0) {
+        await LoadVoice(char, true);
+    }
+    else {
+        const buffer = audioBuffers[char.name];
+        console.log("playing");
+        const audioSource = Audio.createBufferSource();
+        audioSource.addEventListener("ended", () => document.dispatchEvent(new Event(VOICE_DONE)));
+        audioSource.buffer = buffer;
+        audioSource.connect(voiceGain);
+        audioSource.start(0);
+    }
+}
+
 Listen(VOICE_ENABLED, (value: boolean) => voiceEnabled = value);
+Listen(VOICE_LOADED, (value: CharacterInfo) => {
+    if (playWhenDone)
+        PlayVoice(value);
+    playWhenDone = false;
+});

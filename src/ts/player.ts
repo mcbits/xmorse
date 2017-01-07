@@ -65,18 +65,9 @@ async function patternComplete(char: CharacterInfo) {
 
             await Sleep(UnitTime * CharSpacing);
 
-            // Sometimes the voice won't be loaded. Usually this will be when the user changes
-            // the checkbox after a pattern starts, so the voice-load wasn't already triggered.
-            // In that case, load the voice now.
-            // 
-            // No need to call playNextPattern(), as it will be called by VOICE_DONE (which is
-            // triggered whether the voice is enabled or not).
-            //
-            // TODO: It's also possible that the voice wasn't loaded because the user's
-            // connection is very slow. Here, reloading just makes it worse. Need to keep track
-            // of progress in the voice loader to differentiate between "never loaded" and
-            // "still loading".
-            PreloadVoice(char, () => PlayVoice(char.name));
+            // playNextPattern() will be called by VOICE_DONE (which is
+            // triggered whether the voice is currently enabled or not).
+            await PlayVoice(char);
         }
     }
 }

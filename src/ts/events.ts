@@ -20,6 +20,7 @@ export const STOP = "stop";
 export const TONE_OFF = "toneOff";
 export const TONE_ON = "toneOn";
 export const VOICE_DONE = "voiceDone";
+export const VOICE_LOADED = "voiceLoaded";
 export const VOICE_ENABLED = "voiceEnabled";
 export const VOLUME = "volume";
 export const SYMBOLS_ENABLED = "symbolsEnabled";
