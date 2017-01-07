@@ -1,7 +1,7 @@
 import {
     Notify, Listen,
     PATTERN_COMPLETE, VOLUME, LETTER, NOW_PLAYING,
-    VOICE_DONE, START, STOP, OUTPUT
+    VOICE_DONE, PAUSE, START, STOP, OUTPUT
 } from "./events";
 import { Sleep } from "./sleep";
 import { Audio, MasterGain } from "./audiocontext";
@@ -73,6 +73,7 @@ async function patternComplete(char: CharacterInfo) {
 }
 
 Listen(VOICE_DONE, playNextPattern);
+Listen(PAUSE, stopPlaying);
 Listen(STOP, stopPlaying);
 Listen(START, startPlaying);
 Listen(PATTERN_COMPLETE, patternComplete);

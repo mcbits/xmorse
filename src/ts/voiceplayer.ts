@@ -69,7 +69,6 @@ export async function PlayVoice(char: CharacterInfo): Promise<void> {
     }
     else {
         const buffer = audioBuffers[char.name];
-        console.log("playing");
         const audioSource = Audio.createBufferSource();
         audioSource.addEventListener("ended", () => document.dispatchEvent(new Event(VOICE_DONE)));
         audioSource.buffer = buffer;
