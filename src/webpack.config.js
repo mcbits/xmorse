@@ -10,6 +10,10 @@ module.exports = {
         filename: "js/app.js"
     },
     devtool: "source-map",
+    devServer: {
+        inline: true,
+        contentBase: __dirname + "/dist"
+    },
     resolve: {
         extensions: [".webpack.js", ".web.js", ".ts", ".js", ".less", ".css", ".ico"]
     },

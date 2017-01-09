@@ -260,3 +260,5 @@ paket-files/
 **/src/js/tests.js
 **/src/js/tests.js.map
 **/src/dist/*
+**/.vscode/*
+
