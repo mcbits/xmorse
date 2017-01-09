@@ -8,6 +8,7 @@ import { CharacterInfo } from "./morsetable";
 import { Query, QueryId, QueryAll } from "./query";
 
 // Page elements
+const home = Query<HTMLElement>(".btn-home");
 const start = Query<HTMLButtonElement>(".btn-start");
 const pause = Query<HTMLButtonElement>(".btn-pause");
 const stop = Query<HTMLButtonElement>(".btn-stop");
@@ -38,7 +39,7 @@ const lettersEnabled = QueryId<HTMLInputElement>("lettersEnabled");
 const numbersEnabled = QueryId<HTMLInputElement>("numbersEnabled");
 const symbolsEnabled = QueryId<HTMLInputElement>("symbolsEnabled");
 
-function view(selector: string) {
+function view(selector: string, menuItem: Element) {
     const views = QueryAll(".view");
 
     for (let i = 0; i < views.length; ++i) {
@@ -49,6 +50,14 @@ function view(selector: string) {
 
     const viewToShow = Query(selector);
     viewToShow.classList.remove("disabled");
+
+    // Highlight the menu item
+    const controls = QueryAll("nav.controls .btn");
+    for (let i = 0; i < controls.length; ++i) {
+        const control = controls[i];
+        control.classList.remove("active");
+    }
+    menuItem.classList.add("active");
 }
 
 volume.addEventListener("input",
@@ -84,6 +93,9 @@ symbolsEnabled.addEventListener("change",
 siteName.addEventListener("click",
     () => Notify(HOME, null));
 
+home.addEventListener("click",
+    () => Notify(HOME, null));
+
 watch.addEventListener("click",
     () => Notify(WATCH, null));
 
@@ -91,10 +103,10 @@ options.addEventListener("click",
     () => Notify(OPTIONS, null));
 
 paste.addEventListener("click",
-    () => view(".paste"));
+    () => view(".paste", paste));
 
 stories.addEventListener("click",
-    () => view(".stories"));
+    () => view(".stories", stories));
 
 pause.addEventListener("click",
     () => Notify(PAUSE, null));
@@ -157,10 +169,10 @@ Listen(LETTER,
     (value: string) => letterElement.innerHTML = value);
 
 Listen(HOME,
-    () => view(".home"));
+    () => view(".home", Query(".btn-home")));
 
 Listen(OPTIONS,
-    () => view(".options"));
+    () => view(".options", options));
 
 Listen(OUTPUT,
     (value: string) => {
@@ -186,7 +198,9 @@ Listen(TONE_ON,
     });
 
 Listen(WATCH,
-    () => view(".view.playing"));
+    () => {
+        view(".view.playing", watch);
+    });
 
 // Trigger events to initialize state
 Notify(VOLUME, volume.value);

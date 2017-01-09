@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta description="Learning Morse code has never been easier." />
-    <title>xMorse Morse Code Learning Aid</title>
+    <title>xMorse - Learn Morse Code</title>
     <link rel="icon" href="/favicon.ico" />
     <link rel="stylesheet" href="css/site.css" />
     <link href="https://fonts.googleapis.com/css?family=Audiowide" rel="stylesheet">
@@ -20,28 +20,35 @@
             <button class="btn btn-stop" disabled>Stop</button>
         </div>
     </header>
+
+    <nav class="controls">
+        <a href="#" class="btn btn-home active">Home</a>
+        <a href="#player" class="btn btn-watch">Player</a>
+        <a href="#options" class="btn btn-options">Options</a>
+        <a href="#stories" class="btn btn-stories">Stories</a>
+        <a href="#text" class="btn btn-paste">Text</a>
+    </nav>
+
     <div class="columns">
         <div class="views">
             <div class="home view">
                 <article>
-                    <h1>Learn Morse Code</h1>
-
                     <table class="instructions">
                         <tr>
-                            <td>Press</td><td><kbd class="kbd-go">Go</kbd></td><td>to begin playing random Morse code characters.</td>
+                            <td><kbd class="kbd-go">Go</kbd></td><td>to begin playing random Morse code characters.</td>
                         </tr>
                         <tr>
-                            <td>Press</td><td><kbd>Options</kbd></td><td>to change playback speed, volume, pitch, and more.</td>
+                            <td><kbd>Options</kbd></td><td>to change playback speed, volume, pitch, and more.</td>
                         </tr>
                         <tr>
-                            <td>Press</td><td><kbd>Stories</kbd></td><td>to play a short story instead of random characters.</td>
+                            <td><kbd>Stories</kbd></td><td>to play a short story instead of random characters.</td>
                         </tr>
                         <tr>
-                            <td>Press</td><td><kbd>Text</kbd></td><td>to paste your own custom text for playback.</td><td></td>
+                            <td><kbd>Text</kbd></td><td>to paste your own custom text for playback.</td><td></td>
                         </tr>
                     </table>
                     
-                    <h2>Steps to success:</h2>
+                    <h1>Learn Morse Code</h1>
 
                     <p>If you have never learned the Morse code characters, listen with the voice enabled. Try to remember the character before the voice reveals it. Once you have memorized most of the sequences, you can disable the voice. (This takes less time than you might think!)</p>
                     <p>Set the character WPM just faster than your target speed, and set the spacing just wide enough to pose a challenge. For example, if you are aiming for 18 WPM, listen to characters at 20-22 WPM.</p>
@@ -53,16 +60,15 @@
 
             <div class="playing view disabled">
                 <article>
-                    <h2>History:</h2>
+                    <div class="letter">(No output)</div>
                     <div class="outputBuffer"></div>
-                    <div class="letter"></div>
                     <button class="btn btn-fullscreen disabled" title="Full screen"></button>
                 </article>
             </div>
 
             <div class="paste view disabled">
                 <article>
-                    <h2>Text you type or paste here will be played instead of random characters.</h2>
+                    <h2>Type or paste text to play instead of random characters.</h2>
                     <textarea id="pasteText" placeholder="Paste text here" rows="12"></textarea>
                 </article>
             </div>
@@ -194,12 +200,7 @@
         </aside>
     </div>
 
-    <nav class="controls">
-        <button class="btn btn-watch">Watch</button>
-        <button class="btn btn-options">Options</button>
-        <button class="btn btn-stories">Stories</button>
-        <button class="btn btn-paste">Text</button>
-    </nav>
+    <div class="flasher"></div>
 
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
