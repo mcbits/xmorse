@@ -7,6 +7,8 @@
     <title>xMorse - Learn Morse Code</title>
     <link rel="icon" href="/favicon.ico" />
     <link rel="stylesheet" href="css/site.css" />
+    <link rel="canonical" href="http://xmorse.com" />
+    <link href="https://fonts.googleapis.com/css?family=Actor" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Audiowide" rel="stylesheet">
     <script src="js/app.js" defer></script>
 </head>
@@ -15,7 +17,7 @@
     <header class="header-top">
         <h1 class="siteName"><a href="/">xMorse</a></h1>
         <div class="menu-top controls">
-            <button class="btn btn-start">Go</button>
+            <button class="btn btn-start">Start</button>
             <button class="btn btn-pause" disabled>Pause</button>
             <button class="btn btn-stop" disabled>Stop</button>
         </div>
@@ -23,7 +25,7 @@
 
     <nav class="controls">
         <a href="#" class="btn btn-home active">Home</a>
-        <a href="#player" class="btn btn-watch">Player</a>
+        <a href="#playing" class="btn btn-playing">Playing</a>
         <a href="#options" class="btn btn-options">Options</a>
         <a href="#stories" class="btn btn-stories">Stories</a>
         <a href="#text" class="btn btn-paste">Text</a>
@@ -35,16 +37,16 @@
                 <article>
                     <table class="instructions">
                         <tr>
-                            <td><kbd class="kbd-go">Go</kbd></td><td>to begin playing random Morse code characters.</td>
+                            <td><kbd class="kbd-go btn-start">Start</kbd></td><td>to play random Morse code characters.</td>
                         </tr>
                         <tr>
-                            <td><kbd>Options</kbd></td><td>to change playback speed, volume, pitch, and more.</td>
+                            <td><a class="btn-options" href="#options">Options</a></td><td>to change playback speed, volume, pitch, and more.</td>
                         </tr>
                         <tr>
-                            <td><kbd>Stories</kbd></td><td>to play a short story instead of random characters.</td>
+                            <td><a class="btn-stories" href="#stories">Stories</a></td><td>to play a short story instead of random characters.</td>
                         </tr>
                         <tr>
-                            <td><kbd>Text</kbd></td><td>to paste your own custom text for playback.</td><td></td>
+                            <td><a class="btn-paste" href="#text">Text</a></td><td>to paste your own custom text for playback.</td><td></td>
                         </tr>
                     </table>
                     
@@ -76,28 +78,28 @@
             <div class="stories view disabled">
                 <article>
                     <div class="story" vocab="http://schema.org/" typeof="TextDigitalDocument">
-                        <div class="author" property="author">Ben Bova</div>
-                        <div class="title"><a property="title" href="/text/ben_bova-the_next_logical_step.txt">The Next Logical Step</a></div>
+                        <h2 class="title"><a property="title" href="/text/ben_bova-the_next_logical_step.txt">The Next Logical Step</a></h2>
+                        <p>by <span class="author" property="author">Ben Bova</span></p>
                     </div>
 
                     <div class="story" vocab="http://schema.org/" typeof="TextDigitalDocument">
-                        <div class="author" property="author">Philip K. Dick</div>
-                        <div class="title"><a property="title" href="/text/philip_k_dick-beyond_lies_the_wub.txt">Beyond Lies the Wub</a></div>
+                        <h2 class="title"><a property="title" href="/text/philip_k_dick-beyond_lies_the_wub.txt">Beyond Lies the Wub</a></h2>
+                        <p>by <span class="author" property="author">Philip K. Dick</span></p>
                     </div>
 
                     <div class="story" vocab="http://schema.org/" typeof="TextDigitalDocument">
-                        <div class="author" property="author">Philip K. Dick</div>
-                        <div class="title"><a property="title" href="/text/philip_k_dick-the_crystal_crypt.txt">The Crystal Crypt</a></div>
+                        <h2 class="title"><a property="title" href="/text/philip_k_dick-the_crystal_crypt.txt">The Crystal Crypt</a></h2>
+                        <p>by <span class="author" property="author">Philip K. Dick</span></p>
                     </div>
 
                     <div class="story" vocab="http://schema.org/" typeof="TextDigitalDocument">
-                        <div class="author" property="author">Philip K. Dick</div>
-                        <div class="title"><a property="title" href="/text/philip_k_dick-the_skull.txt">The Skull</a></div>
+                        <h2 class="title"><a property="title" href="/text/philip_k_dick-the_skull.txt">The Skull</a></h2>
+                        <p>by <span class="author" property="author">Philip K. Dick</span></p>
                     </div>
 
                     <div class="story" vocab="http://schema.org/" typeof="TextDigitalDocument">
-                        <div class="author" property="author">Katherine MacLean</div>
-                        <div class="title"><a property="title" href="/text/katherine_maclean-the_snowball_effect.txt">The Snowball Effect</a></div>
+                        <h2 class="title"><a property="title" href="/text/katherine_maclean-the_snowball_effect.txt">The Snowball Effect</a></h2>
+                        <p>by <span class="author" property="author">Katherine MacLean</span></p>
                     </div>
                 </article>
             </div>
@@ -107,68 +109,77 @@
                     <table>
                         <tr class="control">
                             <th>Voice:</th>
-                            <td colspan="2">
-                                <label>
+                            <td>
                                     <input type="checkbox" id="voiceEnabled" checked>
-                                    Enable voice after each letter
-                                </label>
+                            </td>
+                            <td>
+                                <label for="voiceEnabled">Enable voice repeating each letter</label>
                             </td>
                         </tr>
 
                         <tr class="control">
                             <th>Volume:</th>
-                            <td><input type="range" id="volume" value="0.4" min="0" max="1" step="0.01" /></td>
                             <td><output for="volume" class="volumeText"></output></td>
+                            <td><input type="range" id="volume" value="0.4" min="0" max="1" step="0.01" /></td>
                         </tr>
 
                         <tr class="control">
                             <th>Character WPM:</th>
-                            <td><input type="range" id="charWPM" value="12" min="5" max="40" /></td>
                             <td><output for="charWPM" class="charWPMText"></output></td>
+                            <td><input type="range" id="charWPM" value="12" min="5" max="40" /></td>
                         </tr>
 
                         <tr class="control">
                             <th>Character Spacing:</th>
-                            <td><input type="range" id="charSpacing" value="10" min="3" max="50" /></td>
                             <td><output for="charSpacing" class="charSpacingText"></output></td>
+                            <td><input type="range" id="charSpacing" value="10" min="3" max="50" /></td>
                         </tr>
 
                         <tr class="control">
                             <th>Enable characters:</th>
-                            <td colspan="2">
-
+                            <td></td>
+                            <td>
                                 <label>
                                     <input type="checkbox" id="lettersEnabled" checked />
                                     Letters
                                 </label>
+
                                 <br>
+
                                 <label>
                                     <input type="checkbox" id="numbersEnabled" />
                                     Numbers
                                 </label>
+
                                 <br>
+
                                 <label>
                                     <input type="checkbox" id="symbolsEnabled" />
                                     Symbols
                                 </label>
-                                
                             </td>
                         </tr>
 
                         <tr class="control">
                             <th>Pitch:</th>
-                            <td><input type="range" id="pitch" value="650" min="400" max="1000" /></td>
                             <td><output for="pitch" class="pitchText"></output></td>
+                            <td><input type="range" id="pitch" value="650" min="400" max="1000" /></td>
                         </tr>
 
                         <tr class="control">
                             <th>Flashing:</th>
-                            <td colspan="2">
-                                <label>
+                            <td>
                                     <input type="checkbox" id="flashingEnabled">
-                                    Flashing the background in sync with the tones
-                                </label>
                             </td>
+                            <td>
+                                <label for="flashingEnabled">Flash background in sync with tones</label>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th><button id="resetSettings" style="width: 100%">Reset</button></th>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </table>
                 </article>

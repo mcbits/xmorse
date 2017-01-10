@@ -1,5 +1,6 @@
 * {
   box-sizing: border-box;
+  font-weight: normal;
 }
 html,
 body {
@@ -7,7 +8,7 @@ body {
 }
 body {
   margin: 0;
-  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-family: "Actor", Helvetica, Arial, sans-serif;
   background-color: transparent;
   line-height: 1.45;
   display: flex;
@@ -81,7 +82,6 @@ header {
 }
 header .siteName {
   font-family: Audiowide;
-  font-weight: normal;
   font-size: 40px;
   color: #e0e0e0;
   text-align: center;
@@ -148,7 +148,12 @@ header a {
 .instructions td {
   padding: 0.5rem;
 }
-.instructions kbd {
+.instructions a {
+  text-decoration: none;
+  color: #2a2a2a;
+}
+.instructions kbd,
+.instructions a {
   display: block;
   padding: 1px 0.5rem;
   text-align: center;
@@ -157,13 +162,7 @@ header a {
   border-right-width: 2px;
   border-bottom-width: 2px;
   font: inherit;
-}
-.instructions kbd.disabled {
-  color: #999;
-}
-.instructions .kbd-go {
-  background-color: seagreen;
-  color: #fff;
+  cursor: pointer;
 }
 @media (min-width: 1024px) {
   header {
@@ -231,11 +230,19 @@ header a {
 .view.stories .story {
   margin-bottom: 2rem;
 }
+.view.stories .story a {
+  text-decoration: none;
+}
+.view.stories .story .title {
+  margin: 0;
+  line-height: 1;
+}
 .view.stories .story .author {
   font-weight: bold;
 }
-.view.stories .story .title {
-  margin-left: 1rem;
+.view.stories .story p {
+  margin-top: 0;
+  margin-left: 1.2rem;
 }
 .view.playing {
   display: flex;
@@ -335,18 +342,24 @@ nav.controls {
   background: linear-gradient(#f1f1f1, #dedede);
   padding: 0.25rem 0;
   text-align: center;
-  margin-bottom: 1.2rem;
-  box-shadow: 0 0 10px #fff;
   border: 1px solid #fff;
+  box-shadow: 0 0 12px -1px #fff;
+  border-radius: 7px;
+  line-height: 1.2;
 }
-@media (min-width: 480px) {
+@media (min-width: 0) {
+  nav.controls {
+    margin: 0 0.6rem 1.2rem;
+  }
 }
 @media (min-width: 1024px) {
   nav.controls {
-    margin-right: 340px;
-    margin-left: 1.2rem;
+    margin: 0 340px 1.2rem 1.2rem;
     padding: 0;
   }
+}
+nav.controls:hover {
+  box-shadow: 0 0 11px 1px #fff;
 }
 nav.controls .btn {
   text-decoration: none;
@@ -373,7 +386,8 @@ nav.controls .btn {
   }
 }
 nav.controls .btn:hover {
-  background: #d4d4d4;
+  background: #e5e5e5;
+  text-shadow: 0 0 3px #fff;
 }
 nav.controls .btn.active {
   background: linear-gradient(#d1d7da, #f1f1f1);
@@ -410,7 +424,6 @@ nav.controls .btn.active {
   margin: 2rem 0;
   text-align: center;
   font-size: 2.5rem;
-  font-weight: normal;
 }
 .btn[disabled] {
   color: #999;
@@ -460,30 +473,34 @@ hr {
 }
 .options table {
   width: 100%;
-  margin: 2rem auto;
-  border-spacing: 1rem;
-}
-@media (min-width: 0) {
-  .options table th,
-  .options table td {
-    display: inline-block;
-  }
-}
-@media (min-width: 480px) {
-  .options table th,
-  .options table td {
-    display: table-cell;
-  }
+  margin-bottom: 2rem;
 }
 .options table th {
   text-align: right;
+  padding: 0.5rem;
 }
 .options table td {
   padding: 0.5rem 0.5rem;
   border-left: 5px solid #e0e0e0;
 }
-.options table td:first-of-type {
+@media (max-width: 479px) {
+  .options table th,
+  .options table td {
+    display: block;
+    text-align: left;
+    padding: 0 0 0 0.6rem;
+  }
+  .options table td:last-of-type {
+    margin-bottom: 2rem;
+  }
+}
+.options table td:last-of-type {
   width: 100%;
+}
+.options table td:first-of-type {
+  color: #1ba09c;
+  font-size: larger;
+  text-align: center;
 }
 .options table input[type=range] {
   width: 100%;
