@@ -11,16 +11,13 @@ import { Query, QueryId, QueryAll } from "./query";
 
 // Page elements
 const home = Query<HTMLElement>(".btn-home");
-const start = Query<HTMLButtonElement>(".btn-start");
+const allStarts = QueryAll<HTMLElement>(".btn-start");
+const startBtn = Query<HTMLButtonElement>(".btn-start");
 const pause = Query<HTMLButtonElement>(".btn-pause");
 const stop = Query<HTMLButtonElement>(".btn-stop");
-const watch = Query(".btn-playing");
-const paste = Query(".btn-paste");
-const stories = Query(".btn-stories");
 const letterElement = Query(".letter");
 const outputBuffer = Query(".outputBuffer");
 const storyLinks = QueryAll(".story a");
-const siteName = Query(".siteName");
 const resetSettingsButton = QueryId("resetSettings");
 
 // Settings text labels
@@ -131,8 +128,10 @@ resetSettingsButton.addEventListener("click",
 pause.addEventListener("click",
     () => Notify(PAUSE, null));
 
-start.addEventListener("click",
-    () => Notify(START, null));
+for (let i = 0; i < allStarts.length; ++i) {
+    allStarts[i].addEventListener("click",
+        () => Notify(START, null));
+}
 
 stop.addEventListener("click",
     () => Notify(STOP, null));
@@ -148,14 +147,14 @@ for (let i = 0; i < storyLinks.length; ++i) {
 }
 
 Listen(PAUSE, () => {
-    start.disabled = false;
+    startBtn.disabled = false;
     pause.disabled = true;
     stop.disabled = true;
 });
 
 Listen(START, () => {
     Notify(WATCH, null);
-    start.disabled = true;
+    startBtn.disabled = true;
     pause.disabled = false;
     stop.disabled = false;
 });
@@ -164,7 +163,7 @@ Listen(STOP, () => {
     location.hash = "";
     outputBuffer.innerHTML = "";
     letterElement.innerHTML = "";
-    start.disabled = false;
+    startBtn.disabled = false;
     pause.disabled = true;
     stop.disabled = true;
 });

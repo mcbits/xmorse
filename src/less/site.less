@@ -14,7 +14,7 @@ html, body {
 
 body {
     margin: 0;
-    font-family: "Roboto", Helvetica, Arial, sans-serif;
+    font-family: "Actor", Helvetica, Arial, sans-serif;
     background-color: transparent;
     line-height: 1.45;
     display: flex;
@@ -129,7 +129,12 @@ header {
         padding: 0.5rem;
     }
 
-    kbd {
+    a {
+        text-decoration: none;
+        color: @black;
+    }
+
+    kbd, a {
         display: block;
         padding: 1px 0.5rem;
         text-align: center;
@@ -138,15 +143,7 @@ header {
         border-right-width: 2px;
         border-bottom-width: 2px;
         font: inherit;
-    }
-
-    kbd.disabled {
-        color: #999;
-    }
-
-    .kbd-go {
-        background-color: seagreen;
-        color: #fff;
+        cursor: pointer;
     }
 }
     
@@ -226,6 +223,10 @@ header {
     .story {
         margin-bottom: 2rem;
 
+        a {
+            text-decoration: none;
+        }
+
         .title {
             margin: 0;
             line-height: 1;
@@ -236,6 +237,7 @@ header {
         }
 
         p {
+            margin-top: 0;
             margin-left: 1.2rem;
         }
     }
