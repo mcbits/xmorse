@@ -5,6 +5,7 @@
 
 * {
     box-sizing: border-box;
+    font-weight: normal;
 }
 
 html, body {
@@ -13,7 +14,7 @@ html, body {
 
 body {
     margin: 0;
-    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-family: "Roboto", Helvetica, Arial, sans-serif;
     background-color: transparent;
     line-height: 1.45;
     display: flex;
@@ -63,7 +64,6 @@ header {
 
     .siteName {
         font-family: Audiowide;
-        font-weight: normal;
         font-size: 40px;
         color: #e0e0e0;
         text-align: center;
@@ -226,12 +226,17 @@ header {
     .story {
         margin-bottom: 2rem;
 
+        .title {
+            margin: 0;
+            line-height: 1;
+        }
+
         .author {
             font-weight: bold;
         }
 
-        .title {
-            margin-left: 1rem;
+        p {
+            margin-left: 1.2rem;
         }
     }
 }
@@ -313,18 +318,25 @@ nav.controls {
     background: @gradient;
     padding: 0.25rem 0;
     text-align: center;
-    margin-bottom: 1.2rem;
-    box-shadow: 0 0 10px #fff;
     border: 1px solid #fff;
+    box-shadow: 0 0 12px -1px #fff;
+    border-radius: 7px;
+    line-height: 1.2;
+
+    @media (min-width: 0) {
+        margin: 0 0.6rem 1.2rem;
+    }
 
     @media (min-width: 480px) {
-        //text-align: left;
     }
 
     @media (min-width: 1024px) {
-        margin-right: 340px;
-        margin-left: 1.2rem;
+        margin: 0 340px 1.2rem 1.2rem;
         padding: 0;
+    }
+
+    &:hover {
+        box-shadow: 0 0 11px 1px #fff;
     }
 }
 
@@ -346,7 +358,8 @@ nav.controls .btn {
     }
 
     &:hover {
-        background: #d4d4d4;
+        background: #e5e5e5;
+        text-shadow: 0 0 3px #fff;
     }
 
     &.active {
@@ -393,7 +406,6 @@ nav.controls .btn {
     margin: 2rem 0;
     text-align: center;
     font-size: 2.5rem;
-    font-weight: normal;
 }
 
 .btn[disabled] {
@@ -451,18 +463,11 @@ hr {
 
 .options table {
     width: 100%;
-    margin: 2rem auto;
-    border-spacing: 1rem;
-
-    @media (min-width: 0) {
-        th, td { display: inline-block; }
-    }
-    @media (min-width: 480px) {
-        th, td { display: table-cell; }
-    }
+    margin-bottom: 2rem;
 
     th {
         text-align: right;
+        padding: 0.5rem;
     }
 
     td {
@@ -470,8 +475,26 @@ hr {
         border-left: 5px solid #e0e0e0;
     }
 
-    td:first-of-type {
+    @media (max-width: 479px) {
+        th, td {
+            display: block;
+            text-align: left;
+            padding: 0 0 0 0.6rem;
+        }
+
+        td:last-of-type {
+            margin-bottom: 2rem;
+        }
+    }
+
+    td:last-of-type {
         width: 100%;
+    }
+
+    td:first-of-type {
+        color: #1ba09c;
+        font-size: larger;
+        text-align: center;
     }
 
     input[type=range] {
