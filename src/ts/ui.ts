@@ -1,9 +1,10 @@
 import {
     Notify, Listen,
-    WPM, VOLUME, CHAR_SPACING, FLASHING_ENABLED, HOME, PITCH, LETTERS_ENABLED, NUMBERS_ENABLED,
+    WPM, VOLUME, CHAR_SPACING, FLASHING_ENABLED, PITCH, LETTERS_ENABLED, NUMBERS_ENABLED,
     MANUAL_VOICE_ENABLED,
     SYMBOLS_ENABLED, LETTER, PATTERN_COMPLETE, VOICE_ENABLED, PAUSE, WATCH, START, STOP,
-    OPTIONS, OUTPUT, STORY, TEXT_BUFFER, TONE_OFF, TONE_ON
+    OUTPUT, STORY, TEXT_BUFFER, TONE_OFF, TONE_ON,
+    VIEW_HOME, VIEW_OPTIONS, VIEW_PLAYING, VIEW_STORIES, VIEW_TEXT
 } from "./events";
 import { CharacterInfo } from "./morsetable";
 import { Query, QueryId, QueryAll } from "./query";
@@ -13,8 +14,7 @@ const home = Query<HTMLElement>(".btn-home");
 const start = Query<HTMLButtonElement>(".btn-start");
 const pause = Query<HTMLButtonElement>(".btn-pause");
 const stop = Query<HTMLButtonElement>(".btn-stop");
-const watch = Query(".btn-watch");
-const options = Query(".btn-options");
+const watch = Query(".btn-playing");
 const paste = Query(".btn-paste");
 const stories = Query(".btn-stories");
 const letterElement = Query(".letter");
@@ -113,24 +113,6 @@ userSet.symbolsEnabled.addEventListener("change",
 
 ///
 
-siteName.addEventListener("click",
-    () => Notify(HOME, null));
-
-home.addEventListener("click",
-    () => Notify(HOME, null));
-
-watch.addEventListener("click",
-    () => Notify(WATCH, null));
-
-options.addEventListener("click",
-    () => Notify(OPTIONS, null));
-
-paste.addEventListener("click",
-    () => view(".paste", paste));
-
-stories.addEventListener("click",
-    () => view(".stories", stories));
-
 resetSettingsButton.addEventListener("click",
     () => {
         Adjust(CHAR_SPACING, defaults.charSpacing);
@@ -166,7 +148,6 @@ for (let i = 0; i < storyLinks.length; ++i) {
 }
 
 Listen(PAUSE, () => {
-    Notify(WATCH, null);
     start.disabled = false;
     pause.disabled = true;
     stop.disabled = true;
@@ -180,7 +161,7 @@ Listen(START, () => {
 });
 
 Listen(STOP, () => {
-    Notify(HOME, null);
+    location.hash = "";
     outputBuffer.innerHTML = "";
     letterElement.innerHTML = "";
     start.disabled = false;
@@ -237,12 +218,6 @@ Listen(WPM,
 Listen(LETTER,
     (value: string) => letterElement.innerHTML = value);
 
-Listen(HOME,
-    () => view(".home", Query(".btn-home")));
-
-Listen(OPTIONS,
-    () => view(".options", options));
-
 Listen(OUTPUT,
     (value: string) => {
         outputBuffer.innerHTML += value;
@@ -265,11 +240,24 @@ Listen(TONE_ON,
     });
 
 Listen(WATCH,
-    () => {
-        view(".view.playing", watch);
-    });
+    () => location.hash = "#playing");
 
-///
+/// Views
+
+Listen(VIEW_HOME,
+    () => view(".home", Query(".btn-home")));
+
+Listen(VIEW_OPTIONS,
+    () => view(".options", Query(".btn-options")));
+
+Listen(VIEW_PLAYING,
+    () => view(".playing", Query(".btn-playing")));
+
+Listen(VIEW_STORIES,
+    () => view(".stories", Query(".btn-stories")));
+
+Listen(VIEW_TEXT,
+    () => view(".paste", Query(".btn-paste")));
 
 document.addEventListener("DOMContentLoaded", () => {
     // // Trigger events to initialize state
