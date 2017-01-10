@@ -107,12 +107,13 @@
                     <table>
                         <tr class="control">
                             <th>Voice:</th>
-                            <td colspan="2">
+                            <td>
                                 <label>
                                     <input type="checkbox" id="voiceEnabled" checked>
-                                    Enable voice after each letter
+                                    Enable voice repeating each letter
                                 </label>
                             </td>
+                            <td></td>
                         </tr>
 
                         <tr class="control">
@@ -135,24 +136,27 @@
 
                         <tr class="control">
                             <th>Enable characters:</th>
-                            <td colspan="2">
-
+                            <td>
                                 <label>
                                     <input type="checkbox" id="lettersEnabled" checked />
                                     Letters
                                 </label>
+
                                 <br>
+
                                 <label>
                                     <input type="checkbox" id="numbersEnabled" />
                                     Numbers
                                 </label>
+
                                 <br>
+
                                 <label>
                                     <input type="checkbox" id="symbolsEnabled" />
                                     Symbols
                                 </label>
-                                
                             </td>
+                            <td></td>
                         </tr>
 
                         <tr class="control">
@@ -163,12 +167,19 @@
 
                         <tr class="control">
                             <th>Flashing:</th>
-                            <td colspan="2">
+                            <td>
                                 <label>
                                     <input type="checkbox" id="flashingEnabled">
-                                    Flashing the background in sync with the tones
+                                    Flash background in sync with tones
                                 </label>
                             </td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <th><button id="resetSettings" style="width: 100%">Reset</button></th>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </table>
                 </article>

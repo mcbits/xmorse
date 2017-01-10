@@ -1,6 +1,7 @@
 import {
     Notify, Listen,
     WPM, VOLUME, CHAR_SPACING, FLASHING_ENABLED, HOME, PITCH, LETTERS_ENABLED, NUMBERS_ENABLED,
+    MANUAL_VOICE_ENABLED,
     SYMBOLS_ENABLED, LETTER, PATTERN_COMPLETE, VOICE_ENABLED, PAUSE, WATCH, START, STOP,
     OPTIONS, OUTPUT, STORY, TEXT_BUFFER, TONE_OFF, TONE_ON
 } from "./events";
@@ -20,6 +21,7 @@ const letterElement = Query(".letter");
 const outputBuffer = Query(".outputBuffer");
 const storyLinks = QueryAll(".story a");
 const siteName = Query(".siteName");
+const resetSettingsButton = QueryId("resetSettings");
 
 // Settings text labels
 const volumeText = Query<HTMLInputElement>(".volumeText");
@@ -28,16 +30,30 @@ const pitchText = Query<HTMLInputElement>(".pitchText");
 const charSpacingText = Query<HTMLInputElement>(".charSpacingText");
 
 // Settings inputs
-const volume = QueryId<HTMLInputElement>("volume");
-const charWPM = QueryId<HTMLInputElement>("charWPM");
-const pitch = QueryId<HTMLInputElement>("pitch");
-const charSpacing = QueryId<HTMLInputElement>("charSpacing");
-const voiceEnabled = QueryId<HTMLInputElement>("voiceEnabled");
-const pasteTextBox = QueryId<HTMLTextAreaElement>("pasteText");
-const flashingEnabled = QueryId<HTMLInputElement>("flashingEnabled");
-const lettersEnabled = QueryId<HTMLInputElement>("lettersEnabled");
-const numbersEnabled = QueryId<HTMLInputElement>("numbersEnabled");
-const symbolsEnabled = QueryId<HTMLInputElement>("symbolsEnabled");
+const userSet = {
+    volume: QueryId<HTMLInputElement>("volume"),
+    charWPM: QueryId<HTMLInputElement>("charWPM"),
+    pitch: QueryId<HTMLInputElement>("pitch"),
+    charSpacing: QueryId<HTMLInputElement>("charSpacing"),
+    voiceEnabled: QueryId<HTMLInputElement>("voiceEnabled"),
+    pasteTextBox: QueryId<HTMLTextAreaElement>("pasteText"),
+    flashingEnabled: QueryId<HTMLInputElement>("flashingEnabled"),
+    lettersEnabled: QueryId<HTMLInputElement>("lettersEnabled"),
+    numbersEnabled: QueryId<HTMLInputElement>("numbersEnabled"),
+    symbolsEnabled: QueryId<HTMLInputElement>("symbolsEnabled")
+};
+
+const defaults = {
+    charSpacing: 15,
+    flashingEnabled: false,
+    lettersEnabled: true,
+    numbersEnabled: false,
+    pitch: 650,
+    symbolsEnabled: false,
+    voiceEnabled: true,
+    volume: 0.40,
+    wpm: 12
+};
 
 function view(selector: string, menuItem: Element) {
     const views = QueryAll(".view");
@@ -60,35 +76,42 @@ function view(selector: string, menuItem: Element) {
     menuItem.classList.add("active");
 }
 
-volume.addEventListener("input",
-    () => Notify(VOLUME, parseFloat(volume.value)));
+function Adjust(name: string, value: any) {
+    Notify("manual_" + name, value.toString());
+    Notify(name, value);
+}
 
-charWPM.addEventListener("input",
-    () => Notify(WPM, parseInt(charWPM.value)));
+userSet.volume.addEventListener("input",
+    () => Adjust(VOLUME, parseFloat(userSet.volume.value)));
 
-charSpacing.addEventListener("input",
-    () => Notify(CHAR_SPACING, parseInt(charSpacing.value)));
+userSet.charWPM.addEventListener("input",
+    () => Adjust(WPM, parseInt(userSet.charWPM.value)));
 
-pitch.addEventListener("input",
-    () => Notify(PITCH, parseInt(pitch.value)));
+userSet.charSpacing.addEventListener("input",
+    () => Adjust(CHAR_SPACING, parseInt(userSet.charSpacing.value)));
 
-pasteTextBox.addEventListener("input",
-    () => Notify(TEXT_BUFFER, pasteTextBox.value));
+userSet.pitch.addEventListener("input",
+    () => Adjust(PITCH, parseInt(userSet.pitch.value)));
 
-voiceEnabled.addEventListener("change",
-    () => Notify(VOICE_ENABLED, voiceEnabled.checked));
+userSet.pasteTextBox.addEventListener("input",
+    () => Adjust(TEXT_BUFFER, userSet.pasteTextBox.value));
 
-flashingEnabled.addEventListener("change",
-    () => Notify(FLASHING_ENABLED, flashingEnabled.checked));
+userSet.voiceEnabled.addEventListener("change",
+    () => Adjust(VOICE_ENABLED, userSet.voiceEnabled.checked));
 
-lettersEnabled.addEventListener("change",
-    () => Notify(LETTERS_ENABLED, lettersEnabled.checked));
+userSet.flashingEnabled.addEventListener("change",
+    () => Adjust(FLASHING_ENABLED, userSet.flashingEnabled.checked));
 
-numbersEnabled.addEventListener("change",
-    () => Notify(NUMBERS_ENABLED, numbersEnabled.checked));
+userSet.lettersEnabled.addEventListener("change",
+    () => Adjust(LETTERS_ENABLED, userSet.lettersEnabled.checked));
 
-symbolsEnabled.addEventListener("change",
-    () => Notify(SYMBOLS_ENABLED, symbolsEnabled.checked));
+userSet.numbersEnabled.addEventListener("change",
+    () => Adjust(NUMBERS_ENABLED, userSet.numbersEnabled.checked));
+
+userSet.symbolsEnabled.addEventListener("change",
+    () => Adjust(SYMBOLS_ENABLED, userSet.symbolsEnabled.checked));
+
+///
 
 siteName.addEventListener("click",
     () => Notify(HOME, null));
@@ -107,6 +130,21 @@ paste.addEventListener("click",
 
 stories.addEventListener("click",
     () => view(".stories", stories));
+
+resetSettingsButton.addEventListener("click",
+    () => {
+        Adjust(CHAR_SPACING, defaults.charSpacing);
+        Adjust(FLASHING_ENABLED, defaults.flashingEnabled);
+        Adjust(LETTERS_ENABLED, defaults.lettersEnabled);
+        Adjust(NUMBERS_ENABLED, defaults.numbersEnabled);
+        Adjust(PITCH, defaults.pitch);
+        Adjust(SYMBOLS_ENABLED, defaults.symbolsEnabled);
+        Adjust(VOICE_ENABLED, defaults.voiceEnabled);
+        Adjust(VOLUME, defaults.volume);
+        Adjust(WPM, defaults.wpm);
+    });
+
+///
 
 pause.addEventListener("click",
     () => Notify(PAUSE, null));
@@ -150,20 +188,51 @@ Listen(STOP, () => {
     stop.disabled = true;
 });
 
-Listen(TEXT_BUFFER,
-    (value: string) => pasteTextBox.value = value);
-
-Listen(VOLUME,
-    (value: number) => volumeText.value = Math.floor(value * 100).toString());
-
-Listen(WPM,
-    (value: number) => charWPMText.value = value.toString());
+// Update UI in response to settings changes
 
 Listen(CHAR_SPACING,
-    (value: number) => charSpacingText.value = value.toString());
+    (value: number) => {
+        charSpacingText.value = value.toString();
+        userSet.charSpacing.value = value.toString();
+    });
+
+Listen(FLASHING_ENABLED,
+    (value: boolean) => userSet.flashingEnabled.checked = value);
+
+Listen(LETTERS_ENABLED,
+    (value: boolean) => userSet.lettersEnabled.checked = value);
+
+Listen(NUMBERS_ENABLED,
+    (value: boolean) => userSet.numbersEnabled.checked = value);
 
 Listen(PITCH,
-    (value: number) => pitchText.value = value.toString());
+    (value: number) => {
+        pitchText.value = value.toString();
+        userSet.pitch.value = value.toString();
+    });
+
+Listen(SYMBOLS_ENABLED,
+    (value: boolean) => userSet.symbolsEnabled.checked = value);
+
+Listen(TEXT_BUFFER,
+    (value: string) => userSet.pasteTextBox.value = value);
+
+Listen(VOICE_ENABLED,
+    (value: boolean) => userSet.voiceEnabled.checked = value);
+
+Listen(VOLUME,
+    (value: number) => {
+        volumeText.value = Math.floor(value * 100).toString();
+        userSet.volume.value = value.toString();
+    });
+
+Listen(WPM,
+    (value: number) => {
+        charWPMText.value = value.toString();
+        userSet.charWPM.value = value.toString();
+    });
+
+///
 
 Listen(LETTER,
     (value: string) => letterElement.innerHTML = value);
@@ -187,14 +256,12 @@ Listen(PATTERN_COMPLETE,
     });
 
 Listen(TONE_OFF,
-    () => {
-        Query("body").classList.remove("toneOn")
-    });
+    () => Query("body").classList.remove("toneOn"));
 
 Listen(TONE_ON,
     () => {
-        if (flashingEnabled.checked)
-            Query("body").classList.add("toneOn")
+        if (userSet.flashingEnabled.checked)
+            Query("body").classList.add("toneOn");
     });
 
 Listen(WATCH,
@@ -202,13 +269,42 @@ Listen(WATCH,
         view(".view.playing", watch);
     });
 
-// Trigger events to initialize state
-Notify(VOLUME, volume.value);
-Notify(WPM, charWPM.value);
-Notify(CHAR_SPACING, charSpacing.value);
-Notify(VOICE_ENABLED, voiceEnabled.checked);
-Notify(PITCH, pitch.value);
-Notify(FLASHING_ENABLED, flashingEnabled.checked);
-Notify(LETTERS_ENABLED, lettersEnabled.checked);
-Notify(NUMBERS_ENABLED, numbersEnabled.checked);
-Notify(SYMBOLS_ENABLED, symbolsEnabled.checked);
+///
+
+document.addEventListener("DOMContentLoaded", () => {
+    // // Trigger events to initialize state
+    Notify(VOLUME, localStorage.getItem("volume") || defaults.volume);
+    Notify(WPM, localStorage.getItem("wpm") || defaults.wpm);
+    Notify(CHAR_SPACING, localStorage.getItem("charSpacing") || defaults.charSpacing);
+    Notify(PITCH, localStorage.getItem("pitch") || defaults.pitch);
+
+    const voiceEnabledStorage = localStorage.getItem("voiceEnabled");
+    if (voiceEnabledStorage == null)
+        Notify(VOICE_ENABLED, defaults.voiceEnabled);
+    else
+        Notify(VOICE_ENABLED, voiceEnabledStorage === "true");
+
+    const flashingEnabledStorage = localStorage.getItem("flashingEnabled");
+    if (flashingEnabledStorage == null)
+        Notify(FLASHING_ENABLED, defaults.flashingEnabled);
+    else
+        Notify(FLASHING_ENABLED, flashingEnabledStorage === "true");
+
+    const lettersEnabledStorage = localStorage.getItem("lettersEnabled");
+    if (lettersEnabledStorage == null)
+        Notify(LETTERS_ENABLED, defaults.lettersEnabled);
+    else
+        Notify(LETTERS_ENABLED, lettersEnabledStorage === "true");
+
+    const numbersEnabledStorage = localStorage.getItem("numbersEnabled");
+    if (numbersEnabledStorage == null)
+        Notify(NUMBERS_ENABLED, defaults.numbersEnabled);
+    else
+        Notify(NUMBERS_ENABLED, numbersEnabledStorage === "true");
+
+    const symbolsEnabledStorage = localStorage.getItem("symbolsEnabled");
+    if (symbolsEnabledStorage == null)
+        Notify(SYMBOLS_ENABLED, defaults.symbolsEnabled);
+    else
+        Notify(SYMBOLS_ENABLED, symbolsEnabledStorage === "true");
+});

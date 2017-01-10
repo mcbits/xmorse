@@ -12,4 +12,5 @@ import * as VoicePlayer from "./voiceplayer"; VoicePlayer;
 import * as TonePlayer from "./toneplayer"; TonePlayer;
 import * as Player from "./player"; Player;
 import * as FullScreen from "./fullscreen"; FullScreen;
+import * as Storage from "./storage"; Storage;
 import * as UI from "./ui"; UI;
