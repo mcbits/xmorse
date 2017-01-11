@@ -41,7 +41,7 @@ const userSet = {
 };
 
 const defaults = {
-    charSpacing: 15,
+    charSpacing: 12,
     flashingEnabled: false,
     lettersEnabled: true,
     numbersEnabled: false,
@@ -49,7 +49,7 @@ const defaults = {
     symbolsEnabled: false,
     voiceEnabled: true,
     volume: 0.40,
-    wpm: 12
+    wpm: 15
 };
 
 function view(selector: string, menuItem: Element) {

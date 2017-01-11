@@ -2,6 +2,7 @@
 @inverseGradient: linear-gradient(#d1d7da, #f1f1f1);
 @flashColor: #404860;
 @black: #2a2a2a;
+@linkBlue: #0079ff;
 
 * {
     box-sizing: border-box;
@@ -27,6 +28,10 @@ body {
     @media (min-width: 1280px) { font-size: 18px; }
     @media (min-width: 1600px) { font-size: 19px; }
     @media (min-width: 1920px) { font-size: 20px; }
+}
+
+a, a:visited, a:active {
+    color: @linkBlue;
 }
 
 .flasher {
@@ -68,6 +73,10 @@ header {
         color: #e0e0e0;
         text-align: center;
         margin: 0;
+
+        > a {
+            color: #e0e0e0;
+        }
     }
 
     .menu-top {
@@ -96,15 +105,12 @@ header {
             }
         }
     }
-
-    a {
-        color: #e0e0e0;
-    }
 }
 
 #pasteText {
     flex: 1;
     margin-bottom: 2rem;
+    line-height: 1.5;
 }
 
 .columns {
@@ -222,9 +228,17 @@ header {
 .view.stories {
     .story {
         margin-bottom: 2rem;
+        border-left: 5px solid @linkBlue;
+        border-radius: 8px;
+        padding-left: 1.2rem;
 
         a {
             text-decoration: none;
+        }
+
+        .blurb, .byline {
+            color: #484848;
+            font-style: italic;
         }
 
         .title {
@@ -236,7 +250,7 @@ header {
             font-weight: bold;
         }
 
-        p {
+        .byline {
             margin-top: 0;
             margin-left: 1.2rem;
         }
@@ -371,7 +385,7 @@ nav.controls .btn {
     }
 }
 
-.btn {
+a.btn {
     color: @black;
 }
 
@@ -494,6 +508,7 @@ hr {
     }
 
     td:first-of-type {
+        font-family: monospace;
         color: #1ba09c;
         font-size: larger;
         text-align: center;
