@@ -49,6 +49,11 @@ body {
     font-size: 20px;
   }
 }
+a,
+a:visited,
+a:active {
+  color: #0079ff;
+}
 .flasher {
   position: absolute;
   top: 0;
@@ -87,6 +92,9 @@ header .siteName {
   text-align: center;
   margin: 0;
 }
+header .siteName > a {
+  color: #e0e0e0;
+}
 header .menu-top {
   flex: 1;
   display: flex;
@@ -114,12 +122,10 @@ header .menu-top .btn {
 header .menu-top .btn:hover {
   border-color: #eee;
 }
-header a {
-  color: #e0e0e0;
-}
 #pasteText {
   flex: 1;
   margin-bottom: 2rem;
+  line-height: 1.5;
 }
 .columns {
   flex: 1;
@@ -229,9 +235,17 @@ header a {
 }
 .view.stories .story {
   margin-bottom: 2rem;
+  border-left: 5px solid #0079ff;
+  border-radius: 8px;
+  padding-left: 1.2rem;
 }
 .view.stories .story a {
   text-decoration: none;
+}
+.view.stories .story .blurb,
+.view.stories .story .byline {
+  color: #484848;
+  font-style: italic;
 }
 .view.stories .story .title {
   margin: 0;
@@ -240,7 +254,7 @@ header a {
 .view.stories .story .author {
   font-weight: bold;
 }
-.view.stories .story p {
+.view.stories .story .byline {
   margin-top: 0;
   margin-left: 1.2rem;
 }
@@ -394,7 +408,7 @@ nav.controls .btn.active {
   box-shadow: 0 1px 6px #444;
   color: #111;
 }
-.btn {
+a.btn {
   color: #2a2a2a;
 }
 .btn-start {
@@ -498,6 +512,7 @@ hr {
   width: 100%;
 }
 .options table td:first-of-type {
+  font-family: monospace;
   color: #1ba09c;
   font-size: larger;
   text-align: center;
