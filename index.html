@@ -16,20 +16,22 @@
 <body>
     <header class="header-top">
         <h1 class="siteName"><a href="/">xMorse</a></h1>
-        <div class="menu-top controls">
-            <button class="btn btn-start">Start</button>
-            <button class="btn btn-pause" disabled>Pause</button>
-            <button class="btn btn-stop" disabled>Stop</button>
+
+        <div class="controls">
+            <button class="btn btn-start"></button>
+            <button class="btn btn-pause" disabled></button>
+            <button class="btn btn-stop" disabled></button>
         </div>
+
+        <nav class="menu">
+            <a href="#" class="btn btn-home active">Home</a>
+            <a href="#playing" class="btn btn-playing">Playing</a>
+            <a href="#options" class="btn btn-options">Options</a>
+            <a href="#stories" class="btn btn-stories">Stories</a>
+            <a href="#text" class="btn btn-paste">Text</a>
+        </nav>
     </header>
 
-    <nav class="controls">
-        <a href="#" class="btn btn-home active">Home</a>
-        <a href="#playing" class="btn btn-playing">Playing</a>
-        <a href="#options" class="btn btn-options">Options</a>
-        <a href="#stories" class="btn btn-stories">Stories</a>
-        <a href="#text" class="btn btn-paste">Text</a>
-    </nav>
 
     <div class="columns">
         <div class="views">
@@ -50,13 +52,42 @@
                         </tr>
                     </table>
                     
-                    <h1>Learn Morse Code</h1>
+                    <div class="sections">
+                        <section class="tips">
+                            <h2>Learn Morse Code</h2>
 
-                    <p>If you have never learned the Morse code characters, listen with the voice enabled. Try to remember the character before the voice reveals it. Once you have memorized most of the sequences, you can disable the voice. (This takes less time than you might think!)</p>
-                    <p>Set the character WPM just faster than your target speed, and set the spacing just wide enough to pose a challenge. For example, if you are aiming for 18 WPM, listen to characters at 20-22 WPM.</p>
-                    <p>Gradually reduce the spacing between characters until you reach your target rate.</p>
-                    <p>Practice "copying" (writing or typing) characters while you listen. This will reinforce your learning better than simply listening.</p>
-                    <p>Set aside a few minutes every day to practice. It's the small, consistent efforts that add up to long-term success!</p>
+                            <p>If you have never learned the Morse code characters, listen with the voice enabled. Try to remember the character before the voice reveals it. Once you have memorized most of the sequences, you can disable the voice. (This takes less time than you might think!)</p>
+                            <p>Set the character WPM just faster than your target speed, and set the spacing just wide enough to pose a challenge. For example, if you are aiming for 18 WPM, listen to characters at 20-22 WPM.</p>
+                            <p>Gradually reduce the spacing between characters until you reach your target rate.</p>
+                            <p>Practice "copying" (writing or typing) characters while you listen. This will reinforce your learning better than simply listening.</p>
+                            <p>Set aside a few minutes every day to practice. It's the small, consistent efforts that add up to long-term success!</p>
+                        </section>
+
+                        <section class="story-previews">
+                            <h2>Train with short stories</h2>
+
+                            <div class="story" vocab="http://schema.org/" typeof="TextDigitalDocument">
+                                <h3 class="title"><a property="title" href="/text/philip_k_dick-beyond_lies_the_wub.txt">Beyond Lies the Wub</a></h3>
+                                <p class="byline">by <span class="author" property="author">Philip K. Dick</span></p>
+                                <p class="blurb">The slovenly wub might well have said: Many men talk like philosophers and live like fools ...</p>
+                            </div>
+
+
+                            <div class="story" vocab="http://schema.org/" typeof="TextDigitalDocument">
+                                <h3 class="title"><a property="title" href="/text/frank_herbert-old_rambling_house.txt">Old Rambling House</a></h3>
+                                <p class="byline">by <span class="author" property="author">Frank Herbert</span></p>
+                                <p class="blurb">All the grahams desired was a home they could call their own ... but what did the home want?</p>
+                            </div>
+
+                            <div class="story" vocab="http://schema.org/" typeof="TextDigitalDocument">
+                                <h3 class="title"><a property="title" href="/text/william_carroll-solomons_orbit.txt">Solomon's Orbit</a></h3>
+                                <p class="byline">by <span class="author" property="author">William Carroll</span></p>
+                                <p class="blurb">There will, sooner or later, be problems of "space junk," and the right to dump in space. But not like this!</p>
+                            </div>
+
+                            <p class="more"><a href="#stories">See full list</a></p>
+                        </section>
+                    </div>
                 </article>
             </div>
 
@@ -77,6 +108,10 @@
 
             <div class="stories view disabled">
                 <article>
+                    <h2>Train with short stories</h2>
+
+                    <p>Sorted by author.</p>
+
                     <div class="story" vocab="http://schema.org/" typeof="TextDigitalDocument">
                         <h2 class="title"><a property="title" href="/text/c_c_beck-vanishing_point.txt">Vanishing Point</a></h2>
                         <p class="byline">by <span class="author" property="author">C. C. Beck</span></p>
