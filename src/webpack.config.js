@@ -9,6 +9,7 @@ module.exports = {
         path: __dirname + "/dist",
         filename: "js/app.js"
     },
+    performance: { hints: false },
     devtool: "source-map",
     devServer: {
         inline: true,

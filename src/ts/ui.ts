@@ -65,7 +65,7 @@ function view(selector: string, menuItem: Element) {
     viewToShow.classList.remove("disabled");
 
     // Highlight the menu item
-    const controls = QueryAll("nav.controls .btn");
+    const controls = QueryAll(".menu .btn");
     for (let i = 0; i < controls.length; ++i) {
         const control = controls[i];
         control.classList.remove("active");
