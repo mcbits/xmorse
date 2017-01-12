@@ -102,7 +102,7 @@ nav.menu {
     border: 1px solid #fff;
     box-shadow: 0 0 12px -1px #fff;
     margin: @size-s 0;
-    line-height: 1.2;
+    line-height: 1.3;
 
     @media (min-width: 0) {
         min-width: 280px;
@@ -288,7 +288,6 @@ nav.menu {
         }
 
         @media (min-width: 1600px) {
-            max-width: 65%;
         }
 
         h2 {
@@ -299,9 +298,7 @@ nav.menu {
             margin-bottom: 2rem;
         }
     }
-}
 
-.view {
     @media (min-width: 1024px) {
         overflow-y: auto;
     }
@@ -309,6 +306,58 @@ nav.menu {
 
 .view.disabled {
     display: none !important;
+}
+
+.view.home {
+    article h2 {
+        margin: @size-l 0;
+        text-align: center;
+        font-size: 2.5rem;
+    }
+
+    .sections {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -1rem;
+
+        section {
+            flex: 1 0 300px;
+            margin: 0 1rem;
+        }
+
+        .story-previews {
+            padding: 0 @size-m;
+
+            a {
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+            .title {
+                font-size: 1.5rem;
+                margin: 0;
+            }
+
+            .byline {
+                margin: 0 @size-l;
+                font-style: italic;
+                color: #555;
+            }
+
+            .author {
+                font-weight: bold;
+            }
+
+            .more {
+                font-size: 1.5rem;
+                text-align: right;
+            }
+
+            .blurb {
+                margin: 0 0 @size-m;
+            }
+        }
+    }
 }
 
 .view.paste {
@@ -375,7 +424,7 @@ nav.menu {
     @media (min-width: 769px) { font-size: 80px; }
     @media (min-width: 1024px) { font-size: 70px; }
     @media (min-width: 1281px) { font-size: 100px; }
-    @media (min-width: 1600px) { font-size: 140px; }
+    @media (min-width: 1600px) { font-size: 120px; }
 }
 
 .sidebar {
@@ -420,12 +469,6 @@ nav.menu {
             font-size: 1rem;
         }
     }
-}
-
-.home article h1 {
-    margin: @size-l 0;
-    text-align: center;
-    font-size: 2.5rem;
 }
 
 .btn-fullscreen {
