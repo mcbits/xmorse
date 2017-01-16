@@ -308,6 +308,11 @@ nav.menu {
     display: none !important;
 }
 
+.controls.disabled, .menu.disabled, .sidebar.disabled {
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
 .view.home {
     article h2 {
         margin: @size-l 0;
@@ -479,17 +484,9 @@ nav.menu {
     z-index: 1;
     border: 0;
     margin: @size-s;
-    padding: 0;
-    width: 80px;
-    height: 45px;
+    padding: 1rem 2rem;
     background-position-y: 45px;
-    background-color: #a0a0a0;
-    background-image: url(/img/fullscreen.png);
-}
-
-.btn-fullscreen:hover {
-    background-position-y: 0;
-    background-color: #fff;
+    font-weight: bold;
 }
 
 .btn-fullscreen.disabled {

@@ -3,7 +3,11 @@ import { Query } from "./query";
 const fullScreenButton = Query(".btn-fullscreen");
 const startButton = Query(".btn-start");
 const stopButton = Query(".btn-stop");
-const playingView = Query<HTMLElement>(".view.playing");
+const playingView = document.body.parentElement; //Query<HTMLElement>(".view.playing");
+const controls = Query(".controls");
+const menu = Query(".menu");
+const sidebar = Query(".sidebar");
+
 
 let isFullScreen = false;
 let hideControlsInterval: number;
@@ -12,23 +16,33 @@ let hideControlsMS = 2000;
 let controlsVisible = false;
 let cursorVisible = false;
 
-function changeFullScreen() {
-    if (isFullScreen) {
-        if (document.exitFullscreen)
-            document.exitFullscreen();
-        else if (document["webkitExitFullscreen"])
-            document["webkitExitFullscreen"]();
-        else if (document["mozCancelFullScreen"])
-            document["mozCancelFullScreen"]();
-    }
-    else {
-        if (document.fullscreenEnabled)
-            playingView.requestFullscreen();
-        else if (document["webkitFullscreenEnabled"])
-            playingView["webkitRequestFullscreen"]();
-        else if (document["mozFullScreenEnabled"])
-            playingView["mozRequestFullScreen"]();
-    }
+function exitFullScreen() {
+    fullScreenButton.textContent = "Full screen";
+
+    if (document.exitFullscreen)
+        document.exitFullscreen();
+    else if (document["webkitExitFullscreen"])
+        document["webkitExitFullscreen"]();
+    else if (document["mozCancelFullScreen"])
+        document["mozCancelFullScreen"]();
+}
+
+function enterFullScreen() {
+    fullScreenButton.textContent = "Exit full screen";
+
+    if (document.fullscreenEnabled)
+        playingView.requestFullscreen();
+    else if (document["webkitFullscreenEnabled"])
+        playingView["webkitRequestFullscreen"]();
+    else if (document["mozFullScreenEnabled"])
+        playingView["mozRequestFullScreen"]();
+}
+
+function toggleFullScreen() {
+    if (isFullScreen)
+        exitFullScreen();
+    else
+        enterFullScreen();
 }
 
 function fullScreenChanged() {
@@ -41,10 +55,10 @@ function markTime() {
 }
 
 function hideOrReveal() {
-    if (Date.now() - lastActivity > hideControlsMS) {
+    if (isFullScreen && Date.now() - lastActivity > hideControlsMS) {
         hideControls();
-        if (isFullScreen)
-            hideCursor();
+        hideCursor();
+        return;
     }
     else {
         showControls();
@@ -67,21 +81,28 @@ function showCursor() {
 }
 
 function hideControls() {
-    if (controlsVisible)
+    if (controlsVisible) {
         fullScreenButton.classList.add("disabled");
+        controls.classList.add("disabled");
+        menu.classList.add("disabled");
+        sidebar.classList.add("disabled");
+    }
 
     controlsVisible = false;
 }
 
 function showControls() {
-    if (!controlsVisible)
+    if (!controlsVisible) {
         fullScreenButton.classList.remove("disabled");
+        controls.classList.remove("disabled");
+        menu.classList.remove("disabled");
+        sidebar.classList.remove("disabled");
+    }
 
     controlsVisible = true;
 }
 
 function start() {
-    showControls();
     document.addEventListener("mousemove", markTime);
     hideControlsInterval = setInterval(hideOrReveal, 200);
 }
@@ -90,7 +111,9 @@ function stop() {
     clearInterval(hideControlsInterval);
     document.removeEventListener("mousemove", markTime);
     showCursor();
-    hideControls();
+    showControls();
+    if (isFullScreen)
+        exitFullScreen();
 }
 
 startButton.addEventListener("click", start);
@@ -104,4 +127,4 @@ else if (document["webkitFullscreenEnabled"])
 else if (document["mozFullScreenEnabled"])
     document.addEventListener("mozfullscreenchange", fullScreenChanged);
 
-fullScreenButton.addEventListener("click", changeFullScreen);
+fullScreenButton.addEventListener("click", toggleFullScreen);
