@@ -3,7 +3,7 @@ import { Query } from "./query";
 const fullScreenButton = Query(".btn-fullscreen");
 const startButton = Query(".btn-start");
 const stopButton = Query(".btn-stop");
-const playingView = document.body.parentElement; //Query<HTMLElement>(".view.playing");
+const playingView = document.body.parentElement;
 const controls = Query(".controls");
 const menu = Query(".menu");
 const sidebar = Query(".sidebar");
