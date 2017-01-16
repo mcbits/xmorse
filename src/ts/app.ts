@@ -7,6 +7,7 @@ require("file-loader?name=CNAME!../CNAME");
 require("file-loader?name=google90d264b1a2a461c8.html!../google90d264b1a2a461c8.html");
 require("../less/site.less");
 
+import * as Views from "./views"; Views;
 import * as Audio from "./audiocontext"; Audio;
 import * as VoicePlayer from "./voiceplayer"; VoicePlayer;
 import * as TonePlayer from "./toneplayer"; TonePlayer;

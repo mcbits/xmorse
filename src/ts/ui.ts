@@ -3,8 +3,7 @@ import {
     WPM, VOLUME, CHAR_SPACING, FLASHING_ENABLED, PITCH, LETTERS_ENABLED, NUMBERS_ENABLED,
     MANUAL_VOICE_ENABLED,
     SYMBOLS_ENABLED, LETTER, PATTERN_COMPLETE, VOICE_ENABLED, PAUSE, WATCH, START, STOP,
-    OUTPUT, STORY, TEXT_BUFFER, TONE_OFF, TONE_ON,
-    VIEW_HOME, VIEW_OPTIONS, VIEW_PLAYING, VIEW_STORIES, VIEW_TEXT
+    OUTPUT, STORY, TEXT_BUFFER, TONE_OFF, TONE_ON
 } from "./events";
 import { CharacterInfo } from "./morsetable";
 import { Query, QueryId, QueryAll } from "./query";
@@ -51,27 +50,6 @@ const defaults = {
     volume: 0.40,
     wpm: 15
 };
-
-function view(selector: string, menuItem: Element) {
-    const views = QueryAll(".view");
-
-    for (let i = 0; i < views.length; ++i) {
-        const view = views[i];
-        if (!view.classList.contains("disabled"))
-            view.classList.add("disabled");
-    }
-
-    const viewToShow = Query(selector);
-    viewToShow.classList.remove("disabled");
-
-    // Highlight the menu item
-    const controls = QueryAll(".menu .btn");
-    for (let i = 0; i < controls.length; ++i) {
-        const control = controls[i];
-        control.classList.remove("active");
-    }
-    menuItem.classList.add("active");
-}
 
 function Adjust(name: string, value: any) {
     Notify("manual_" + name, value.toString());
@@ -240,23 +218,6 @@ Listen(TONE_ON,
 
 Listen(WATCH,
     () => location.hash = "#playing");
-
-/// Views
-
-Listen(VIEW_HOME,
-    () => view(".home", Query(".btn-home")));
-
-Listen(VIEW_OPTIONS,
-    () => view(".options", Query(".btn-options")));
-
-Listen(VIEW_PLAYING,
-    () => view(".playing", Query(".btn-playing")));
-
-Listen(VIEW_STORIES,
-    () => view(".stories", Query(".btn-stories")));
-
-Listen(VIEW_TEXT,
-    () => view(".paste", Query(".btn-paste")));
 
 document.addEventListener("DOMContentLoaded", () => {
     // // Trigger events to initialize state
