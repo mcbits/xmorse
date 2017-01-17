@@ -7,9 +7,9 @@ import { Audio, MasterGain } from "./audiocontext";
 import { CharacterInfo } from "./morsetable";
 import { UnitTime, NowPlaying } from "./timing";
 
-const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") !== -1 ? 0.05 : 0.0001;
+const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") !== -1 ? 0.05 : 0;
 const oscillatorVolume = 0.9;
-const ramp = 0.005;
+const ramp = 0.004;
 
 // Wire up audio parts.
 // Oscillator frequency will be initialized by UI.
@@ -30,24 +30,7 @@ function off() {
     Notify(TONE_OFF, null);
 }
 
-async function playTone(char: CharacterInfo, index: number): Promise<void> {
-    if (NowPlaying) {
-        const delayFactor = char.pattern.charAt(index++) === "." ? 1 : 3;
-
-        on();
-        await Sleep(UnitTime * delayFactor);
-        off();
-
-        if (index >= char.pattern.length)
-            Notify(PATTERN_COMPLETE, char);
-        else {
-            await Sleep(UnitTime);
-            await playTone(char, index);
-        }
-    }
-}
-
-export async function PlayPattern(char: CharacterInfo): Promise<void> {
+export function PlayPattern(char: CharacterInfo): void {
     if (char == null) {
         console.log("char was null!");
         Notify(PATTERN_COMPLETE, null);
@@ -55,7 +38,18 @@ export async function PlayPattern(char: CharacterInfo): Promise<void> {
     else {
         Notify(LETTER, char.pattern);
 
-        await playTone(char, 0);
+        let pos = 0;
+
+        for (let i = 0; i < char.pattern.length; ++i) {
+            const toneDuration = char.pattern[i] === "." ? 1 : 3;
+            setTimeout(on, pos);
+            pos += UnitTime * toneDuration;
+            setTimeout(off, pos);
+
+            pos += UnitTime;
+        }
+
+        setTimeout(() => Notify(PATTERN_COMPLETE, char), pos - UnitTime);
     }
 }
 

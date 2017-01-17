@@ -45,7 +45,7 @@ function updateVolume(value: number) {
 async function startPlaying() {
     if (!NowPlaying) {
         Notify(NOW_PLAYING, true);
-        await Sleep(2500);
+        await Sleep(500);
         await playNextPattern();
     }
 }
