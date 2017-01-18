@@ -30,7 +30,6 @@ body {
     @media (min-width: 1024px) { font-size: 17px; }
     @media (min-width: 1280px) { font-size: 18px; }
     @media (min-width: 1600px) { font-size: 19px; }
-    @media (min-width: 1920px) { font-size: 20px; }
 }
 
 a, a:visited, a:active {
@@ -222,6 +221,7 @@ nav.menu {
 
 .instructions {
     margin: @size-l auto;
+    font-size: 1.1em;
 
     @media (min-width: 0) {
         border-spacing: 1rem;
@@ -321,18 +321,19 @@ nav.menu {
     }
 
     .sections {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 0 -1rem;
+
+        @media (min-width: 769px){
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -1rem;
+        }        
 
         section {
-            flex: 1 0 300px;
+            flex: 1 0 320px;
             margin: 0 1rem;
         }
 
         .story-previews {
-            padding: 0 @size-m;
-
             a {
                 text-decoration: none;
                 font-weight: bold;
@@ -498,7 +499,7 @@ nav.menu {
     max-height: 1000px;
     font-family: monospace;
     background: linear-gradient(#f1f1f1, #dedede);
-    color: #7d6134;
+    color: #6d6134;
     flex: 1;
     overflow-wrap: break-word;
     overflow-y: hidden;
