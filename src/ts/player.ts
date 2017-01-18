@@ -21,8 +21,9 @@ async function playNextPattern(): Promise<void> {
             if (nextCharacter[0] !== nextCharacter[1].name) {
                 Notify(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
 
-                // The 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
-                await Sleep(UnitTime * CharSpacing * (7 / 3));
+                // A 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
+                // But we've already waited 1 character space, so subtract 3/3 from that.
+                await Sleep(UnitTime * CharSpacing * (4 / 3));
             }
 
             const currentCharacter = nextCharacter[1];
@@ -33,8 +34,6 @@ async function playNextPattern(): Promise<void> {
         }
         else
             Notify(PATTERN_COMPLETE, null);
-
-        await Sleep(UnitTime * CharSpacing);
     }
 }
 
