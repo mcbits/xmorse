@@ -1,15 +1,15 @@
-export function Load(url: string, responseType: string): Promise<any> {
-    return new Promise<any>(function (resolve, reject) {
-        const request = new XMLHttpRequest();
-        request.responseType = responseType;
-        request.open("GET", url);
-        request.onload = () => {
-            if (request.status === 200)
-                resolve(request.response);
-            else
-                reject(Error("There was a problem downloading the data: " + request));
-        };
-        request.onerror = () => reject(Error("There was a problem downloading the data: " + request));
-        request.send();
-    });
+namespace Xhr {
+	export function Load<T>(url: string, responseType: string, success: (_: T) => void): void {
+		const request = new XMLHttpRequest();
+		request.responseType = responseType;
+		request.onload = () => {
+			if (request.status === 200)
+				success(request.response);
+			else
+				console.log("Sever request failed: ", request);
+		};
+		request.onerror = () => { console.log("Server request failed: ", request); };
+		request.open("GET", url);
+		request.send();
+	}
 }

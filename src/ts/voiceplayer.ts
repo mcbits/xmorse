@@ -1,85 +1,81 @@
-import { CharacterInfo } from "./morsetable";
-import { Listen, Notify, VOICE_DONE, VOICE_ENABLED, VOICE_LOADED } from "./events";
-import { Audio, MasterGain } from "./audiocontext";
-import { NowPlaying } from "./timing";
-import { Load } from "./xhr";
+/// <reference path="morsetable.ts"/>
+/// <reference path="events.ts"/>
+/// <reference path="audiocontext.ts"/>
+/// <reference path="timing.ts"/>
+/// <reference path="xhr.ts"/>
 
-// Wire up audio
-const voiceGain = Audio.createGain();
-voiceGain.gain.value = 0.85;
-voiceGain.connect(MasterGain);
+namespace VoicePlayer {
+	// For caching audio files as they're loaded
+	const audioBuffers: { [char: string]: AudioBuffer } = {};
 
-const audioBuffers: { [char: string]: AudioBuffer } = {};
+	// Wire up audio
+	const voiceGain = AudioCtx.createGain();
+	voiceGain.gain.value = 0.85;
+	voiceGain.connect(MasterGain);
 
-let voiceEnabled = true;
-let loading = <string[]>[];
-let loaded = <string[]>[];
-let playWhenDone = false;
+	let voiceEnabled = false;
+	let loading: { [_: string]: boolean } = {};
+	let loaded: { [_: string]: boolean } = {};
+	let playWhenDone = false;
 
-async function LoadVoice(char: CharacterInfo, playImmediately: boolean): Promise<void> {
-    playWhenDone = playImmediately;
+	function voiceLoaded(char: Morse.Char): void {
+		const play = playWhenDone;
+		playWhenDone = false;
 
-    if (loaded.indexOf(char.name) > -1) {
-        Notify(VOICE_LOADED, char);
-        return;
-    }
+		if (play)
+			PlayVoice(char);
+	}
 
-    const response = await Load("/audio/" + char.fileName, "arraybuffer");
+	function decodeResponse(char: Morse.Char, callback: (_: Morse.Char) => void): (_: ArrayBuffer) => void {
+		return function (response: ArrayBuffer): void {
+			AudioCtx.decodeAudioData(
+				response,
+				function (buffer: AudioBuffer) {
+					audioBuffers[char.name] = buffer;
+					loading[char.name] = false;
+					loaded[char.name] = true;
 
-    Audio.decodeAudioData(
-        response,
-        function (buffer: AudioBuffer) {
-            audioBuffers[char.name] = buffer;
+					callback(char);
+				},
+				(err: DOMException) => console.log("Error loading audio source: ", err));
+		};
+	}
 
-            // Remove character from loading list
-            const loadingIndex = loading.indexOf(char.name);
-            if (loadingIndex > -1)
-                loading.splice(loadingIndex, 1);
+	function loadVoice(char: Morse.Char): void {
+		if (loaded[char.name])
+			voiceLoaded(char);
+		else {
+			loading[char.name] = true;
+			Xhr.Load("/snd/" + char.fileName, "arraybuffer", decodeResponse(char, voiceLoaded));
+		}
+	}
 
-            // Add character to loaded list
-            if (loaded.indexOf(char.name) < 0)
-                loaded.push(char.name);
+	export function PreloadVoice(char: Morse.Char): void {
+		if (voiceEnabled && !loaded[char.name] && loading[char.name])
+			loadVoice(char);
+	}
 
-            Notify(VOICE_LOADED, char);
-        },
-        (err: DOMException) => console.log("Error loading audio source: ", err));
+	export function PlayVoice(char: Morse.Char): void {
+		if (!Timing.NowPlaying)
+			return;
+
+		if (!voiceEnabled)
+			Notify(VOICE_DONE, char);
+		else if (loading[char.name])
+			playWhenDone = true;
+		else if (!loaded[char.name]) {
+			playWhenDone = true;
+			loadVoice(char);
+		}
+		else {
+			const buffer = audioBuffers[char.name];
+			const audioSource = AudioCtx.createBufferSource();
+			audioSource.addEventListener("ended", () => Notify(VOICE_DONE, char));
+			audioSource.buffer = buffer;
+			audioSource.connect(voiceGain);
+			audioSource.start(0);
+		}
+	}
+
+	Listen(SET_VOICE, (value: boolean) => voiceEnabled = value);
 }
-
-export function PreloadVoice(char: CharacterInfo) {
-    if (voiceEnabled && loaded.indexOf(char.name) < 0 && loading.indexOf(char.name) < 0) {
-        loading.push(char.name);
-        LoadVoice(char, false);
-    }
-}
-
-export async function PlayVoice(char: CharacterInfo): Promise<void> {
-    if (!NowPlaying)
-        return;
-
-    if (!voiceEnabled) {
-        document.dispatchEvent(new Event(VOICE_DONE));
-        return;
-    }
-
-    if (loading.indexOf(char.name) > -1) {
-        playWhenDone = true;
-    }
-    else if (loaded.indexOf(char.name) < 0) {
-        await LoadVoice(char, true);
-    }
-    else {
-        const buffer = audioBuffers[char.name];
-        const audioSource = Audio.createBufferSource();
-        audioSource.addEventListener("ended", () => document.dispatchEvent(new Event(VOICE_DONE)));
-        audioSource.buffer = buffer;
-        audioSource.connect(voiceGain);
-        audioSource.start(0);
-    }
-}
-
-Listen(VOICE_ENABLED, (value: boolean) => voiceEnabled = value);
-Listen(VOICE_LOADED, (value: CharacterInfo) => {
-    if (playWhenDone)
-        PlayVoice(value);
-    playWhenDone = false;
-});

@@ -1,56 +1,57 @@
-import {
-    Notify, Listen,
-    LETTER, PATTERN_COMPLETE, PITCH, TONE_OFF, TONE_ON
-} from "./events";
-import { Sleep } from "./sleep";
-import { Audio, MasterGain } from "./audiocontext";
-import { CharacterInfo } from "./morsetable";
-import { UnitTime, NowPlaying } from "./timing";
+/// <reference path="events.ts"/>
+/// <reference path="audiocontext.ts"/>
+/// <reference path="morsetable.ts"/>
+/// <reference path="timing.ts"/>
 
-const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") !== -1 ? 0.05 : 0;
-const oscillatorVolume = 0.9;
-const ramp = 0.004;
+namespace TonePlayer {
+	let UnitTime = Timing.UnitTime;
 
-// Wire up audio parts.
-// Oscillator frequency will be initialized by UI.
-const oscillator = Audio.createOscillator();
-const oscillatorGain = Audio.createGain();
-oscillatorGain.gain.setValueAtTime(0, Audio.currentTime);
-oscillator.connect(oscillatorGain);
-oscillatorGain.connect(MasterGain);
-oscillator.start(0);
+	const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") !== -1 ? 0.05 : 0;
+	const oscillatorVolume = 0.9;
+	const ramp = 0.004;
 
-function on() {
-    oscillatorGain.gain.setTargetAtTime(oscillatorVolume, Audio.currentTime + firefoxAntiClickDelay, ramp);
-    Notify(TONE_ON, null);
+	// Wire up audio parts.
+	// Oscillator frequency will be initialized by UI.
+	const oscillator = AudioCtx.createOscillator();
+	const oscillatorGain = AudioCtx.createGain();
+	oscillatorGain.gain.setValueAtTime(0, AudioCtx.currentTime);
+	oscillator.connect(oscillatorGain);
+	oscillatorGain.connect(MasterGain);
+	oscillator.start(0);
+
+	function on() {
+		oscillatorGain.gain.setTargetAtTime(oscillatorVolume, AudioCtx.currentTime + firefoxAntiClickDelay, ramp);
+		Notify(OSC_ON, null);
+	}
+
+	function off() {
+		oscillatorGain.gain.setTargetAtTime(0, AudioCtx.currentTime + firefoxAntiClickDelay, ramp);
+		Notify(OSC_OFF, null);
+	}
+
+	export function PlayPattern(char: Morse.Char): void {
+		if (char == null) {
+			Notify(PATTERN_START, " ");
+			Notify(PATTERN_STOP, null);
+		}
+		else {
+			Notify(PATTERN_START, char.pattern);
+			Notify(LETTER, char.pattern);
+
+			let pos = 0;
+
+			for (let i = 0; i < char.pattern.length; ++i) {
+				const toneDuration = char.pattern[i] === "." ? 1 : 3;
+				setTimeout(on, pos);
+				pos += UnitTime * toneDuration;
+				setTimeout(off, pos);
+
+				pos += UnitTime;
+			}
+
+			setTimeout(() => Notify(PATTERN_STOP, char), pos - UnitTime);
+		}
+	}
+
+	Listen(SET_PITCH, (value: number) => oscillator.frequency.value = value);
 }
-
-function off() {
-    oscillatorGain.gain.setTargetAtTime(0, Audio.currentTime + firefoxAntiClickDelay, ramp);
-    Notify(TONE_OFF, null);
-}
-
-export function PlayPattern(char: CharacterInfo): void {
-    if (char == null) {
-        console.log("char was null!");
-        Notify(PATTERN_COMPLETE, null);
-    }
-    else {
-        Notify(LETTER, char.pattern);
-
-        let pos = 0;
-
-        for (let i = 0; i < char.pattern.length; ++i) {
-            const toneDuration = char.pattern[i] === "." ? 1 : 3;
-            setTimeout(on, pos);
-            pos += UnitTime * toneDuration;
-            setTimeout(off, pos);
-
-            pos += UnitTime;
-        }
-
-        setTimeout(() => Notify(PATTERN_COMPLETE, char), pos - UnitTime);
-    }
-}
-
-Listen(PITCH, (value: number) => oscillator.frequency.value = value);

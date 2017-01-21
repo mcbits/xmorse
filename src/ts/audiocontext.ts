@@ -1,5 +1,5 @@
-export const Audio: AudioContext = new (AudioContext || window["webkitAudioContext"])();
+const AudioCtx: AudioContext = new (AudioContext || window["webkitAudioContext"])();
 
-export const MasterGain = Audio.createGain();
+const MasterGain = AudioCtx.createGain();
 MasterGain.gain.value = 0.5;
-MasterGain.connect(Audio.destination);
+MasterGain.connect(AudioCtx.destination);

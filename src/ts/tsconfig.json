@@ -1,9 +1,27 @@
 {
-    "compilerOptions": {
-        "lib": ["dom", "es5"],
-        "target": "es5",
-        "module": "commonjs",
-        "sourceMap": true,
-        "alwaysStrict": true
-    }
+	"files": [
+        "app.ts",
+        "audiocontext.ts",
+        "events.ts",
+        "fullscreen.ts",
+        "morsetable.ts",
+        "player.ts",
+        "query.ts",
+        "routing.ts",
+        "storage.ts",
+        "text.ts",
+        "timing.ts",
+        "toneplayer.ts",
+        "ui.ts",
+        "views.ts",
+        "voiceplayer.ts",
+        "xhr.ts"
+    ],
+	"compilerOptions": {
+		"target": "es5",
+		"module": "none",
+		"sourceMap": true,
+		"alwaysStrict": false,
+        "outFile": "app.js"
+	}
 }

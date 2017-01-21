@@ -1,80 +1,79 @@
-import {
-    Notify, Listen,
-    PATTERN_COMPLETE, VOLUME, LETTER, NOW_PLAYING,
-    VOICE_DONE, PAUSE, START, STOP, OUTPUT
-} from "./events";
-import { Sleep } from "./sleep";
-import { Audio, MasterGain } from "./audiocontext";
-import { CharacterInfo } from "./morsetable";
-import { PlayPattern } from "./toneplayer";
-import { PreloadVoice, PlayVoice } from "./voiceplayer";
-import { Next } from "./text";
-import { UnitTime, CharSpacing, NowPlaying } from "./timing";
+/// <reference path="events.ts"/>
+/// <reference path="audiocontext.ts"/>
+/// <reference path="morsetable.ts"/>
+/// <reference path="toneplayer.ts"/>
+/// <reference path="voiceplayer.ts"/>
+/// <reference path="text.ts"/>
+/// <reference path="timing.ts"/>
 
-async function playNextPattern(): Promise<void> {
-    if (NowPlaying) {
-        // Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
-        const nextCharacter = Next();
+namespace Player {
+	let NowPlaying = Timing.NowPlaying;
+	let UnitTime = Timing.UnitTime;
+	let CharSpacing = Timing.CharSpacing;
 
-        if (nextCharacter[1]) {
-            // If there is unplayable text, send it to the output buffer and delay for one word-break.
-            if (nextCharacter[0] !== nextCharacter[1].name) {
-                Notify(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
+	function playNextPattern(): void {
+		if (NowPlaying) {
+			// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
+			const nextCharacter = TextLoader.Next();
 
-                // A 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
-                // But we've already waited 1 character space, so subtract 3/3 from that.
-                await Sleep(UnitTime * CharSpacing * (4 / 3));
-            }
+			if (nextCharacter[1]) {
+				let sleepTime = 0;
 
-            const currentCharacter = nextCharacter[1];
+				// If there is unplayable text, send it to the output buffer and delay for one word-break.
+				if (nextCharacter[0] !== nextCharacter[1].name) {
+					Notify(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
 
-            PreloadVoice(currentCharacter);
+					// A 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
+					sleepTime = UnitTime * CharSpacing * (7 / 3);
+				}
 
-            await PlayPattern(currentCharacter);
-        }
-        else
-            Notify(PATTERN_COMPLETE, null);
-    }
+				setTimeout(() => {
+					const currentCharacter = nextCharacter[1];
+					VoicePlayer.PreloadVoice(currentCharacter);
+					TonePlayer.PlayPattern(currentCharacter);
+				}, sleepTime);
+			}
+			else {
+				Notify(PATTERN_START, "");
+				Notify(PATTERN_STOP, null);
+			}
+		}
+	}
+
+	function updateVolume(value: number): void {
+		MasterGain.gain.setTargetAtTime(value, AudioCtx.currentTime, 0.01);
+	}
+
+	function startPlaying(): void {
+		if (!NowPlaying) {
+			Notify(NOW_PLAYING, true);
+			setTimeout(playNextPattern, 500);
+		}
+	}
+
+	function stopPlaying(): void {
+		Notify(NOW_PLAYING, false);
+	}
+
+	function patternComplete(char: Morse.Char): void {
+		if (NowPlaying) {
+			if (char == null) {
+				setTimeout(playNextPattern, UnitTime * CharSpacing);
+			}
+			else {
+				Notify(LETTER, char.name);
+
+				// playNextPattern() will be called by VOICE_DONE (which is
+				// triggered whether the voice is currently enabled or not).
+				setTimeout(() => VoicePlayer.PlayVoice(char), UnitTime * CharSpacing);
+			}
+		}
+	}
+
+	Listen(VOICE_DONE, playNextPattern);
+	Listen(PAUSE, stopPlaying);
+	Listen(STOP, stopPlaying);
+	Listen(START, startPlaying);
+	Listen(PATTERN_STOP, patternComplete);
+	Listen(SET_VOLUME, updateVolume);
 }
-
-function updateVolume(value: number) {
-    MasterGain.gain.setTargetAtTime(value, Audio.currentTime, 0.01);
-}
-
-async function startPlaying() {
-    if (!NowPlaying) {
-        Notify(NOW_PLAYING, true);
-        await Sleep(500);
-        await playNextPattern();
-    }
-}
-
-function stopPlaying() {
-    Notify(NOW_PLAYING, false);
-}
-
-async function patternComplete(char: CharacterInfo) {
-    if (NowPlaying) {
-        if (char == null) {
-            await Sleep(UnitTime * CharSpacing);
-
-            playNextPattern();
-        }
-        else {
-            Notify(LETTER, char.name);
-
-            await Sleep(UnitTime * CharSpacing);
-
-            // playNextPattern() will be called by VOICE_DONE (which is
-            // triggered whether the voice is currently enabled or not).
-            await PlayVoice(char);
-        }
-    }
-}
-
-Listen(VOICE_DONE, playNextPattern);
-Listen(PAUSE, stopPlaying);
-Listen(STOP, stopPlaying);
-Listen(START, startPlaying);
-Listen(PATTERN_COMPLETE, patternComplete);
-Listen(VOLUME, updateVolume);
