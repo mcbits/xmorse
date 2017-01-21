@@ -7,12 +7,10 @@
 /// <reference path="timing.ts"/>
 
 namespace Player {
-	let NowPlaying = Timing.NowPlaying;
-	let UnitTime = Timing.UnitTime;
-	let CharSpacing = Timing.CharSpacing;
+	const T = Timing;
 
 	function playNextPattern(): void {
-		if (NowPlaying) {
+		if (T.NowPlaying) {
 			// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
 			const nextCharacter = TextLoader.Next();
 
@@ -24,7 +22,7 @@ namespace Player {
 					Notify(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
 
 					// A 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
-					sleepTime = UnitTime * CharSpacing * (7 / 3);
+					sleepTime = T.UnitTime * T.CharSpacing * (7 / 3);
 				}
 
 				setTimeout(() => {
@@ -45,7 +43,7 @@ namespace Player {
 	}
 
 	function startPlaying(): void {
-		if (!NowPlaying) {
+		if (!T.NowPlaying) {
 			Notify(NOW_PLAYING, true);
 			setTimeout(playNextPattern, 500);
 		}
@@ -56,16 +54,16 @@ namespace Player {
 	}
 
 	function patternComplete(char: Morse.Char): void {
-		if (NowPlaying) {
+		if (T.NowPlaying) {
 			if (char == null) {
-				setTimeout(playNextPattern, UnitTime * CharSpacing);
+				setTimeout(playNextPattern, T.UnitTime * T.CharSpacing);
 			}
 			else {
 				Notify(LETTER, char.name);
 
 				// playNextPattern() will be called by VOICE_DONE (which is
 				// triggered whether the voice is currently enabled or not).
-				setTimeout(() => VoicePlayer.PlayVoice(char), UnitTime * CharSpacing);
+				setTimeout(() => VoicePlayer.PlayVoice(char), T.UnitTime * T.CharSpacing);
 			}
 		}
 	}

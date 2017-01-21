@@ -4,7 +4,7 @@
 /// <reference path="timing.ts"/>
 
 namespace TonePlayer {
-	let UnitTime = Timing.UnitTime;
+	let T = Timing;
 
 	const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") !== -1 ? 0.05 : 0;
 	const oscillatorVolume = 0.9;
@@ -43,13 +43,13 @@ namespace TonePlayer {
 			for (let i = 0; i < char.pattern.length; ++i) {
 				const toneDuration = char.pattern[i] === "." ? 1 : 3;
 				setTimeout(on, pos);
-				pos += UnitTime * toneDuration;
+				pos += T.UnitTime * toneDuration;
 				setTimeout(off, pos);
 
-				pos += UnitTime;
+				pos += T.UnitTime;
 			}
 
-			setTimeout(() => Notify(PATTERN_STOP, char), pos - UnitTime);
+			setTimeout(() => Notify(PATTERN_STOP, char), pos - T.UnitTime);
 		}
 	}
 
