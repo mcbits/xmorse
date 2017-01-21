@@ -18,7 +18,7 @@ gulp.task("compile-ts", () =>
 		.pipe(gulp.dest("dist/js")));
 
 gulp.task("compile-less", () =>
-	gulp.src("less/*.less")
+	gulp.src("less/**/*.less")
 		.pipe(less({ paths: ["less/site.less"] }))
 		.pipe(gulp.dest("dist/css")));
 
@@ -63,4 +63,6 @@ gulp.task("build", ["compile-ts", "compile-less", "copy-all"]);
 gulp.task("minify", ["minify-js", "minify-css"]);
 
 gulp.task("default", ["build"], () =>
-	gulp.watch("ts/*.ts", ["compile-ts"]));
+	gulp.watch("ts/**/*.ts", ["compile-ts"]))
+	.watch("less/**/*.less", ["compile-less"])
+	.watch("*.html", ["copy-html"]);

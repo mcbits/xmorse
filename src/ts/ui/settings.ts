@@ -1,17 +1,6 @@
-/// <reference path="events.ts"/>
-/// <reference path="morsetable.ts"/>
-/// <reference path="query.ts"/>
+/// <reference path="../events.ts"/>
 
-namespace UI {
-	// Page elements
-	const home = Query<HTMLElement>(".btn-home");
-	const allStarts = QueryAll<HTMLElement>(".btn-start");
-	const startBtn = Query<HTMLButtonElement>(".btn-start");
-	const pause = Query<HTMLButtonElement>(".btn-pause");
-	const stopBtn = Query<HTMLButtonElement>(".btn-stop");
-	const letterElement = Query(".letter");
-	const outputBuffer = Query(".outputBuffer");
-	const storyLinks = QueryAll(".story a");
+namespace Settings {
 	const resetSettingsButton = QueryId("resetSettings");
 
 	// Settings text labels
@@ -21,7 +10,7 @@ namespace UI {
 	const charSpacingText = Query<HTMLInputElement>(".charSpacingText");
 
 	// Settings inputs
-	const userSet = {
+	export const userSet = {
 		volume: QueryId<HTMLInputElement>("volume"),
 		charWPM: QueryId<HTMLInputElement>("charWPM"),
 		pitch: QueryId<HTMLInputElement>("pitch"),
@@ -81,8 +70,6 @@ namespace UI {
 	userSet.symbolsEnabled.addEventListener("change",
 		() => Adjust(SET_SYMBOLS, userSet.symbolsEnabled.checked));
 
-	///
-
 	resetSettingsButton.addEventListener("click",
 		() => {
 			Adjust(SET_SPACING, defaults.charSpacing);
@@ -95,51 +82,6 @@ namespace UI {
 			Adjust(SET_VOLUME, defaults.volume);
 			Adjust(SET_WPM, defaults.wpm);
 		});
-
-	///
-
-	pause.addEventListener("click",
-		() => Notify(PAUSE, null));
-
-	for (let i = 0; i < allStarts.length; ++i) {
-		allStarts[i].addEventListener("click",
-			() => Notify(START, null));
-	}
-
-	stopBtn.addEventListener("click",
-		() => Notify(STOP, null));
-
-	for (let i = 0; i < storyLinks.length; ++i) {
-		const storyLink = storyLinks[i];
-		storyLink.addEventListener("click", (evt: MouseEvent) => {
-			evt.preventDefault();
-			const anchor = <HTMLAnchorElement>evt.target;
-			const href = anchor.href;
-			Notify(STORY, href);
-		});
-	}
-
-	Listen(PAUSE, () => {
-		startBtn.disabled = false;
-		pause.disabled = true;
-		stopBtn.disabled = true;
-	});
-
-	Listen(START, () => {
-		Notify(WATCH, null);
-		startBtn.disabled = true;
-		pause.disabled = false;
-		stopBtn.disabled = false;
-	});
-
-	Listen(STOP, () => {
-		location.hash = "";
-		outputBuffer.innerHTML = "";
-		letterElement.innerHTML = "";
-		startBtn.disabled = false;
-		pause.disabled = true;
-		stopBtn.disabled = true;
-	});
 
 	// Update UI in response to settings changes
 
@@ -184,56 +126,6 @@ namespace UI {
 			charWPMText.value = value.toString();
 			userSet.charWPM.value = value.toString();
 		});
-
-	///
-
-	Listen(LETTER,
-		(value: string) => letterElement.innerHTML = value);
-
-	Listen(OUTPUT,
-		(value: string) => {
-			outputBuffer.innerHTML += value;
-			outputBuffer.scrollTop = outputBuffer.scrollHeight;
-		});
-
-	Listen(PATTERN_START,
-		(pattern: string) => {
-			const patternEl = document.querySelector(".view.playing .pattern");
-
-			for (let i = 0; i < pattern.length; ++i) {
-				const el = document.createElement("span");
-				el.classList.add("element");
-
-				if (pattern[i] === ".")
-					el.classList.add("dit");
-				else if (pattern[i] === "-")
-					el.classList.add("dah");
-				else if (pattern[i] === "")
-					el.classList.add("charSpace");
-				else if (pattern[i] === " ")
-					el.classList.add("wordSpace");
-
-				patternEl.appendChild(el);
-			}
-		});
-
-	Listen(PATTERN_STOP,
-		(char: Morse.Char) => {
-			outputBuffer.innerHTML += char == null ? " " : char.name;
-			outputBuffer.scrollTop = outputBuffer.scrollHeight;
-		});
-
-	Listen(OSC_OFF,
-		() => Query("body").classList.remove("toneOn"));
-
-	Listen(OSC_ON,
-		() => {
-			if (userSet.flashingEnabled.checked)
-				Query("body").classList.add("toneOn");
-		});
-
-	Listen(WATCH,
-		() => location.hash = "#playing");
 
 	document.addEventListener("DOMContentLoaded", () => {
 		// // Trigger events to initialize state

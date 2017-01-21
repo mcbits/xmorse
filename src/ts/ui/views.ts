@@ -1,5 +1,5 @@
-/// <reference path="events.ts"/>
-/// <reference path="query.ts"/>
+/// <reference path="../events.ts"/>
+/// <reference path="../query.ts"/>
 
 namespace Views {
 	function view(selector: string, menuItem: Element) {
