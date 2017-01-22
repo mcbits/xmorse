@@ -46,7 +46,7 @@ namespace VoicePlayer {
 			voiceLoaded(char);
 		else {
 			loading[char.name] = true;
-			Xhr.Load("/snd/" + char.fileName, "arraybuffer", decodeResponse(char, voiceLoaded));
+			Xhr.Load("/snd/" + Morse.fileName(char), "arraybuffer", decodeResponse(char, voiceLoaded));
 		}
 	}
 
