@@ -422,7 +422,12 @@ nav.menu {
 		text-align: right;
 		overflow: hidden;
 		white-space: nowrap;
-		font-size: 4px;
+		padding-bottom: 1rem;
+
+		font-size: 3px;
+		@media (min-width: 640px) {
+			font-size: 4px;
+		}
 	}
 
 	.pattern {
@@ -471,6 +476,10 @@ nav.menu {
 	@media (min-width: 1024px) { font-size: 70px; }
 	@media (min-width: 1281px) { font-size: 100px; }
 	@media (min-width: 1600px) { font-size: 120px; }
+}
+
+.letter:empty::before {
+	content: '\200b';
 }
 
 .sidebar {
@@ -544,12 +553,19 @@ nav.menu {
 	overflow-y: hidden;
 	padding: @size-s 1rem;
 	white-space: pre-wrap;
-	font-size: 1.8rem;
+	font-size: 1.5rem;
 	letter-spacing: 3px;
 	margin-top: @size-m;
 	word-break: break-word;
-}
 
+	@media (min-width: 1600px) {
+		font-size: 2rem;
+	}
+
+	@media (min-width: 1920px) {
+		font-size: 2.3rem;
+	}
+}
 
 .options table {
 	width: 100%;
