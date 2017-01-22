@@ -62,7 +62,8 @@ gulp.task("build", ["compile-ts", "compile-less", "copy-all"]);
 
 gulp.task("minify", ["minify-js", "minify-css"]);
 
-gulp.task("default", ["build"], () =>
-	gulp.watch("ts/**/*.ts", ["compile-ts"]))
-	.watch("less/**/*.less", ["compile-less"])
-	.watch("*.html", ["copy-html"]);
+gulp.task("default", ["build"], () => {
+	gulp.watch("ts/**/*.ts", ["compile-ts"]);
+	gulp.watch("less/**/*.less", ["compile-less"]);
+	gulp.watch("*.html", ["copy-html"]);
+});
