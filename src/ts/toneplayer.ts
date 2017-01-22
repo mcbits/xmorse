@@ -30,27 +30,21 @@ namespace TonePlayer {
 	}
 
 	export function PlayPattern(char: Morse.Char): void {
-		if (char == null) {
-			Notify(PATTERN_START, " ");
-			Notify(PATTERN_STOP, null);
+		Notify(PATTERN_START, char.pattern);
+		Notify(LETTER, "");
+
+		let pos = 0;
+
+		for (let i = 0; i < char.pattern.length; ++i) {
+			const toneDuration = char.pattern[i] === "." ? 1 : 3;
+			setTimeout(on, pos);
+			pos += T.UnitTime * toneDuration;
+			setTimeout(off, pos);
+
+			pos += T.UnitTime;
 		}
-		else {
-			Notify(PATTERN_START, char.pattern);
-			Notify(LETTER, char.pattern);
 
-			let pos = 0;
-
-			for (let i = 0; i < char.pattern.length; ++i) {
-				const toneDuration = char.pattern[i] === "." ? 1 : 3;
-				setTimeout(on, pos);
-				pos += T.UnitTime * toneDuration;
-				setTimeout(off, pos);
-
-				pos += T.UnitTime;
-			}
-
-			setTimeout(() => Notify(PATTERN_STOP, char), pos - T.UnitTime);
-		}
+		setTimeout(() => Notify(PATTERN_STOP, char), pos - T.UnitTime);
 	}
 
 	Listen(SET_PITCH, (value: number) => oscillator.frequency.value = value);

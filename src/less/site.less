@@ -269,6 +269,7 @@ nav.menu {
 
 	@media (min-width: 1024px) {
 		height: 100%;
+		overflow: hidden;
 	}
 }
 
@@ -422,45 +423,35 @@ nav.menu {
 		overflow: hidden;
 		white-space: nowrap;
 		font-size: 4px;
-
-		@media (min-width: 768px) and (max-width: 1023px) {
-			font-size: 8px;
-		}
-
-		@media (min-width: 1280px) {
-			font-size: 8px;
-		}
-
 	}
 
 	.pattern {
 		height: 4em;
-		background: #ffffff;
 		float: right;
 
 		.element {
 			border-radius: 2em;
 			height: 4em;
 			display: inline-block;
-			margin-left: 1em;
-			margin-right: 1em;
+			margin-left: 0.25em;
+			margin-right: 0.25em;
 			
 			&.dit {
 				width: 4em;
-				background-color: #77a;
+				background-color: #119cbd;
 			}
 
 			&.dah {
 				width: 12em;
-				background-color: #77a;
+				background-color: #119cbd;
 			}
 
 			&.charSpace {
-				width: 3em;
+				width: 4em;
 			}
 
 			&.wordSpace {
-				width: 12em;
+				width: 6em;
 			}
 		}
 	}

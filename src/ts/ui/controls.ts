@@ -68,23 +68,29 @@ namespace UI {
 
 	Listen(PATTERN_START,
 		(pattern: string) => {
+			function make(className: string): HTMLElement {
+				const el = document.createElement("span");
+				el.classList.add("element");
+				el.classList.add(className);
+				return el;
+			}
+
 			const patternEl = document.querySelector(".view.playing .pattern");
 
 			for (let i = 0; i < pattern.length; ++i) {
-				const el = document.createElement("span");
-				el.classList.add("element");
+				let el: HTMLElement;
 
 				if (pattern[i] === ".")
-					el.classList.add("dit");
+					el = make("dit");
 				else if (pattern[i] === "-")
-					el.classList.add("dah");
-				else if (pattern[i] === "")
-					el.classList.add("charSpace");
+					el = make("dah");
 				else if (pattern[i] === " ")
-					el.classList.add("wordSpace");
+					el = make("wordSpace");
 
 				patternEl.appendChild(el);
 			}
+
+			patternEl.appendChild(make("charSpace"));
 		});
 
 	Listen(PATTERN_STOP,
