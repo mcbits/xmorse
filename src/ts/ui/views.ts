@@ -26,8 +26,8 @@ namespace Views {
 	Listen(VIEW_HOME,
 		() => view(".home", Query(".btn-home")));
 
-	Listen(VIEW_OPTIONS,
-		() => view(".options", Query(".btn-options")));
+	Listen(VIEW_SETTINGS,
+		() => view(".settings", Query(".btn-settings")));
 
 	Listen(VIEW_PLAYING,
 		() => view(".playing", Query(".btn-playing")));

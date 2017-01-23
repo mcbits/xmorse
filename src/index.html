@@ -27,7 +27,7 @@
 		<nav class="menu">
 			<a href="#" class="btn btn-home active">Home</a>
 			<a href="#playing" class="btn btn-playing">Playing</a>
-			<a href="#options" class="btn btn-options">Options</a>
+			<a href="#settings" class="btn btn-settings">Settings</a>
 			<a href="#stories" class="btn btn-stories">Stories</a>
 			<a href="#text" class="btn btn-paste">Text</a>
 		</nav>
@@ -42,7 +42,7 @@
 							<td><kbd class="kbd-go btn-start">Start</kbd></td><td>to play random Morse code characters.</td>
 						</tr>
 						<tr>
-							<td><a class="btn-options" href="#options">Options</a></td><td>to change playback speed, volume, pitch, and more.</td>
+							<td><a class="btn-settings" href="#settings">Settings</a></td><td>to change playback speed, volume, pitch, and more.</td>
 						</tr>
 						<tr>
 							<td><a class="btn-stories" href="#stories">Stories</a></td><td>to play a short story instead of random characters.</td>
@@ -60,6 +60,7 @@
 								<p><b>System requirements:</b> A browser that supports the Web Audio API, such as <a href="https://www.google.com/chrome/browser/index.html" target="_blank" rel="noopener noreferrer nofollow">Chrome</a>, <a href="https://www.mozilla.org/en-US/firefox/new" target="_blank" rel="noopener noreferrer nofollow">Firefox</a>, or <a href="https://www.microsoft.com/en-us/windows/microsoft-edge" target="_blank" rel="noopener noreferrer nofollow">Edge</a>.</p>
 								<p><b>Known issue:</b> A lot of mobile devices struggle with audio timing at the precision needed for Morse code, so this site is only usable up to about 8-10 WPM. I'm still looking for a solution...</p>
 							</aside>
+							<hr/>
 							<p>If you have never learned the Morse code characters, listen with the voice enabled. Try to remember the character before the voice reveals it. Once you have memorized most of the sequences, you can disable the voice. (This takes less time than you might think!)</p>
 							<p>Set the character WPM just faster than your target speed, and set the spacing just wide enough to pose a challenge. For example, if you are aiming for 18 WPM, listen to characters at 20-22 WPM.</p>
 							<p>Gradually reduce the spacing between characters until you reach your target rate.</p>
@@ -97,19 +98,19 @@
 
 			<div class="playing view disabled">
 				<article>
+					<button class="btn btn-fullscreen" title="Full screen">Full screen</button>
 					<div class="letter"></div>
 					<div class="patternWrap">
 						<div class="pattern"></div>
 					</div>
 					<div class="outputBuffer"></div>
-					<button class="btn btn-fullscreen disabled" title="Full screen">Full screen</button>
 				</article>
 			</div>
 
 			<div class="paste view disabled">
 				<article>
-					<h2>Type or paste text to play instead of random characters.</h2>
-					<textarea id="pasteText" placeholder="Paste text here" rows="12"></textarea>
+					<h2>Text to play instead of random characters</h2>
+					<textarea id="pasteText" placeholder="Type or paste text here" rows="12"></textarea>
 				</article>
 			</div>
 
@@ -271,7 +272,7 @@
 				</article>
 			</div>
 
-			<div class="options view disabled">
+			<div class="settings view disabled">
 				<article>
 					<table>
 						<tr class="control">
@@ -330,7 +331,7 @@
 						<tr class="control">
 							<th>Pitch</th>
 							<td><output for="pitch" class="pitchText"></output></td>
-							<td><input type="range" id="pitch" value="650" min="400" max="1000" /></td>
+							<td><input type="range" id="pitch" value="650" min="400" max="999" /></td>
 						</tr>
 
 						<tr class="control">

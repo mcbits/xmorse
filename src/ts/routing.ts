@@ -4,7 +4,7 @@ namespace Routing {
 	const routes = {
 		"": VIEW_HOME,
 		"#playing": VIEW_PLAYING,
-		"#options": VIEW_OPTIONS,
+		"#settings": VIEW_SETTINGS,
 		"#stories": VIEW_STORIES,
 		"#text": VIEW_TEXT
 	};

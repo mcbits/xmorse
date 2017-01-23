@@ -36,7 +36,7 @@ namespace Settings {
 	};
 
 	function Adjust(name: string, value: any) {
-		Notify("manual_" + name, value.toString());
+		Notify(name.replace(/^set_/, "ui_"), value.toString());
 		Notify(name, value);
 	}
 
@@ -128,7 +128,7 @@ namespace Settings {
 		});
 
 	document.addEventListener("DOMContentLoaded", () => {
-		// // Trigger events to initialize state
+		// Trigger events to initialize state
 		Notify(SET_VOLUME, localStorage.getItem("volume") || defaults.volume);
 		Notify(SET_WPM, localStorage.getItem("wpm") || defaults.wpm);
 		Notify(SET_SPACING, localStorage.getItem("charSpacing") || defaults.charSpacing);

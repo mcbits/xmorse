@@ -17,8 +17,6 @@ namespace FullScreen {
 	let cursorVisible = false;
 
 	function exitFullScreen() {
-		fullScreenButton.textContent = "Full screen";
-
 		if (document.exitFullscreen)
 			document.exitFullscreen();
 		else if (document["webkitExitFullscreen"])
@@ -28,8 +26,6 @@ namespace FullScreen {
 	}
 
 	function enterFullScreen() {
-		fullScreenButton.textContent = "Exit full screen";
-
 		if (document.fullscreenEnabled)
 			playingView.requestFullscreen();
 		else if (document["webkitFullscreenEnabled"])
@@ -47,6 +43,7 @@ namespace FullScreen {
 
 	function fullScreenChanged() {
 		isFullScreen = !isFullScreen;
+		fullScreenButton.textContent = isFullScreen ? "Exit full screen" : "Full screen";
 		lastActivity = Date.now();
 	}
 
@@ -116,9 +113,8 @@ namespace FullScreen {
 			exitFullScreen();
 	}
 
-	startButton.addEventListener("click", start);
-
-	stopButton.addEventListener("click", stop);
+	Listen(START, start);
+	Listen(STOP, stop);
 
 	if (document.fullscreenEnabled)
 		document.addEventListener("fullscreenchange", fullScreenChanged);

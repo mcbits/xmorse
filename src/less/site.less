@@ -1,8 +1,15 @@
 @gradient: linear-gradient(#f1f1f1, #dedede);
 @inverseGradient: linear-gradient(#d1d7da, #f1f1f1);
+@textWhite: #dfdfdf;
+@textFaded: #c2c2c2;
 @flashColor: #404860;
-@black: #2a2a2a;
-@linkBlue: #288eff;
+@black: #0c0c0c;
+@gray2: #161616;
+@gray1: #262626;
+//@linkBlue: #288eff;
+//@linkBlue: #67d9e0;
+@linkBlue: #76f0ff;
+@yellow: #a79e1e;
 @size-s: 0.6rem;
 @size-m: 1rem;
 @size-l: 2rem;
@@ -20,6 +27,7 @@ body {
 	margin: 0;
 	font-family: "Actor", Helvetica, Arial, sans-serif;
 	background-color: transparent;
+	color: @textWhite;
 	line-height: 1.45;
 	display: flex;
 	flex-direction: column;
@@ -46,7 +54,7 @@ b {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: @black;
+	background: @gray2;
 	z-index: -1;
 }
 
@@ -63,7 +71,7 @@ button:not([disabled]) {
 header {
 	flex-shrink: 0;
 	line-height: 1;
-	margin: 0;
+	margin: 0 0 0.25rem 0;
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
@@ -74,6 +82,7 @@ header {
 	}
 	@media (min-width: 1024px) {
 		flex-direction: row-reverse;
+		margin: 0;
 	}
 
 	.siteName {
@@ -130,7 +139,7 @@ nav.menu {
 	}
 
 	.btn {
-		color: @black;
+		color: @gray2;
 		text-decoration: none;
 
 		@media (min-width: 0) {
@@ -215,6 +224,8 @@ nav.menu {
 	flex: 1;
 	margin-bottom: @size-l;
 	line-height: 1.5;
+	background-color: @black;
+	color: @textWhite;
 }
 
 .columns {
@@ -242,7 +253,6 @@ nav.menu {
 
 	a {
 		text-decoration: none;
-		color: @black;
 	}
 
 	kbd, a {
@@ -251,9 +261,6 @@ nav.menu {
 		text-align: center;
 		border: 1px solid #ccc;
 		border-radius: 4px;
-		border-right-width: 2px;
-		border-bottom-width: 2px;
-		font: inherit;
 		cursor: pointer;
 	}
 }
@@ -261,7 +268,7 @@ nav.menu {
 @media (min-width: 1024px) {
 	.columns {
 		display: flex;
-		margin: 0 0 @size-m @size-m;
+		margin: 0;
 
 	}
 }
@@ -281,12 +288,16 @@ nav.menu {
 	position: relative;
 	flex: 1;
 	width: 100%;
-	background: #f1f1f1;
+	background: @gray1;
 
 	article {
-		margin: @size-l auto 0;
+		margin: @size-m auto 0;
 		flex: 1;
 		width: 95%;
+
+		@media (min-width: 1024px) {
+			margin-top: @size-l;
+		}
 
 		@media (min-width: 1280px) {
 			max-width: 80%;
@@ -297,10 +308,6 @@ nav.menu {
 
 		h2 {
 			margin-top: 0;
-		}
-
-		>*:last-child {
-			margin-bottom: 2rem;
 		}
 	}
 
@@ -341,7 +348,6 @@ nav.menu {
 		.story-previews {
 			a {
 				text-decoration: none;
-				font-weight: bold;
 			}
 
 			.title {
@@ -352,7 +358,7 @@ nav.menu {
 			.byline {
 				margin: 0 @size-l;
 				font-style: italic;
-				color: #555;
+				color: @textFaded;
 			}
 
 			.author {
@@ -384,7 +390,7 @@ nav.menu {
 .view.stories {
 	.story {
 		margin-bottom: @size-l;
-		border-left: 5px solid @linkBlue;
+		border-left: 4px solid @linkBlue;
 		border-radius: 8px;
 		padding-left: @size-m;
 
@@ -393,7 +399,7 @@ nav.menu {
 		}
 
 		.blurb, .byline {
-			color: #484848;
+			color: @textFaded;
 			font-style: italic;
 		}
 
@@ -447,12 +453,12 @@ nav.menu {
 			
 			&.dit {
 				width: 4em;
-				background-color: #119cbd;
+				background-color: @linkBlue;
 			}
 
 			&.dah {
 				width: 12em;
-				background-color: #119cbd;
+				background-color: @linkBlue;
 			}
 
 			&.charSpace {
@@ -516,7 +522,7 @@ nav.menu {
 			display: inline-block;
 			width: 300px;
 			height: 250px;
-			background: @black;
+			background: @gray2;
 		}
 	}
 
@@ -532,14 +538,16 @@ nav.menu {
 
 .btn-fullscreen {
 	position: absolute;
-	bottom: 0;
+	top: 0;
 	right: 0;
 	z-index: 1;
 	border: 0;
-	margin: @size-s;
+	margin: 0;
 	padding: 1rem 2rem;
-	background-position-y: 45px;
 	font-weight: bold;
+	background: transparent;
+	color: @textWhite;
+	outline: none;
 }
 
 .btn-fullscreen.disabled {
@@ -550,8 +558,8 @@ nav.menu {
 	min-height: 250px;
 	max-height: 1000px;
 	font-family: monospace;
-	background: linear-gradient(#f1f1f1, #dedede);
-	color: #6d6134;
+	background: linear-gradient(@black, @gray1);
+	color: @yellow;
 	flex: 1;
 	overflow-wrap: break-word;
 	overflow-y: hidden;
@@ -571,9 +579,10 @@ nav.menu {
 	}
 }
 
-.options table {
+.settings table {
 	width: 100%;
 	margin-bottom: @size-l;
+	border-spacing: 0;
 
 	th {
 		text-align: right;
@@ -583,7 +592,7 @@ nav.menu {
 
 	td {
 		padding: @size-s @size-s;
-		border-left: 5px solid #e0e0e0;
+		border-left: 5px solid @gray2;
 	}
 
 	@media (max-width: 479px) {
@@ -601,13 +610,11 @@ nav.menu {
 	td:last-of-type {
 		width: 100%;
 		padding: @size-s 0 @size-s @size-s;
-		background: #fff;
-		box-shadow: 0 0 3px #e8e8e8;
 	}
 
 	td:first-of-type {
 		font-family: monospace;
-		color: #1ba09c;
+		color: @linkBlue;
 		font-size: larger;
 		text-align: center;
 	}
