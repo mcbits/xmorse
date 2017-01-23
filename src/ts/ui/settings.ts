@@ -24,7 +24,7 @@ namespace Settings {
 	};
 
 	const defaults = {
-		charSpacing: 12,
+		charSpacing: 8,
 		flashingEnabled: false,
 		lettersEnabled: true,
 		numbersEnabled: false,
@@ -32,7 +32,7 @@ namespace Settings {
 		symbolsEnabled: false,
 		voiceEnabled: true,
 		volume: 0.40,
-		wpm: 15
+		wpm: 10
 	};
 
 	function Adjust(name: string, value: any) {
