@@ -11,6 +11,9 @@ namespace UI {
 	const letterElement = Query(".letter");
 	const outputBuffer = Query(".outputBuffer");
 	const storyLinks = QueryAll(".story a");
+	const patternEl = Query<HTMLElement>(".view.playing .pattern");
+
+	let playState = "stopped";
 
 	pauseBtn.addEventListener("click",
 		() => Notify(PAUSE, null));
@@ -34,12 +37,14 @@ namespace UI {
 	}
 
 	Listen(PAUSE, () => {
+		playState = "paused";
 		startBtn.disabled = false;
 		pauseBtn.disabled = true;
 		stopBtn.disabled = true;
 	});
 
 	Listen(START, () => {
+		playState = "started";
 		Notify(WATCH, null);
 		startBtn.disabled = true;
 		pauseBtn.disabled = false;
@@ -47,15 +52,15 @@ namespace UI {
 	});
 
 	Listen(STOP, () => {
+		playState = "stopped";
 		location.hash = "";
 		outputBuffer.innerHTML = "";
 		letterElement.innerHTML = "";
+		patternEl.innerHTML = "";
 		startBtn.disabled = false;
 		pauseBtn.disabled = true;
 		stopBtn.disabled = true;
 	});
-
-	///
 
 	Listen(LETTER,
 		(value: string) => letterElement.innerHTML = value);
@@ -75,8 +80,6 @@ namespace UI {
 				return el;
 			}
 
-			const patternEl = document.querySelector(".view.playing .pattern");
-
 			for (let i = 0; i < pattern.length; ++i) {
 				let el: HTMLElement;
 
@@ -95,8 +98,10 @@ namespace UI {
 
 	Listen(PATTERN_STOP,
 		(char: Morse.Char) => {
-			outputBuffer.innerHTML += char == null ? " " : char.name;
-			outputBuffer.scrollTop = outputBuffer.scrollHeight;
+			if (playState !== "stopped") {
+				outputBuffer.innerHTML += char == null ? " " : char.name;
+				outputBuffer.scrollTop = outputBuffer.scrollHeight;
+			}
 		});
 
 	Listen(OSC_OFF,
