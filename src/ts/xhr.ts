@@ -1,5 +1,5 @@
 namespace Xhr {
-	export function Load<T>(url: string, responseType: string, success: (_: T) => void): void {
+	export function Load<T>(url: string, responseType: XMLHttpRequestResponseType, success: (_: T) => void): void {
 		const request = new XMLHttpRequest();
 		request.responseType = responseType;
 		request.onload = () => {
