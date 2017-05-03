@@ -53,7 +53,7 @@ namespace Xhr {
 		}
 
 		public Preload(char: Morse.Char): void {
-			if (this._enabled && !this._loaded[char.name] && this._loading[char.name])
+			if (this._enabled && !this._loaded[char.name] && !this._loading[char.name])
 				this.loadAudio(char);
 		}
 

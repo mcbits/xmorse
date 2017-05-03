@@ -8,6 +8,7 @@
 namespace Player {
 	const T = Timing;
 	const voiceLoader = new Xhr.AudioLoader("/snd/", SET_VOICE, VOICE_DONE);
+	const toneLoader = new Xhr.AudioLoader("/snd/10/650/", SET_VOICE, PATTERN_STOP);
 
 	function playNextPattern(): void {
 		if (T.NowPlaying) {
@@ -30,7 +31,9 @@ namespace Player {
 				setTimeout(() => {
 					const currentCharacter = nextCharacter[1];
 					voiceLoader.Preload(currentCharacter);
-					TonePlayer.PlayPattern(currentCharacter);
+					toneLoader.Preload(currentCharacter);
+					toneLoader.Play(currentCharacter);
+					//TonePlayer.PlayPattern(currentCharacter);
 				}, sleepTime);
 			}
 			else {
