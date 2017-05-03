@@ -15,40 +15,45 @@ namespace Xhr {
 
 	export class AudioLoader {
 		// For caching audio files as they're loaded
-		private audioBuffers: { [char: string]: AudioBuffer } = {};
+		private _audioBuffers: { [char: string]: AudioBuffer } = {};
 
-		private loading: { [_: string]: boolean } = {};
+		private _loading: { [_: string]: boolean } = {};
 
-		private loaded: { [_: string]: boolean } = {};
+		private _loaded: { [_: string]: boolean } = {};
 
-		private playWhenDone = false;
+		private _playWhenDone = false;
 
-		private voiceEnabled = false;
+		private _enabled = false;
 
-		private voiceGain: GainNode;
+		private _gain: GainNode;
 
-		private basePath = "";
+		private _basePath = "";
+
+		private _donePlayingEvent = null;
 
 		/**
 		 * Creates an instance of AudioLoader.
 		 * @param {string} basePath Must end in "/". Path to the directory containing the audio files.
+		 * @param {string} enabledEvent 
 		 * 
-		 * @memberOf AudioLoader
+		 * @memberof AudioLoader
 		 */
-		constructor(basePath: string) {
-			this.basePath = basePath;
+		constructor(basePath: string, enabledEvent: string, donePlayingEvent: string) {
+			this._basePath = basePath;
+
+			this._donePlayingEvent = donePlayingEvent;
 
 			// Wire up audio
-			this.voiceGain = AudioCtx.createGain();
-			this.voiceGain.gain.value = 0.85;
-			this.voiceGain.connect(MasterGain);
+			this._gain = AudioCtx.createGain();
+			this._gain.gain.value = 0.85;
+			this._gain.connect(MasterGain);
 
 			// TODO: Move this to a better place so different events can be used.
-			Listen(SET_VOICE, (value: boolean) => this.voiceEnabled = value);
+			Listen(enabledEvent, (value: boolean) => this._enabled = value);
 		}
 
 		public Preload(char: Morse.Char): void {
-			if (this.voiceEnabled && !this.loaded[char.name] && this.loading[char.name])
+			if (this._enabled && !this._loaded[char.name] && this._loading[char.name])
 				this.loadAudio(char);
 		}
 
@@ -56,49 +61,49 @@ namespace Xhr {
 			if (!Timing.NowPlaying)
 				return;
 
-			if (!this.voiceEnabled)
-				Notify(VOICE_DONE, char);
-			else if (this.loading[char.name])
-				this.playWhenDone = true;
-			else if (!this.loaded[char.name]) {
-				this.playWhenDone = true;
+			if (!this._enabled)
+				Notify(this._donePlayingEvent, char);
+			else if (this._loading[char.name])
+				this._playWhenDone = true;
+			else if (!this._loaded[char.name]) {
+				this._playWhenDone = true;
 				this.loadAudio(char);
 			}
 			else {
-				const buffer = this.audioBuffers[char.name];
+				const buffer = this._audioBuffers[char.name];
 				const audioSource = AudioCtx.createBufferSource();
-				audioSource.addEventListener("ended", () => Notify(VOICE_DONE, char));
+				audioSource.addEventListener("ended", () => Notify(this._donePlayingEvent, char));
 				audioSource.buffer = buffer;
-				audioSource.connect(this.voiceGain);
+				audioSource.connect(this._gain);
 				audioSource.start(0);
 			}
 		}
 
-		loadAudio = (char: Morse.Char): void => {
-			if (this.loaded[char.name])
+		private loadAudio = (char: Morse.Char): void => {
+			if (this._loaded[char.name])
 				this.audioLoaded(char);
 			else {
-				this.loading[char.name] = true;
-				Xhr.Load(this.basePath + Morse.fileName(char), "arraybuffer", this.decodeResponse(char, this.audioLoaded));
+				this._loading[char.name] = true;
+				Xhr.Load(this._basePath + Morse.fileName(char), "arraybuffer", this.decodeResponse(char, this.audioLoaded));
 			}
 		}
 
-		audioLoaded = (char: Morse.Char): void => {
-			const play = this.playWhenDone;
-			this.playWhenDone = false;
+		private audioLoaded = (char: Morse.Char): void => {
+			const play = this._playWhenDone;
+			this._playWhenDone = false;
 
 			if (play)
 				this.Play(char);
 		}
 
-		decodeResponse = (char: Morse.Char, callback: (_: Morse.Char) => void): (_: ArrayBuffer) => void => {
+		private decodeResponse = (char: Morse.Char, callback: (_: Morse.Char) => void): (_: ArrayBuffer) => void => {
 			return (response: ArrayBuffer): void => {
 				AudioCtx.decodeAudioData(
 					response,
 					(buffer: AudioBuffer) => {
-						this.audioBuffers[char.name] = buffer;
-						this.loading[char.name] = false;
-						this.loaded[char.name] = true;
+						this._audioBuffers[char.name] = buffer;
+						this._loading[char.name] = false;
+						this._loaded[char.name] = true;
 
 						callback(char);
 					},

@@ -2,12 +2,12 @@
 /// <reference path="audiocontext.ts"/>
 /// <reference path="morsetable.ts"/>
 /// <reference path="toneplayer.ts"/>
-/// <reference path="voiceplayer.ts"/>
 /// <reference path="text.ts"/>
 /// <reference path="timing.ts"/>
 
 namespace Player {
 	const T = Timing;
+	const voiceLoader = new Xhr.AudioLoader("/snd/", SET_VOICE, VOICE_DONE);
 
 	function playNextPattern(): void {
 		if (T.NowPlaying) {
@@ -29,7 +29,7 @@ namespace Player {
 
 				setTimeout(() => {
 					const currentCharacter = nextCharacter[1];
-					VoicePlayer.PreloadVoice(currentCharacter);
+					voiceLoader.Preload(currentCharacter);
 					TonePlayer.PlayPattern(currentCharacter);
 				}, sleepTime);
 			}
@@ -65,7 +65,8 @@ namespace Player {
 
 				// playNextPattern() will be called by VOICE_DONE (which is
 				// triggered whether the voice is currently enabled or not).
-				setTimeout(() => VoicePlayer.PlayVoice(char), T.UnitTime * T.CharSpacing);
+				//setTimeout(() => VoicePlayer.PlayVoice(char), T.UnitTime * T.CharSpacing);
+				setTimeout(() => voiceLoader.Play(char), T.UnitTime * T.CharSpacing);
 			}
 		}
 	}
