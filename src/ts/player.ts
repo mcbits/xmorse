@@ -11,35 +11,35 @@ namespace Player {
 	const toneLoader = new Xhr.AudioLoader("/snd/10/650/", SET_VOICE, PATTERN_STOP);
 
 	function playNextPattern(): void {
-		if (T.NowPlaying) {
-			// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
-			const nextCharacter = TextLoader.Next();
+		if (!T.NowPlaying)
+			return;
 
-			if (nextCharacter[1]) {
-				let sleepTime = 0;
+		// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
+		const [junkText, curChar] = TextLoader.Next();
 
-				// If there is unplayable text, send it to the output buffer and delay for one word-break.
-				if (nextCharacter[0] !== nextCharacter[1].name) {
-					Notify(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
-					Notify(PATTERN_START, " ");
-					Notify(LETTER, "");
+		if (curChar != null) {
+			let sleepTime = 0;
 
-					// A 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
-					sleepTime = T.UnitTime * T.CharSpacing * (7 / 3);
-				}
+			// If there is unplayable text, send it to the output buffer and delay for one word-break.
+			if (junkText !== curChar.name) {
+				Notify(OUTPUT, junkText.substr(0, junkText.length - 1));
+				Notify(PATTERN_START, " ");
+				Notify(LETTER, "");
 
-				setTimeout(() => {
-					const currentCharacter = nextCharacter[1];
-					voiceLoader.Preload(currentCharacter);
-					toneLoader.Preload(currentCharacter);
-					toneLoader.Play(currentCharacter);
-					//TonePlayer.PlayPattern(currentCharacter);
-				}, sleepTime);
+				// A 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
+				sleepTime = T.UnitTime * T.CharSpacing * (7 / 3);
 			}
-			else {
-				Notify(PATTERN_START, "");
-				Notify(PATTERN_STOP, null);
-			}
+
+			setTimeout(() => {
+				voiceLoader.Preload(curChar);
+				toneLoader.Preload(curChar);
+				toneLoader.Play(curChar);
+				//TonePlayer.PlayPattern(curChar);
+			}, sleepTime);
+		}
+		else {
+			Notify(PATTERN_START, "");
+			Notify(PATTERN_STOP, null);
 		}
 	}
 
