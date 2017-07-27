@@ -2,44 +2,41 @@
 /// <reference path="audiocontext.ts"/>
 /// <reference path="morsetable.ts"/>
 /// <reference path="toneplayer.ts"/>
+/// <reference path="voiceplayer.ts"/>
 /// <reference path="text.ts"/>
 /// <reference path="timing.ts"/>
 
 namespace Player {
 	const T = Timing;
-	const voiceLoader = new Xhr.AudioLoader("/snd/", SET_VOICE, VOICE_DONE);
-	const toneLoader = new Xhr.AudioLoader("/snd/10/650/", SET_VOICE, PATTERN_STOP);
 
 	function playNextPattern(): void {
-		if (!T.NowPlaying)
-			return;
+		if (T.NowPlaying) {
+			// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
+			const nextCharacter = TextLoader.Next();
 
-		// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
-		const [junkText, curChar] = TextLoader.Next();
+			if (nextCharacter[1]) {
+				let sleepTime = 0;
 
-		if (curChar != null) {
-			let sleepTime = 0;
+				// If there is unplayable text, send it to the output buffer and delay for one word-break.
+				if (nextCharacter[0] !== nextCharacter[1].name) {
+					Notify(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
+					Notify(PATTERN_START, " ");
+					Notify(LETTER, "");
 
-			// If there is unplayable text, send it to the output buffer and delay for one word-break.
-			if (junkText !== curChar.name) {
-				Notify(OUTPUT, junkText.substr(0, junkText.length - 1));
-				Notify(PATTERN_START, " ");
-				Notify(LETTER, "");
+					// A 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
+					sleepTime = T.UnitTime * T.CharSpacing * (7 / 3);
+				}
 
-				// A 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
-				sleepTime = T.UnitTime * T.CharSpacing * (7 / 3);
+				setTimeout(() => {
+					const currentCharacter = nextCharacter[1];
+					VoicePlayer.PreloadVoice(currentCharacter);
+					TonePlayer.PlayPattern(currentCharacter);
+				}, sleepTime);
 			}
-
-			setTimeout(() => {
-				voiceLoader.Preload(curChar);
-				toneLoader.Preload(curChar);
-				toneLoader.Play(curChar);
-				//TonePlayer.PlayPattern(curChar);
-			}, sleepTime);
-		}
-		else {
-			Notify(PATTERN_START, "");
-			Notify(PATTERN_STOP, null);
+			else {
+				Notify(PATTERN_START, "");
+				Notify(PATTERN_STOP, null);
+			}
 		}
 	}
 
@@ -68,8 +65,7 @@ namespace Player {
 
 				// playNextPattern() will be called by VOICE_DONE (which is
 				// triggered whether the voice is currently enabled or not).
-				//setTimeout(() => VoicePlayer.PlayVoice(char), T.UnitTime * T.CharSpacing);
-				setTimeout(() => voiceLoader.Play(char), T.UnitTime * T.CharSpacing);
+				setTimeout(() => VoicePlayer.PlayVoice(char), T.UnitTime * T.CharSpacing);
 			}
 		}
 	}
