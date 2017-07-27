@@ -49,7 +49,7 @@ gulp.task("copy-img", () =>
 		.pipe(gulp.dest("dist/img")));
 
 gulp.task("copy-snd", () =>
-	gulp.src("snd/**")
+	gulp.src("snd/*")
 		.pipe(gulp.dest("dist/snd")));
 
 gulp.task("copy-txt", () =>
