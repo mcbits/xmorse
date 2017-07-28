@@ -2,8 +2,6 @@
 
 namespace FullScreen {
 	const fullScreenButton = Query(".btn-fullscreen");
-	const startButton = Query(".btn-start");
-	const stopButton = Query(".btn-stop");
 	const playingView = document.body.parentElement;
 	const controls = Query(".controls");
 	const menu = Query(".menu");
