@@ -19,10 +19,10 @@ namespace VoicePlayer {
 	let playWhenDone = false;
 
 	function voiceLoaded(char: Morse.Char): void {
-		const play = playWhenDone;
+		const playNow = playWhenDone;
 		playWhenDone = false;
 
-		if (play)
+		if (playNow)
 			PlayVoice(char);
 	}
 
@@ -56,24 +56,23 @@ namespace VoicePlayer {
 	}
 
 	export function PlayVoice(char: Morse.Char): void {
-		if (!Timing.NowPlaying)
-			return;
-
-		if (!voiceEnabled)
-			Notify(VOICE_DONE, char);
-		else if (loading[char.name])
-			playWhenDone = true;
-		else if (!loaded[char.name]) {
-			playWhenDone = true;
-			loadVoice(char);
-		}
-		else {
-			const buffer = audioBuffers[char.name];
-			const audioSource = AudioCtx.createBufferSource();
-			audioSource.addEventListener("ended", () => Notify(VOICE_DONE, char));
-			audioSource.buffer = buffer;
-			audioSource.connect(voiceGain);
-			audioSource.start(0);
+		if (Timing.NowPlaying) {
+			if (!voiceEnabled)
+				Notify(VOICE_DONE, char);
+			else if (loading[char.name])
+				playWhenDone = true;
+			else if (!loaded[char.name]) {
+				playWhenDone = true;
+				loadVoice(char);
+			}
+			else {
+				const buffer = audioBuffers[char.name];
+				const audioSource = AudioCtx.createBufferSource();
+				audioSource.addEventListener("ended", () => Notify(VOICE_DONE, char));
+				audioSource.buffer = buffer;
+				audioSource.connect(voiceGain);
+				audioSource.start(0);
+			}
 		}
 	}
 
