@@ -12,14 +12,14 @@ namespace Player {
 	function playNextPattern(): void {
 		if (T.NowPlaying) {
 			// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
-			const nextCharacter = TextLoader.Next();
+			const [text, morseChar] = TextLoader.Next();
 
-			if (nextCharacter[1]) {
+			if (morseChar) {
 				let sleepTime = 0;
 
 				// If there is unplayable text, send it to the output buffer and delay for one word-break.
-				if (nextCharacter[0] !== nextCharacter[1].name) {
-					Notify(OUTPUT, nextCharacter[0].substr(0, nextCharacter[0].length - 1));
+				if (text !== morseChar.name) {
+					Notify(OUTPUT, text.substr(0, text.length - 1));
 					Notify(PATTERN_START, " ");
 					Notify(LETTER, "");
 
@@ -28,9 +28,8 @@ namespace Player {
 				}
 
 				setTimeout(() => {
-					const currentCharacter = nextCharacter[1];
-					VoicePlayer.PreloadVoice(currentCharacter);
-					TonePlayer.PlayPattern(currentCharacter);
+					VoicePlayer.PreloadVoice(morseChar);
+					TonePlayer.PlayPattern(morseChar);
 				}, sleepTime);
 			}
 			else {
