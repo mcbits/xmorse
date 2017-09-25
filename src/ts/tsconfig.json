@@ -4,6 +4,6 @@
 		"module": "none",
 		"sourceMap": true,
 		"alwaysStrict": false,
-        "outFile": "app.js"
+		"outFile": "app.js"
 	}
 }
