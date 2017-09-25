@@ -1,6 +1,7 @@
 /// <reference path="events.ts"/>
 
-namespace Routing {
+namespace Routing
+{
 	const routes = {
 		"": VIEW_HOME,
 		"#playing": VIEW_PLAYING,
@@ -9,7 +10,8 @@ namespace Routing {
 		"#text": VIEW_TEXT
 	};
 
-	function processHash() {
+	function processHash()
+	{
 		const hash = location.hash;
 		if (routes[hash])
 			Notify(routes[hash], null);

@@ -1,7 +1,9 @@
 /// <reference path="events.ts"/>
 
-namespace Morse {
-	export interface Char {
+namespace Morse
+{
+	export interface Char
+	{
 		name: string;
 		pattern: string;
 	}
@@ -98,7 +100,8 @@ namespace Morse {
 
 	let symbolsEnabled = false;
 
-	export function RandomCharacter(): Char {
+	export function RandomCharacter(): Char
+	{
 		let chars = [];
 
 		if (lettersEnabled)
@@ -110,7 +113,8 @@ namespace Morse {
 		if (symbolsEnabled)
 			chars = chars.concat(symbols);
 
-		if (chars.length > 0) {
+		if (chars.length > 0)
+		{
 			const char = chars[Math.floor(Math.random() * chars.length)];
 
 			return letterPatterns[char] || numberPatterns[char] || symbolPatterns[char];
@@ -119,7 +123,8 @@ namespace Morse {
 		return null;
 	}
 
-	export function GetCharacter(char: string): Char {
+	export function GetCharacter(char: string): Char
+	{
 		char = char.toUpperCase();
 
 		let found = letterPatterns[char];
@@ -137,7 +142,8 @@ namespace Morse {
 		return undefined;
 	}
 
-	export function fileName(char: Char) {
+	export function fileName(char: Char)
+	{
 		let fileName = symbolNames[char.name];
 
 		if (!fileName)

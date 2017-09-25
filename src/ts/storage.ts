@@ -1,6 +1,7 @@
 /// <reference path="events.ts"/>
 
-namespace LocalStorage {
+namespace LocalStorage
+{
 	Listen(UI_SPACING,
 		(value: string) => localStorage.setItem("charSpacing", value));
 

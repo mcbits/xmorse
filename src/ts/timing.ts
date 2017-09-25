@@ -1,6 +1,7 @@
 /// <reference path="events.ts"/>
 
-namespace Timing {
+namespace Timing
+{
 	export let NowPlaying: boolean;
 	export let UnitTime: number;
 	export let CharSpacing: number;

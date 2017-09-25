@@ -1,8 +1,11 @@
-namespace Xhr {
-	export function Load<T>(url: string, responseType: string, success: (_: T) => void): void {
+namespace Xhr
+{
+	export function Load<T>(url: string, responseType: string, success: (_: T) => void): void
+	{
 		const request = new XMLHttpRequest();
 		request.responseType = <XMLHttpRequestResponseType>responseType;
-		request.onload = () => {
+		request.onload = () =>
+		{
 			if (request.status === 200)
 				success(request.response);
 			else

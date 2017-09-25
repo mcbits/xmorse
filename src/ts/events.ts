@@ -1,8 +1,10 @@
-function Notify(name: string, value: any) {
+function Notify(name: string, value: any)
+{
 	document.dispatchEvent(new CustomEvent(name, { detail: value }));
 }
 
-function Listen<T>(name: string, handler: (value?: T) => any) {
+function Listen<T>(name: string, handler: (value?: T) => any)
+{
 	document.addEventListener(name, (evt: CustomEvent) => handler(evt.detail));
 }
 

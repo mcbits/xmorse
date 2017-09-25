@@ -1,6 +1,7 @@
 /// <reference path="query.ts"/>
 
-namespace FullScreen {
+namespace FullScreen
+{
 	const fullScreenButton = Query(".btn-fullscreen");
 	const playingView = document.body.parentElement;
 	const controls = Query(".controls");
@@ -14,7 +15,8 @@ namespace FullScreen {
 	let controlsVisible = false;
 	let cursorVisible = false;
 
-	function exitFullScreen() {
+	function exitFullScreen()
+	{
 		if (document.exitFullscreen)
 			document.exitFullscreen();
 		else if (document["webkitExitFullscreen"])
@@ -23,7 +25,8 @@ namespace FullScreen {
 			document["mozCancelFullScreen"]();
 	}
 
-	function enterFullScreen() {
+	function enterFullScreen()
+	{
 		if (document.fullscreenEnabled)
 			playingView.requestFullscreen();
 		else if (document["webkitFullscreenEnabled"])
@@ -32,51 +35,61 @@ namespace FullScreen {
 			playingView["mozRequestFullScreen"]();
 	}
 
-	function toggleFullScreen() {
+	function toggleFullScreen()
+	{
 		if (isFullScreen)
 			exitFullScreen();
 		else
 			enterFullScreen();
 	}
 
-	function fullScreenChanged() {
+	function fullScreenChanged()
+	{
 		isFullScreen = !isFullScreen;
 		fullScreenButton.textContent = isFullScreen ? "Exit full screen" : "Full screen";
 		lastActivity = Date.now();
 	}
 
-	function markTime() {
+	function markTime()
+	{
 		lastActivity = Date.now();
 	}
 
-	function hideOrReveal() {
-		if (isFullScreen && Date.now() - lastActivity > hideControlsMS) {
+	function hideOrReveal()
+	{
+		if (isFullScreen && Date.now() - lastActivity > hideControlsMS)
+		{
 			hideControls();
 			hideCursor();
 			return;
 		}
-		else {
+		else
+		{
 			showControls();
 			showCursor();
 		}
 	}
 
-	function hideCursor() {
+	function hideCursor()
+	{
 		if (cursorVisible)
 			playingView.style.cursor = "none";
 
 		cursorVisible = false;
 	}
 
-	function showCursor() {
+	function showCursor()
+	{
 		if (!cursorVisible)
 			playingView.style.cursor = "default";
 
 		cursorVisible = true;
 	}
 
-	function hideControls() {
-		if (controlsVisible) {
+	function hideControls()
+	{
+		if (controlsVisible)
+		{
 			fullScreenButton.classList.add("disabled");
 			controls.classList.add("disabled");
 			menu.classList.add("disabled");
@@ -86,8 +99,10 @@ namespace FullScreen {
 		controlsVisible = false;
 	}
 
-	function showControls() {
-		if (!controlsVisible) {
+	function showControls()
+	{
+		if (!controlsVisible)
+		{
 			fullScreenButton.classList.remove("disabled");
 			controls.classList.remove("disabled");
 			menu.classList.remove("disabled");
@@ -97,12 +112,14 @@ namespace FullScreen {
 		controlsVisible = true;
 	}
 
-	function start() {
+	function start()
+	{
 		document.addEventListener("mousemove", markTime);
 		hideControlsInterval = setInterval(hideOrReveal, 200);
 	}
 
-	function stop() {
+	function stop()
+	{
 		clearInterval(hideControlsInterval);
 		document.removeEventListener("mousemove", markTime);
 		showCursor();

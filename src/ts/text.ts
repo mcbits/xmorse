@@ -2,32 +2,40 @@
 /// <reference path="morsetable.ts"/>
 /// <reference path="xhr.ts"/>
 
-namespace TextLoader {
+namespace TextLoader
+{
 	let textBuffer = "";
 	let textBufferIndex = -1;
 
-	function resetPosition() {
+	function resetPosition()
+	{
 		textBufferIndex = textBuffer.length > 0 ? 0 : -1;
 	}
 
-	function updateTextBuffer(text: string) {
+	function updateTextBuffer(text: string)
+	{
 		textBuffer = text.toUpperCase() + "\n";
 		resetPosition();
 	}
 
-	function loadBook(href: string): void {
-		const response = Xhr.Load(href, "text", response => {
+	function loadBook(href: string): void
+	{
+		const response = Xhr.Load(href, "text", response =>
+		{
 			Notify(SET_TEXT_BUFFER, response);
 			Notify(START, null);
 		});
 	}
 
-	export function Next(): [string, Morse.Char] {
-		if (textBuffer.length > 0) {
+	export function Next(): [string, Morse.Char]
+	{
+		if (textBuffer.length > 0)
+		{
 			const startingIndex = textBufferIndex;
 			let text = "";
 
-			do {
+			do
+			{
 				text += textBuffer[textBufferIndex];
 				const morseChar = Morse.GetCharacter(textBuffer[textBufferIndex]);
 

@@ -3,7 +3,8 @@
 /// <reference path="morsetable.ts"/>
 /// <reference path="timing.ts"/>
 
-namespace TonePlayer {
+namespace TonePlayer
+{
 	let T = Timing;
 
 	const firefoxAntiClickDelay = navigator.userAgent.indexOf("irefox") !== -1 ? 0.05 : 0;
@@ -19,23 +20,27 @@ namespace TonePlayer {
 	oscillatorGain.connect(MasterGain);
 	oscillator.start(0);
 
-	function on() {
+	function on()
+	{
 		oscillatorGain.gain.setTargetAtTime(oscillatorVolume, AudioCtx.currentTime + firefoxAntiClickDelay, ramp);
 		Notify(OSC_ON, null);
 	}
 
-	function off() {
+	function off()
+	{
 		oscillatorGain.gain.setTargetAtTime(0, AudioCtx.currentTime + firefoxAntiClickDelay, ramp);
 		Notify(OSC_OFF, null);
 	}
 
-	export function PlayPattern(char: Morse.Char): void {
+	export function PlayPattern(char: Morse.Char): void
+	{
 		Notify(PATTERN_START, char.pattern);
 		Notify(LETTER, "");
 
 		let pos = 0;
 
-		for (let i = 0; i < char.pattern.length; ++i) {
+		for (let i = 0; i < char.pattern.length; ++i)
+		{
 			const toneDuration = char.pattern[i] === "." ? 1 : 3;
 			setTimeout(on, pos);
 			pos += T.UnitTime * toneDuration;
