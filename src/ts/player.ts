@@ -15,7 +15,7 @@ namespace Player
 		if (T.NowPlaying)
 		{
 			// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
-			const [text, morseChar] = TextLoader.Next();
+			let [text, morseChar] = TextLoader.Next() || [" ", {name: " ", pattern: ""}];
 
 			if (morseChar)
 			{
@@ -24,12 +24,9 @@ namespace Player
 				// If there is unplayable text, send it to the output buffer and delay for one word-break.
 				if (text !== morseChar.name)
 				{
-					Notify(OUTPUT, text.substr(0, text.length - 1));
+					Notify(EMIT_OUTPUT, text.substr(0, text.length - 1));
 					Notify(PATTERN_START, " ");
-					Notify(LETTER, "");
-
-					// A 7/3 factor comes from character spaces being 3 units and word spaces being 7 units.
-					sleepTime = T.UnitTime * T.CharSpacing * (7 / 3);
+					Notify(EMIT_LETTER, "");
 				}
 
 				setTimeout(() =>
@@ -55,14 +52,14 @@ namespace Player
 	{
 		if (!T.NowPlaying)
 		{
-			Notify(NOW_PLAYING, true);
+			Notify(SET_NOW_PLAYING, true);
 			setTimeout(playNextPattern, 500);
 		}
 	}
 
 	function stopPlaying(): void
 	{
-		Notify(NOW_PLAYING, false);
+		Notify(SET_NOW_PLAYING, false);
 	}
 
 	function patternComplete(char: Morse.Char): void
@@ -71,23 +68,21 @@ namespace Player
 		{
 			if (char == null)
 			{
-				setTimeout(playNextPattern, T.UnitTime * T.CharSpacing);
+				playNextPattern();
 			}
 			else
 			{
-				Notify(LETTER, char.name);
-
 				// playNextPattern() will be called by VOICE_DONE (which is
 				// triggered whether the voice is currently enabled or not).
-				setTimeout(() => VoicePlayer.PlayVoice(char), T.UnitTime * T.CharSpacing);
+				VoicePlayer.PlayVoice(char);
 			}
 		}
 	}
 
-	Listen(VOICE_DONE, playNextPattern);
-	Listen(PAUSE, stopPlaying);
-	Listen(STOP, stopPlaying);
-	Listen(START, startPlaying);
+	Listen(EMIT_VOICE_DONE, playNextPattern);
+	Listen(CMD_PAUSE, stopPlaying);
+	Listen(CMD_STOP, stopPlaying);
+	Listen(CMD_START, startPlaying);
 	Listen(PATTERN_STOP, patternComplete);
 	Listen(SET_VOLUME, updateVolume);
 }

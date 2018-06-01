@@ -128,8 +128,8 @@ namespace FullScreen
 			exitFullScreen();
 	}
 
-	Listen(START, start);
-	Listen(STOP, stop);
+	Listen(CMD_START, start);
+	Listen(CMD_STOP, stop);
 
 	if (document.fullscreenEnabled)
 		document.addEventListener("fullscreenchange", fullScreenChanged);

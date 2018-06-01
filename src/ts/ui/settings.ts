@@ -131,8 +131,8 @@ namespace Settings {
 		// Trigger events to initialize state
 		Notify(SET_VOLUME, localStorage.getItem("volume") || defaults.volume);
 		Notify(SET_WPM, localStorage.getItem("wpm") || defaults.wpm);
-		Notify(SET_SPACING, localStorage.getItem("charSpacing") || defaults.charSpacing);
 		Notify(SET_PITCH, localStorage.getItem("pitch") || defaults.pitch);
+		Notify(SET_SPACING, localStorage.getItem("charSpacing") || defaults.charSpacing);
 
 		const voiceEnabledStorage = localStorage.getItem("voiceEnabled");
 		if (voiceEnabledStorage == null)

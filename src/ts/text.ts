@@ -23,7 +23,7 @@ namespace TextLoader
 		const response = Xhr.Load(href, "text", response =>
 		{
 			Notify(SET_TEXT_BUFFER, response);
-			Notify(START, null);
+			Notify(CMD_START, null);
 		});
 	}
 
@@ -58,6 +58,6 @@ namespace TextLoader
 	}
 
 	Listen(SET_TEXT_BUFFER, updateTextBuffer);
-	Listen(STORY, loadBook);
-	Listen(STOP, resetPosition);
+	Listen(CMD_STORY, loadBook);
+	Listen(CMD_STOP, resetPosition);
 }

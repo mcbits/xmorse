@@ -100,6 +100,13 @@ namespace Morse
 
 	let symbolsEnabled = false;
 
+	export function AllCharacters(): Char[]
+	{
+		return letters.map(l => letterPatterns[l])
+			.concat(numbers.map(n => numberPatterns[n]))
+			.concat(symbols.map(s => symbolPatterns[s]));
+	}
+
 	export function RandomCharacter(): Char
 	{
 		let chars = [];
@@ -139,19 +146,33 @@ namespace Morse
 		if (found)
 			return found;
 
+		if (char === "")
+			return { name: "", pattern: "" };
+
+		if (char === " ")
+			return { name: " ", pattern: " " };
+
 		return undefined;
 	}
 
 	export function fileName(char: Char)
 	{
-		let fileName = symbolNames[char.name];
+		if (Object.keys(letterPatterns).indexOf(char.name) > -1
+			|| Object.keys(numberPatterns).indexOf(char.name) > -1
+			|| Object.keys(symbolNames).indexOf(char.name) > -1)
+		{
 
-		if (!fileName)
-			fileName = char.name;
+			let fileName = symbolNames[char.name];
 
-		fileName += ".mp3";
+			if (!fileName)
+				fileName = char.name;
 
-		return fileName;
+			fileName += ".mp3";
+
+			return fileName;
+		}
+
+		return undefined;
 	}
 
 	Listen(SET_LETTERS, (value: boolean) => lettersEnabled = value);

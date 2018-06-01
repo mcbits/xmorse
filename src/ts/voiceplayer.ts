@@ -67,8 +67,8 @@ namespace VoicePlayer
 	{
 		if (Timing.NowPlaying)
 		{
-			if (!voiceEnabled)
-				Notify(VOICE_DONE, char);
+			if (!voiceEnabled || Morse.fileName(char) === undefined)
+				Notify(EMIT_VOICE_DONE, char);
 			else if (loading[char.name])
 				playWhenDone = true;
 			else if (!loaded[char.name])
@@ -80,7 +80,7 @@ namespace VoicePlayer
 			{
 				const buffer = audioBuffers[char.name];
 				const audioSource = AudioCtx.createBufferSource();
-				audioSource.addEventListener("ended", () => Notify(VOICE_DONE, char));
+				audioSource.addEventListener("ended", () => Notify(EMIT_VOICE_DONE, char));
 				audioSource.buffer = buffer;
 				audioSource.connect(voiceGain);
 				audioSource.start(0);

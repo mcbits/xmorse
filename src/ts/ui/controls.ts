@@ -2,7 +2,8 @@
 /// <reference path="../morsetable.ts"/>
 /// <reference path="../query.ts"/>
 
-namespace UI {
+namespace UI
+{
 	const homeBtn = Query<HTMLElement>(".btn-home");
 	const startBtns = QueryAll<HTMLElement>(".btn-start");
 	const startBtn = Query<HTMLButtonElement>(".btn-start");
@@ -16,34 +17,42 @@ namespace UI {
 	let playState = "stopped";
 
 	pauseBtn.addEventListener("click",
-		() => Notify(PAUSE, null));
+		() => Notify(CMD_PAUSE, null));
 
-	for (let i = 0; i < startBtns.length; ++i) {
+	for (let i = 0; i < startBtns.length; ++i)
+	{
 		startBtns[i].addEventListener("click",
-			() => Notify(START, null));
+			() => Notify(CMD_START, null));
 	}
 
 	stopBtn.addEventListener("click",
-		() => Notify(STOP, null));
+		() => Notify(CMD_STOP, null));
 
-	for (let i = 0; i < storyLinks.length; ++i) {
+	for (let i = 0; i < storyLinks.length; ++i)
+	{
 		const storyLink = storyLinks[i];
-		storyLink.addEventListener("click", (evt: MouseEvent) => {
+		storyLink.addEventListener("click", (evt: MouseEvent) =>
+		{
 			evt.preventDefault();
 			const anchor = <HTMLAnchorElement>evt.target;
 			const href = anchor.href;
-			Notify(STORY, href);
+			Notify(CMD_STORY, href);
 		});
 	}
 
-	Listen(PAUSE, () => {
+	Listen(CMD_PAUSE, () =>
+	{
 		playState = "paused";
 		startBtn.disabled = false;
 		pauseBtn.disabled = true;
 		stopBtn.disabled = true;
 	});
 
-	Listen(START, () => {
+	Listen(CMD_START, () =>
+	{
+		if (AudioCtx.state === "suspended")
+			AudioCtx.resume();
+
 		playState = "started";
 		Notify(WATCH, null);
 		startBtn.disabled = true;
@@ -51,7 +60,8 @@ namespace UI {
 		stopBtn.disabled = false;
 	});
 
-	Listen(STOP, () => {
+	Listen(CMD_STOP, () =>
+	{
 		playState = "stopped";
 		location.hash = "";
 		outputBuffer.innerHTML = "";
@@ -62,25 +72,29 @@ namespace UI {
 		stopBtn.disabled = true;
 	});
 
-	Listen(LETTER,
+	Listen(EMIT_LETTER,
 		(value: string) => letterElement.innerHTML = value);
 
-	Listen(OUTPUT,
-		(value: string) => {
+	Listen(EMIT_OUTPUT,
+		(value: string) =>
+		{
 			outputBuffer.innerHTML += value;
 			outputBuffer.scrollTop = outputBuffer.scrollHeight;
 		});
 
 	Listen(PATTERN_START,
-		(pattern: string) => {
-			function make(className: string): HTMLElement {
+		(pattern: string) =>
+		{
+			function make(className: string): HTMLElement
+			{
 				const el = document.createElement("span");
 				el.classList.add("element");
 				el.classList.add(className);
 				return el;
 			}
 
-			for (let i = 0; i < pattern.length; ++i) {
+			for (let i = 0; i < pattern.length; ++i)
+			{
 				let el: HTMLElement;
 
 				if (pattern[i] === ".")
@@ -97,20 +111,13 @@ namespace UI {
 		});
 
 	Listen(PATTERN_STOP,
-		(char: Morse.Char) => {
-			if (playState !== "stopped") {
+		(char: Morse.Char) =>
+		{
+			if (playState !== "stopped")
+			{
 				outputBuffer.innerHTML += char == null ? " " : char.name;
 				outputBuffer.scrollTop = outputBuffer.scrollHeight;
 			}
-		});
-
-	Listen(OSC_OFF,
-		() => Query("body").classList.remove("toneOn"));
-
-	Listen(OSC_ON,
-		() => {
-			if (Settings.userSet.flashingEnabled.checked)
-				Query("body").classList.add("toneOn");
 		});
 
 	Listen(WATCH,
