@@ -40,6 +40,9 @@ namespace UI
 		});
 	}
 
+	Listen(CMD_CLEAR_OUTPUT, () =>
+		outputBuffer.innerHTML = "");
+
 	Listen(CMD_PAUSE, () =>
 	{
 		playState = "paused";

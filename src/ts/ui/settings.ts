@@ -17,7 +17,6 @@ namespace Settings {
 		charSpacing: QueryId<HTMLInputElement>("charSpacing"),
 		voiceEnabled: QueryId<HTMLInputElement>("voiceEnabled"),
 		pasteTextBox: QueryId<HTMLTextAreaElement>("pasteText"),
-		flashingEnabled: QueryId<HTMLInputElement>("flashingEnabled"),
 		lettersEnabled: QueryId<HTMLInputElement>("lettersEnabled"),
 		numbersEnabled: QueryId<HTMLInputElement>("numbersEnabled"),
 		symbolsEnabled: QueryId<HTMLInputElement>("symbolsEnabled")
@@ -25,7 +24,6 @@ namespace Settings {
 
 	const defaults = {
 		charSpacing: 8,
-		flashingEnabled: false,
 		lettersEnabled: true,
 		numbersEnabled: false,
 		pitch: 650,
@@ -58,9 +56,6 @@ namespace Settings {
 	userSet.voiceEnabled.addEventListener("change",
 		() => Adjust(SET_VOICE, userSet.voiceEnabled.checked));
 
-	userSet.flashingEnabled.addEventListener("change",
-		() => Adjust(SET_FLASHING_ENABLED, userSet.flashingEnabled.checked));
-
 	userSet.lettersEnabled.addEventListener("change",
 		() => Adjust(SET_LETTERS, userSet.lettersEnabled.checked));
 
@@ -73,7 +68,6 @@ namespace Settings {
 	resetSettingsButton.addEventListener("click",
 		() => {
 			Adjust(SET_SPACING, defaults.charSpacing);
-			Adjust(SET_FLASHING_ENABLED, defaults.flashingEnabled);
 			Adjust(SET_LETTERS, defaults.lettersEnabled);
 			Adjust(SET_NUMBERS, defaults.numbersEnabled);
 			Adjust(SET_PITCH, defaults.pitch);
@@ -90,9 +84,6 @@ namespace Settings {
 			charSpacingText.value = value.toString();
 			userSet.charSpacing.value = value.toString();
 		});
-
-	Listen(SET_FLASHING_ENABLED,
-		(value: boolean) => userSet.flashingEnabled.checked = value);
 
 	Listen(SET_LETTERS,
 		(value: boolean) => userSet.lettersEnabled.checked = value);
@@ -139,12 +130,6 @@ namespace Settings {
 			Notify(SET_VOICE, defaults.voiceEnabled);
 		else
 			Notify(SET_VOICE, voiceEnabledStorage === "true");
-
-		const flashingEnabledStorage = localStorage.getItem("flashingEnabled");
-		if (flashingEnabledStorage == null)
-			Notify(SET_FLASHING_ENABLED, defaults.flashingEnabled);
-		else
-			Notify(SET_FLASHING_ENABLED, flashingEnabledStorage === "true");
 
 		const lettersEnabledStorage = localStorage.getItem("lettersEnabled");
 		if (lettersEnabledStorage == null)

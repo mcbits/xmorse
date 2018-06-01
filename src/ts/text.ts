@@ -1,6 +1,5 @@
 /// <reference path="events.ts"/>
 /// <reference path="morsetable.ts"/>
-/// <reference path="xhr.ts"/>
 
 namespace TextLoader
 {
@@ -20,11 +19,16 @@ namespace TextLoader
 
 	function loadBook(href: string): void
 	{
-		const response = Xhr.Load(href, "text", response =>
-		{
-			Notify(SET_TEXT_BUFFER, response);
-			Notify(CMD_START, null);
-		});
+		fetch(href, { method: "GET" })
+			.then(response => response.text()
+				.then(value =>
+				{
+					Notify(CMD_CLEAR_OUTPUT, null);
+					setTimeout(() => {
+						Notify(SET_TEXT_BUFFER, value);
+						Notify(CMD_START, null);
+					}, 500);
+				}));
 	}
 
 	export function Next(): [string, Morse.Char]

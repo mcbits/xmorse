@@ -5,9 +5,6 @@ namespace LocalStorage
 	Listen(UI_SPACING,
 		(value: string) => localStorage.setItem("charSpacing", value));
 
-	Listen(UI_FLASHING,
-		(value: boolean) => localStorage.setItem("flashingEnabled", value.toString()));
-
 	Listen(UI_LETTERS,
 		(value: boolean) => localStorage.setItem("lettersEnabled", value.toString()));
 

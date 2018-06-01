@@ -2,7 +2,6 @@
 /// <reference path="events.ts"/>
 /// <reference path="audiocontext.ts"/>
 /// <reference path="timing.ts"/>
-/// <reference path="xhr.ts"/>
 
 namespace VoicePlayer
 {
@@ -28,24 +27,6 @@ namespace VoicePlayer
 			PlayVoice(char);
 	}
 
-	function decodeResponse(char: Morse.Char, callback: (_: Morse.Char) => void): (_: ArrayBuffer) => void
-	{
-		return function (response: ArrayBuffer): void
-		{
-			AudioCtx.decodeAudioData(
-				response,
-				function (buffer: AudioBuffer)
-				{
-					audioBuffers[char.name] = buffer;
-					loading[char.name] = false;
-					loaded[char.name] = true;
-
-					callback(char);
-				},
-				(err: DOMException) => console.error("Error loading audio source: ", err));
-		};
-	}
-
 	function loadVoice(char: Morse.Char): void
 	{
 		if (loaded[char.name])
@@ -53,7 +34,34 @@ namespace VoicePlayer
 		else
 		{
 			loading[char.name] = true;
-			Xhr.Load("/snd/" + Morse.fileName(char), "arraybuffer", decodeResponse(char, voiceLoaded));
+			fetch("/snd/" + Morse.fileName(char), { method: "GET" })
+				.then(response =>
+				{
+					if (response.status === 200)
+						response.arrayBuffer()
+							.then(arrayBuffer =>
+							{
+								AudioCtx.decodeAudioData(
+									arrayBuffer,
+									function (audioBuffer: AudioBuffer)
+									{
+										audioBuffers[char.name] = audioBuffer;
+										loading[char.name] = false;
+										loaded[char.name] = true;
+
+										voiceLoaded(char);
+									},
+									(err: DOMException) => console.error("Error decoding audio source: ", err));
+							});
+					else
+					{
+						console.error("Failed to load voice for char: ", char);
+						loading[char.name] = false;
+						playWhenDone = false;
+						Notify(EMIT_VOICE_DONE, char);
+					}
+				})
+				.catch(reason => console.error(reason));
 		}
 	}
 
