@@ -42,7 +42,7 @@ namespace VoicePlayer
 
 					callback(char);
 				},
-				(err: DOMException) => console.log("Error loading audio source: ", err));
+				(err: DOMException) => console.error("Error loading audio source: ", err));
 		};
 	}
 

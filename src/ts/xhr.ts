@@ -9,9 +9,9 @@ namespace Xhr
 			if (request.status === 200)
 				success(request.response);
 			else
-				console.log("Sever request failed: ", request);
+				console.error("Sever request failed: ", request);
 		};
-		request.onerror = () => { console.log("Server request failed: ", request); };
+		request.onerror = () => { console.error("Server request failed: ", request); };
 		request.open("GET", url);
 		request.send();
 	}

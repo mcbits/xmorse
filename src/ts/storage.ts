@@ -27,7 +27,7 @@ namespace LocalStorage
 		(value: boolean) => localStorage.setItem("voiceEnabled", value.toString()));
 
 	Listen(UI_VOLUME,
-		(value: string) => { console.log("set volume: ", value); localStorage.setItem("volume", value) });
+		(value: string) => localStorage.setItem("volume", value));
 
 	Listen(UI_WPM,
 		(value: string) => localStorage.setItem("wpm", value));
