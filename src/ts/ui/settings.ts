@@ -139,7 +139,7 @@ namespace Settings
 
 	function setWpm(value: number)
 	{
-		Timing.SetWpm(value);
+		TonePlayer.SetWpm(value);
 		charWPMText.value = value.toString();
 		settingsUI.charWPM.value = value.toString();
 	}

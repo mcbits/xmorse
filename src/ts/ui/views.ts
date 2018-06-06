@@ -1,11 +1,14 @@
 /// <reference path="../events.ts"/>
 /// <reference path="../query.ts"/>
 
-namespace Views {
-	function view(selector: string, menuItem: Element) {
+namespace Views
+{
+	function view(selector: string, menuItem: Element)
+	{
 		const views = QueryAll(".view");
 
-		for (let i = 0; i < views.length; ++i) {
+		for (let i = 0; i < views.length; ++i)
+		{
 			const view = views[i];
 			if (!view.classList.contains("disabled"))
 				view.classList.add("disabled");
@@ -16,7 +19,8 @@ namespace Views {
 
 		// Highlight the menu item
 		const controls = QueryAll(".menu .btn");
-		for (let i = 0; i < controls.length; ++i) {
+		for (let i = 0; i < controls.length; ++i)
+		{
 			const control = controls[i];
 			control.classList.remove("active");
 		}

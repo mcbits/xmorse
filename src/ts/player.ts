@@ -4,13 +4,14 @@
 /// <reference path="toneplayer.ts"/>
 /// <reference path="voiceplayer.ts"/>
 /// <reference path="text.ts"/>
-/// <reference path="timing.ts"/>
 
 namespace Player
 {
+	let nowPlaying: boolean;
+
 	export function playNextPattern(): void
 	{
-		if (Timing.NowPlaying)
+		if (nowPlaying)
 		{
 			// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
 			let [text, morseChar] = TextLoader.Next() || [" ", Morse.GetCharacter(" ")];
@@ -43,22 +44,23 @@ namespace Player
 
 	export function StartPlaying(): void
 	{
-		if (!Timing.NowPlaying)
+		if (!nowPlaying)
 		{
-			Timing.NowPlaying = true;
+			nowPlaying = true;
 			setTimeout(playNextPattern, 500);
 		}
 	}
 
 	export function StopPlaying(): void
 	{
-		Timing.NowPlaying = false;
+		nowPlaying = false;
+		VoicePlayer.Cancel();
 		TonePlayer.StopPlaying();
 	}
 
 	function patternComplete(char: Morse.Char): void
 	{
-		if (Timing.NowPlaying)
+		if (nowPlaying)
 		{
 			if (char == null)
 			{

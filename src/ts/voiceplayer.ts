@@ -1,7 +1,6 @@
 /// <reference path="morsetable.ts"/>
 /// <reference path="events.ts"/>
 /// <reference path="audiocontext.ts"/>
-/// <reference path="timing.ts"/>
 
 namespace VoicePlayer
 {
@@ -70,6 +69,11 @@ namespace VoicePlayer
 		enabled = value;
 	}
 
+	export function Cancel()
+	{
+		playWhenDone = false;
+	}
+
 	export function PreloadVoice(char: Morse.Char): void
 	{
 		if (enabled && !loaded[char.name] && loading[char.name])
@@ -78,26 +82,23 @@ namespace VoicePlayer
 
 	export function PlayVoice(char: Morse.Char): void
 	{
-		if (Timing.NowPlaying)
+		if (!enabled || Morse.fileName(char) === undefined)
+			Player.playNextPattern();
+		else if (loading[char.name])
+			playWhenDone = true;
+		else if (!loaded[char.name])
 		{
-			if (!enabled || Morse.fileName(char) === undefined)
-				Player.playNextPattern();
-			else if (loading[char.name])
-				playWhenDone = true;
-			else if (!loaded[char.name])
-			{
-				playWhenDone = true;
-				loadVoice(char);
-			}
-			else
-			{
-				const buffer = audioBuffers[char.name];
-				const audioSource = AudioCtx.createBufferSource();
-				audioSource.addEventListener("ended", Player.playNextPattern);
-				audioSource.buffer = buffer;
-				audioSource.connect(voiceGain);
-				audioSource.start(0);
-			}
+			playWhenDone = true;
+			loadVoice(char);
+		}
+		else
+		{
+			const buffer = audioBuffers[char.name];
+			const audioSource = AudioCtx.createBufferSource();
+			audioSource.addEventListener("ended", Player.playNextPattern);
+			audioSource.buffer = buffer;
+			audioSource.connect(voiceGain);
+			audioSource.start(0);
 		}
 	}
 }

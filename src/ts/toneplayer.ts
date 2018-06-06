@@ -1,28 +1,29 @@
 /// <reference path="events.ts"/>
 /// <reference path="audiocontext.ts"/>
 /// <reference path="morsetable.ts"/>
-/// <reference path="timing.ts"/>
 
 namespace TonePlayer
 {
-	let T = Timing;
+	const ditUnits = 1;
+	const dahUnits = 3;
+	const sampleRate = 48000;
 
 	let ditBuffer: AudioBuffer;
 	let dahBuffer: AudioBuffer;
 	let charSpaceBuffer: AudioBuffer;
 	let wordSpaceBuffer: AudioBuffer;
 	let currentBufferSource: AudioBufferSourceNode;
-	const ramp = 0.0;
-
-	export let Frequency = 650;
-	export let CharSpacing: number = 2;
+	let ramp = 0.01;
+	let frequency = 650;
+	let charSpacing: number = 2;
+	let unitTime: number;
 
 	function addToneToBuffer(units: number, samplesPerUnit: number, data: Float32Array, initialSample: number): void
 	{
-		const omega = 2 * Math.PI * Frequency / Timing.SampleRate;
+		const omega = 2 * Math.PI * frequency / sampleRate;
 
 		// Number of audio samples in the ramp up/down periods.
-		const rampSamples = Math.min(Math.ceil(Timing.Ramp * Timing.SampleRate), samplesPerUnit);
+		const rampSamples = Math.min(Math.ceil(ramp * sampleRate), samplesPerUnit);
 
 		// Number of samples containing audio. Ramp-up is included in the "on" time, but ramp-down is appended.
 		const soundSamples = Math.ceil(samplesPerUnit * units);
@@ -53,7 +54,7 @@ namespace TonePlayer
 
 		for (let i = 0; i < pattern.length; ++i)
 		{
-			total += (pattern[i] === "." ? Timing.DitUnits : Timing.DahUnits) + Timing.DitUnits;
+			total += (pattern[i] === "." ? ditUnits : dahUnits) + ditUnits;
 		}
 
 		return total;
@@ -67,18 +68,18 @@ namespace TonePlayer
 		const units = countUnitsInPattern(pattern);
 
 		// Number of audio samples per Morse code unit of time.
-		const samplesPerUnit = Math.ceil(Timing.UnitTime * Timing.SampleRate);
+		const samplesPerUnit = Math.ceil(unitTime * sampleRate);
 
 		// Number of audio samples in the ramp up/down periods.
-		const rampSamples = Math.min(Math.ceil(Timing.Ramp * Timing.SampleRate), samplesPerUnit);
+		const rampSamples = Math.min(Math.ceil(ramp * sampleRate), samplesPerUnit);
 
 		// Number of samples containing audio. Ramp-up is included in the "on" time, but ramp-down is appended.
 		const soundSamples = Math.ceil(samplesPerUnit * units);
 
 		// Total samples in the clip. This is the "on" time + ramp-down time + any remaining silence.
-		const totalSamples = Math.ceil(samplesPerUnit * units + (samplesPerUnit * CharSpacing));
+		const totalSamples = Math.ceil(samplesPerUnit * units + (samplesPerUnit * charSpacing));
 
-		const buffer = AudioCtx.createBuffer(1, totalSamples, Timing.SampleRate);
+		const buffer = AudioCtx.createBuffer(1, totalSamples, sampleRate);
 
 		const data = buffer.getChannelData(0);
 
@@ -89,12 +90,12 @@ namespace TonePlayer
 			switch (pattern[i])
 			{
 				case ".":
-					addToneToBuffer(Timing.DitUnits, samplesPerUnit, data, pos);
-					pos += samplesPerUnit * (Timing.DitUnits + Timing.DitUnits);
+					addToneToBuffer(ditUnits, samplesPerUnit, data, pos);
+					pos += samplesPerUnit * (ditUnits + ditUnits);
 					break;
 				case "-":
-					addToneToBuffer(Timing.DahUnits, samplesPerUnit, data, pos);
-					pos += samplesPerUnit * (Timing.DahUnits + Timing.DitUnits);
+					addToneToBuffer(dahUnits, samplesPerUnit, data, pos);
+					pos += samplesPerUnit * (dahUnits + ditUnits);
 					break;
 			}
 		}
@@ -116,21 +117,30 @@ namespace TonePlayer
 
 		const emptyChar = Morse.GetCharacter("");
 		const spaceChar = Morse.GetCharacter(" ");
-		const charSpaceTime = Timing.UnitTime * Timing.SampleRate * CharSpacing;
+		const charSpaceTime = unitTime * sampleRate * charSpacing;
 
-		emptyChar.toneAudioBuffer = AudioCtx.createBuffer(1, charSpaceTime, Timing.SampleRate);
-		spaceChar.toneAudioBuffer = AudioCtx.createBuffer(1, charSpaceTime * 3, Timing.SampleRate);
+		emptyChar.toneAudioBuffer = AudioCtx.createBuffer(1, charSpaceTime, sampleRate);
+		spaceChar.toneAudioBuffer = AudioCtx.createBuffer(1, charSpaceTime * 3, sampleRate);
 	}
 
 	export function SetFrequency(value: number)
 	{
-		Frequency = value;
+		frequency = value;
 		InitializeBuffers();
 	}
 
 	export function SetCharSpacing(value: number)
 	{
-		CharSpacing = value;
+		charSpacing = value;
+		InitializeBuffers();
+	}
+
+	// With 60 seconds per minute and 50 units in "PARIS":
+	//     UnitTime in seconds = 60 / (WPM * 50)
+	// This simplifies to 1.2 / WPM.
+	export function SetWpm(value: number)
+	{
+		unitTime = 1.2 / value;
 		InitializeBuffers();
 	}
 
