@@ -16,27 +16,14 @@ namespace UI
 
 	export let playState = "stopped";
 
-	pauseBtn.addEventListener("click", () =>
-	{
-		Player.StopPlaying();
-		UI.PausePlaying();
-	});
-
 	for (let i = 0; i < startBtns.length; ++i)
 	{
-		startBtns[i].addEventListener("click", () =>
-		{
-			Player.StartPlaying();
-		});
+		startBtns[i].addEventListener("click", () => Player.StartPlaying());
 	}
 
-	stopBtn.addEventListener("click", () =>
-	{
-		Player.StopPlaying();
-		FullScreen.StopPlaying();
-		TextLoader.ResetPosition();
-		UI.StopPlaying();
-	});
+	pauseBtn.addEventListener("click", () => UI.PausePlaying());
+
+	stopBtn.addEventListener("click", () => UI.StopPlaying());
 
 	for (let i = 0; i < storyLinks.length; ++i)
 	{
@@ -74,18 +61,21 @@ namespace UI
 		startBtn.disabled = false;
 		pauseBtn.disabled = true;
 		stopBtn.disabled = true;
+		Player.StopPlaying();
 	}
 
 	export function StopPlaying()
 	{
 		playState = "stopped";
-		location.hash = "";
 		outputBuffer.innerHTML = "";
 		letterElement.innerHTML = "";
 		patternEl.innerHTML = "";
 		startBtn.disabled = false;
 		pauseBtn.disabled = true;
 		stopBtn.disabled = true;
+		Player.StopPlaying();
+		FullScreen.StopPlaying();
+		TextLoader.ResetPosition();
 	}
 
 	export function EmitCharacter(char: string)

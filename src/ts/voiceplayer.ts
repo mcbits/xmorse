@@ -77,7 +77,7 @@ namespace VoicePlayer
 
 	export function PlayVoice(char: Morse.Char): void
 	{
-		if (!enabled || Morse.fileName(char) === undefined)
+		if (!enabled || char == null || Morse.fileName(char) === undefined)
 			Player.PlayNextPattern();
 		else if (loading[char.name])
 			playWhenDone = true;

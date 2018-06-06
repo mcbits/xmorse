@@ -160,8 +160,8 @@ namespace TonePlayer
 		currentBufferSource.buffer = char.toneAudioBuffer;
 		currentBufferSource.addEventListener("ended", () =>
 		{
-			Player.PatternComplete(char);
 			UI.PatternComplete(char);
+			Player.PatternComplete(char);
 		});
 		currentBufferSource.start();
 	}

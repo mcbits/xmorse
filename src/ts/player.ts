@@ -28,11 +28,8 @@ namespace Player
 					UI.EmitCharacter("");
 				}
 
-				setTimeout(() =>
-				{
-					VoicePlayer.PreloadVoice(morseChar);
-					TonePlayer.PlayPattern(morseChar);
-				}, sleepTime);
+				VoicePlayer.PreloadVoice(morseChar);
+				TonePlayer.PlayPattern(morseChar);
 			}
 			else
 			{
@@ -64,16 +61,9 @@ namespace Player
 	{
 		if (nowPlaying)
 		{
-			if (char == null)
-			{
-				PlayNextPattern();
-			}
-			else
-			{
-				// playNextPattern() will be called by VOICE_DONE (which is
-				// triggered whether the voice is currently enabled or not).
-				VoicePlayer.PlayVoice(char);
-			}
+			// PlayNextPattern() will be called by VOICE_DONE (which is
+			// triggered whether the voice is currently enabled or not).
+			VoicePlayer.PlayVoice(char);
 		}
 	}
 }
