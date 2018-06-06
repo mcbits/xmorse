@@ -7,11 +7,6 @@ namespace VoicePlayer
 	// For caching audio files as they're loaded
 	const audioBuffers: { [char: string]: AudioBuffer } = {};
 
-	// Wire up audio
-	const voiceGain = AudioCtx.createGain();
-	voiceGain.gain.value = 0.85;
-	voiceGain.connect(MasterGain);
-
 	let loading: { [_: string]: boolean } = {};
 	let loaded: { [_: string]: boolean } = {};
 	let playWhenDone = false;
@@ -97,7 +92,7 @@ namespace VoicePlayer
 			const audioSource = AudioCtx.createBufferSource();
 			audioSource.addEventListener("ended", Player.playNextPattern);
 			audioSource.buffer = buffer;
-			audioSource.connect(voiceGain);
+			audioSource.connect(VoiceGain);
 			audioSource.start(0);
 		}
 	}

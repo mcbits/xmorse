@@ -156,7 +156,7 @@ namespace TonePlayer
 		UI.DrawPattern(char.pattern);
 
 		currentBufferSource = AudioCtx.createBufferSource();
-		currentBufferSource.connect(MasterGain);
+		currentBufferSource.connect(ToneGain);
 		currentBufferSource.buffer = char.toneAudioBuffer;
 		currentBufferSource.addEventListener("ended", () => Notify("patternend", char));
 		currentBufferSource.start();
