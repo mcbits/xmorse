@@ -184,6 +184,8 @@ namespace Settings
 
 	document.addEventListener("DOMContentLoaded", () =>
 	{
+		FullScreen.Initialize();
+
 		const volumeStorage = localStorage.getItem("volume");
 		const volume = volumeStorage == null
 			? defaults.volume

@@ -52,7 +52,7 @@ namespace VoicePlayer
 						console.error("Failed to load voice for char: ", char);
 						loading[char.name] = false;
 						playWhenDone = false;
-						Player.playNextPattern();
+						Player.PlayNextPattern();
 					}
 				})
 				.catch(reason => console.error(reason));
@@ -78,7 +78,7 @@ namespace VoicePlayer
 	export function PlayVoice(char: Morse.Char): void
 	{
 		if (!enabled || Morse.fileName(char) === undefined)
-			Player.playNextPattern();
+			Player.PlayNextPattern();
 		else if (loading[char.name])
 			playWhenDone = true;
 		else if (!loaded[char.name])
@@ -90,7 +90,7 @@ namespace VoicePlayer
 		{
 			const buffer = audioBuffers[char.name];
 			const audioSource = AudioCtx.createBufferSource();
-			audioSource.addEventListener("ended", Player.playNextPattern);
+			audioSource.addEventListener("ended", Player.PlayNextPattern);
 			audioSource.buffer = buffer;
 			audioSource.connect(VoiceGain);
 			audioSource.start(0);

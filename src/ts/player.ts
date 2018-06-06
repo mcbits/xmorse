@@ -9,7 +9,7 @@ namespace Player
 {
 	let nowPlaying: boolean;
 
-	export function playNextPattern(): void
+	export function PlayNextPattern(): void
 	{
 		if (nowPlaying)
 		{
@@ -37,7 +37,8 @@ namespace Player
 			else
 			{
 				UI.DrawPattern("");
-				Notify("patternend", null);
+				Player.PatternComplete(null);
+				UI.PatternComplete(null);
 			}
 		}
 	}
@@ -47,7 +48,7 @@ namespace Player
 		if (!nowPlaying)
 		{
 			nowPlaying = true;
-			setTimeout(playNextPattern, 500);
+			setTimeout(PlayNextPattern, 500);
 		}
 	}
 
@@ -58,13 +59,13 @@ namespace Player
 		TonePlayer.StopPlaying();
 	}
 
-	function patternComplete(char: Morse.Char): void
+	export function PatternComplete(char: Morse.Char): void
 	{
 		if (nowPlaying)
 		{
 			if (char == null)
 			{
-				playNextPattern();
+				PlayNextPattern();
 			}
 			else
 			{
@@ -74,6 +75,4 @@ namespace Player
 			}
 		}
 	}
-
-	Listen("patternend", patternComplete);
 }

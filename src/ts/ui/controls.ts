@@ -128,12 +128,12 @@ namespace UI
 		}
 	}
 
-	Listen("patternend", (char: Morse.Char) =>
+	export function PatternComplete(char: Morse.Char)
 	{
 		if (playState !== "stopped")
 		{
 			outputBuffer.innerHTML += char == null ? " " : char.name;
 			outputBuffer.scrollTop = outputBuffer.scrollHeight;
 		}
-	});
+	}
 }

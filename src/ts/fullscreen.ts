@@ -127,12 +127,15 @@ namespace FullScreen
 			exitFullScreen();
 	}
 
-	if (document.fullscreenEnabled)
-		document.addEventListener("fullscreenchange", fullScreenChanged);
-	else if (document["webkitFullscreenEnabled"])
-		document.addEventListener("webkitfullscreenchange", fullScreenChanged);
-	else if (document["mozFullScreenEnabled"])
-		document.addEventListener("mozfullscreenchange", fullScreenChanged);
+	export function Initialize()
+	{
+		if (document.fullscreenEnabled)
+			document.addEventListener("fullscreenchange", fullScreenChanged);
+		else if (document["webkitFullscreenEnabled"])
+			document.addEventListener("webkitfullscreenchange", fullScreenChanged);
+		else if (document["mozFullScreenEnabled"])
+			document.addEventListener("mozfullscreenchange", fullScreenChanged);
 
-	fullScreenButton.addEventListener("click", toggleFullScreen);
+		fullScreenButton.addEventListener("click", toggleFullScreen);
+	}
 }

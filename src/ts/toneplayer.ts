@@ -158,7 +158,11 @@ namespace TonePlayer
 		currentBufferSource = AudioCtx.createBufferSource();
 		currentBufferSource.connect(ToneGain);
 		currentBufferSource.buffer = char.toneAudioBuffer;
-		currentBufferSource.addEventListener("ended", () => Notify("patternend", char));
+		currentBufferSource.addEventListener("ended", () =>
+		{
+			Player.PatternComplete(char);
+			UI.PatternComplete(char);
+		});
 		currentBufferSource.start();
 	}
 }
