@@ -13,10 +13,10 @@ namespace VoicePlayer
 	voiceGain.gain.value = 0.85;
 	voiceGain.connect(MasterGain);
 
-	let voiceEnabled = false;
 	let loading: { [_: string]: boolean } = {};
 	let loaded: { [_: string]: boolean } = {};
 	let playWhenDone = false;
+	let enabled = false;
 
 	function voiceLoaded(char: Morse.Char): void
 	{
@@ -58,16 +58,21 @@ namespace VoicePlayer
 						console.error("Failed to load voice for char: ", char);
 						loading[char.name] = false;
 						playWhenDone = false;
-						Notify(EMIT_VOICE_DONE, char);
+						Player.playNextPattern();
 					}
 				})
 				.catch(reason => console.error(reason));
 		}
 	}
 
+	export function SetEnabled(value: boolean)
+	{
+		enabled = value;
+	}
+
 	export function PreloadVoice(char: Morse.Char): void
 	{
-		if (voiceEnabled && !loaded[char.name] && loading[char.name])
+		if (enabled && !loaded[char.name] && loading[char.name])
 			loadVoice(char);
 	}
 
@@ -75,8 +80,8 @@ namespace VoicePlayer
 	{
 		if (Timing.NowPlaying)
 		{
-			if (!voiceEnabled || Morse.fileName(char) === undefined)
-				Notify(EMIT_VOICE_DONE, char);
+			if (!enabled || Morse.fileName(char) === undefined)
+				Player.playNextPattern();
 			else if (loading[char.name])
 				playWhenDone = true;
 			else if (!loaded[char.name])
@@ -88,13 +93,11 @@ namespace VoicePlayer
 			{
 				const buffer = audioBuffers[char.name];
 				const audioSource = AudioCtx.createBufferSource();
-				audioSource.addEventListener("ended", () => Notify(EMIT_VOICE_DONE, char));
+				audioSource.addEventListener("ended", Player.playNextPattern);
 				audioSource.buffer = buffer;
 				audioSource.connect(voiceGain);
 				audioSource.start(0);
 			}
 		}
 	}
-
-	Listen(SET_VOICE, (value: boolean) => voiceEnabled = value);
 }

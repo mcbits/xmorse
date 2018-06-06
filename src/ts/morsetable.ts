@@ -6,9 +6,17 @@ namespace Morse
 	{
 		name: string;
 		pattern: string;
+		voiceFileName?: string;
+		voiceAudioBuffer?: AudioBuffer;
+		toneAudioBuffer?: AudioBuffer;
 	}
 
 	// 0 1 2 3 4 5 6 7 8 9 A B C D E F G H I J K L M N O P Q R S T U V W X Y Z . ? ! , : ; ' - / ( ) @ = + "
+
+	const spacePatterns: { [char: string]: Char } = {
+		"": { name: "", pattern: "" },
+		" ": { name: " ", pattern: " " },
+	};
 
 	const letterPatterns: { [char: string]: Char } = {
 		"A": { name: "A", pattern: ".-" },
@@ -147,10 +155,10 @@ namespace Morse
 			return found;
 
 		if (char === "")
-			return { name: "", pattern: "" };
+			return spacePatterns[""];
 
 		if (char === " ")
-			return { name: " ", pattern: " " };
+			return spacePatterns[" "];
 
 		return undefined;
 	}
@@ -175,7 +183,18 @@ namespace Morse
 		return undefined;
 	}
 
-	Listen(SET_LETTERS, (value: boolean) => lettersEnabled = value);
-	Listen(SET_NUMBERS, (value: boolean) => numbersEnabled = value);
-	Listen(SET_SYMBOLS, (value: boolean) => symbolsEnabled = value);
+	export function SetNumbers(value: boolean)
+	{
+		numbersEnabled = value;
+	}
+
+	export function SetLetters(value: boolean)
+	{
+		lettersEnabled = value;
+	}
+
+	export function SetSymbols(value: boolean)
+	{
+		symbolsEnabled = value;
+	}
 }

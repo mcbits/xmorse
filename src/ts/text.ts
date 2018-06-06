@@ -6,29 +6,33 @@ namespace TextLoader
 	let textBuffer = "";
 	let textBufferIndex = -1;
 
-	function resetPosition()
+	export function ResetPosition()
 	{
 		textBufferIndex = textBuffer.length > 0 ? 0 : -1;
 	}
 
-	function updateTextBuffer(text: string)
+	export function SetTextBuffer(text: string)
 	{
 		textBuffer = text.toUpperCase() + "\n";
-		resetPosition();
+		ResetPosition();
 	}
 
-	function loadBook(href: string): void
+	export function LoadBook(href: string): void
 	{
-		fetch(href, { method: "GET" })
-			.then(response => response.text()
-				.then(value =>
-				{
-					Notify(CMD_CLEAR_OUTPUT, null);
-					setTimeout(() => {
-						Notify(SET_TEXT_BUFFER, value);
-						Notify(CMD_START, null);
-					}, 500);
-				}));
+		Player.StopPlaying();
+		fetch(href, { method: "GET" }).then(response =>
+			response.text().then(value =>
+			{
+				UI.playState = "stopped";
+				UI.ClearOutput();
+
+				Settings.SetTextBuffer(value);
+
+				// TODO: Combine StartPlaying (search for other)
+				Player.StartPlaying();
+				FullScreen.Start();
+				UI.StartPlaying();
+			}));
 	}
 
 	export function Next(): [string, Morse.Char]
@@ -60,8 +64,4 @@ namespace TextLoader
 
 		return [char.name, char];
 	}
-
-	Listen(SET_TEXT_BUFFER, updateTextBuffer);
-	Listen(CMD_STORY, loadBook);
-	Listen(CMD_STOP, resetPosition);
 }

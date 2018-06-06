@@ -1,6 +1,7 @@
 /// <reference path="../events.ts"/>
 
-namespace Settings {
+namespace Settings
+{
 	const resetSettingsButton = QueryId("resetSettings");
 
 	// Settings text labels
@@ -10,7 +11,7 @@ namespace Settings {
 	const charSpacingText = Query<HTMLInputElement>(".charSpacingText");
 
 	// Settings inputs
-	export const userSet = {
+	const settingsUI = {
 		volume: QueryId<HTMLInputElement>("volume"),
 		charWPM: QueryId<HTMLInputElement>("charWPM"),
 		pitch: QueryId<HTMLInputElement>("pitch"),
@@ -23,7 +24,7 @@ namespace Settings {
 	};
 
 	const defaults = {
-		charSpacing: 8,
+		charSpacing: 2,
 		lettersEnabled: true,
 		numbersEnabled: false,
 		pitch: 650,
@@ -33,120 +34,202 @@ namespace Settings {
 		wpm: 10
 	};
 
-	function Adjust(name: string, value: any) {
-		Notify(name.replace(/^set_/, "ui_"), value.toString());
-		Notify(name, value);
+	settingsUI.volume.addEventListener("input", () =>
+	{
+		const value = parseFloat(settingsUI.volume.value);
+		localStorage.setItem("volume", value.toString());
+		setVolume(value);
+	});
+
+	settingsUI.charWPM.addEventListener("input", () =>
+	{
+		const value = parseInt(settingsUI.charWPM.value);
+		localStorage.setItem("wpm", value.toString());
+		setWpm(value);
+	});
+
+	settingsUI.charSpacing.addEventListener("input", () =>
+	{
+		const value = parseInt(settingsUI.charSpacing.value);
+		localStorage.setItem("charSpacing", value.toString());
+		setCharSpacing(value);
+	});
+
+	settingsUI.pitch.addEventListener("input", () =>
+	{
+		const value = parseInt(settingsUI.pitch.value);
+		localStorage.setItem("pitch", value.toString());
+		setPitch(value);
+	});
+
+	settingsUI.pasteTextBox.addEventListener("input", () =>
+	{
+		const value = settingsUI.pasteTextBox.value;
+		localStorage.setItem("textBuffer", value.toString());
+		SetTextBuffer(value);
+	});
+
+	settingsUI.voiceEnabled.addEventListener("change", () =>
+	{
+		const value = settingsUI.voiceEnabled.checked;
+		localStorage.setItem("voiceEnabled", value.toString());
+		VoicePlayer.SetEnabled(value);
+	});
+
+	settingsUI.lettersEnabled.addEventListener("change", () =>
+	{
+		localStorage.setItem("lettersEnabled", settingsUI.lettersEnabled.checked.toString());
+		Morse.SetLetters(settingsUI.lettersEnabled.checked);
+		settingsUI.lettersEnabled.checked = settingsUI.lettersEnabled.checked;
+	});
+
+	settingsUI.numbersEnabled.addEventListener("change", () =>
+	{
+		const numbersEnabled = settingsUI.numbersEnabled.checked;
+		localStorage.setItem("numbersEnabled", numbersEnabled.toString());
+		setNumbersEnabled(numbersEnabled);
+	});
+
+	settingsUI.symbolsEnabled.addEventListener("change", () =>
+	{
+		localStorage.setItem("symbolsEnabled", settingsUI.symbolsEnabled.checked.toString());
+		settingsUI.symbolsEnabled.checked = settingsUI.symbolsEnabled.checked;
+		Morse.SetSymbols(settingsUI.symbolsEnabled.checked);
+	});
+
+	resetSettingsButton.addEventListener("click", () =>
+	{
+		localStorage.setItem("charSpacing", defaults.charSpacing.toString());
+		setCharSpacing(defaults.charSpacing);
+
+		localStorage.setItem("lettersEnabled", defaults.lettersEnabled.toString());
+		setLettersEnabled(defaults.lettersEnabled);
+
+		localStorage.setItem("numbersEnabled", defaults.numbersEnabled.toString());
+		setNumbersEnabled(defaults.numbersEnabled);
+
+		localStorage.setItem("pitch", defaults.pitch.toString());
+		setPitch(defaults.pitch);
+
+		localStorage.setItem("symbolsEnabled", defaults.symbolsEnabled.toString());
+		setSymbolsEnabled(defaults.symbolsEnabled);
+
+		localStorage.setItem("voiceEnabled", defaults.voiceEnabled.toString());
+		setVoiceEnabled(defaults.voiceEnabled);
+
+		localStorage.setItem("volume", defaults.volume.toString());
+		setVolume(defaults.volume);
+
+		localStorage.setItem("wpm", defaults.wpm.toString());
+		setWpm(defaults.wpm);
+	});
+
+	export function SetTextBuffer(value: string)
+	{
+		TextLoader.SetTextBuffer(value);
+		settingsUI.pasteTextBox.value = value;
 	}
 
-	userSet.volume.addEventListener("input",
-		() => Adjust(SET_VOLUME, parseFloat(userSet.volume.value)));
+	function setVolume(value: number)
+	{
+		MasterGain.gain.setTargetAtTime(value, AudioCtx.currentTime, 0.01);
+		volumeText.value = Math.floor(value * 100).toString();
+		settingsUI.volume.value = value.toString();
+	}
 
-	userSet.charWPM.addEventListener("input",
-		() => Adjust(SET_WPM, parseInt(userSet.charWPM.value)));
+	function setWpm(value: number)
+	{
+		Timing.SetWpm(value);
+		charWPMText.value = value.toString();
+		settingsUI.charWPM.value = value.toString();
+	}
 
-	userSet.charSpacing.addEventListener("input",
-		() => Adjust(SET_SPACING, parseInt(userSet.charSpacing.value)));
+	function setPitch(value: number)
+	{
+		TonePlayer.SetFrequency(value);
+		pitchText.value = value.toString();
+		settingsUI.pitch.value = value.toString();
+	}
 
-	userSet.pitch.addEventListener("input",
-		() => Adjust(SET_PITCH, parseInt(userSet.pitch.value)));
+	function setCharSpacing(value: number)
+	{
+		TonePlayer.SetCharSpacing(value);
+		charSpacingText.value = value.toString();
+		settingsUI.charSpacing.value = value.toString();
+	}
 
-	userSet.pasteTextBox.addEventListener("input",
-		() => Adjust(SET_TEXT_BUFFER, userSet.pasteTextBox.value));
+	function setVoiceEnabled(value: boolean)
+	{
+		VoicePlayer.SetEnabled(value);
+		settingsUI.voiceEnabled.checked = value;
+	}
 
-	userSet.voiceEnabled.addEventListener("change",
-		() => Adjust(SET_VOICE, userSet.voiceEnabled.checked));
+	function setLettersEnabled(value: boolean)
+	{
+		Morse.SetLetters(value);
+		settingsUI.lettersEnabled.checked = value;
+	}
 
-	userSet.lettersEnabled.addEventListener("change",
-		() => Adjust(SET_LETTERS, userSet.lettersEnabled.checked));
+	function setNumbersEnabled(value: boolean)
+	{
+		Morse.SetNumbers(value);
+		settingsUI.numbersEnabled.checked = value;
+	}
 
-	userSet.numbersEnabled.addEventListener("change",
-		() => Adjust(SET_NUMBERS, userSet.numbersEnabled.checked));
+	function setSymbolsEnabled(value: boolean)
+	{
+		Morse.SetSymbols(value);
+		settingsUI.symbolsEnabled.checked = value;
+	}
 
-	userSet.symbolsEnabled.addEventListener("change",
-		() => Adjust(SET_SYMBOLS, userSet.symbolsEnabled.checked));
+	document.addEventListener("DOMContentLoaded", () =>
+	{
+		const volumeStorage = localStorage.getItem("volume");
+		const volume = volumeStorage == null
+			? defaults.volume
+			: parseFloat(volumeStorage);
+		setVolume(volume);
 
-	resetSettingsButton.addEventListener("click",
-		() => {
-			Adjust(SET_SPACING, defaults.charSpacing);
-			Adjust(SET_LETTERS, defaults.lettersEnabled);
-			Adjust(SET_NUMBERS, defaults.numbersEnabled);
-			Adjust(SET_PITCH, defaults.pitch);
-			Adjust(SET_SYMBOLS, defaults.symbolsEnabled);
-			Adjust(SET_VOICE, defaults.voiceEnabled);
-			Adjust(SET_VOLUME, defaults.volume);
-			Adjust(SET_WPM, defaults.wpm);
-		});
+		const wpmStorage = localStorage.getItem("wpm");
+		const wpm = wpmStorage == null
+			? defaults.wpm
+			: parseInt(wpmStorage);
+		setWpm(wpm);
 
-	// Update UI in response to settings changes
+		const pitchStorage = localStorage.getItem("pitch");
+		const pitch = pitchStorage == null
+			? defaults.pitch
+			: parseInt(pitchStorage);
+		setPitch(pitch);
 
-	Listen(SET_SPACING,
-		(value: number) => {
-			charSpacingText.value = value.toString();
-			userSet.charSpacing.value = value.toString();
-		});
-
-	Listen(SET_LETTERS,
-		(value: boolean) => userSet.lettersEnabled.checked = value);
-
-	Listen(SET_NUMBERS,
-		(value: boolean) => userSet.numbersEnabled.checked = value);
-
-	Listen(SET_PITCH,
-		(value: number) => {
-			pitchText.value = value.toString();
-			userSet.pitch.value = value.toString();
-		});
-
-	Listen(SET_SYMBOLS,
-		(value: boolean) => userSet.symbolsEnabled.checked = value);
-
-	Listen(SET_TEXT_BUFFER,
-		(value: string) => userSet.pasteTextBox.value = value);
-
-	Listen(SET_VOICE,
-		(value: boolean) => userSet.voiceEnabled.checked = value);
-
-	Listen(SET_VOLUME,
-		(value: number) => {
-			volumeText.value = Math.floor(value * 100).toString();
-			userSet.volume.value = value.toString();
-		});
-
-	Listen(SET_WPM,
-		(value: number) => {
-			charWPMText.value = value.toString();
-			userSet.charWPM.value = value.toString();
-		});
-
-	document.addEventListener("DOMContentLoaded", () => {
-		// Trigger events to initialize state
-		Notify(SET_VOLUME, localStorage.getItem("volume") || defaults.volume);
-		Notify(SET_WPM, localStorage.getItem("wpm") || defaults.wpm);
-		Notify(SET_PITCH, localStorage.getItem("pitch") || defaults.pitch);
-		Notify(SET_SPACING, localStorage.getItem("charSpacing") || defaults.charSpacing);
+		const charSpacingStorage = localStorage.getItem("charSpacing");
+		const charSpacing = charSpacingStorage == null
+			? defaults.charSpacing
+			: parseInt(charSpacingStorage);
+		setCharSpacing(charSpacing);
 
 		const voiceEnabledStorage = localStorage.getItem("voiceEnabled");
-		if (voiceEnabledStorage == null)
-			Notify(SET_VOICE, defaults.voiceEnabled);
-		else
-			Notify(SET_VOICE, voiceEnabledStorage === "true");
+		const voiceEnabled = voiceEnabledStorage == null
+			? defaults.voiceEnabled
+			: voiceEnabledStorage === "true";
+		setVoiceEnabled(voiceEnabled);
 
 		const lettersEnabledStorage = localStorage.getItem("lettersEnabled");
-		if (lettersEnabledStorage == null)
-			Notify(SET_LETTERS, defaults.lettersEnabled);
-		else
-			Notify(SET_LETTERS, lettersEnabledStorage === "true");
+		const lettersEnabled = lettersEnabledStorage == null
+			? defaults.lettersEnabled
+			: lettersEnabledStorage === "true";
+		setLettersEnabled(lettersEnabled);
 
 		const numbersEnabledStorage = localStorage.getItem("numbersEnabled");
-		if (numbersEnabledStorage == null)
-			Notify(SET_NUMBERS, defaults.numbersEnabled);
-		else
-			Notify(SET_NUMBERS, numbersEnabledStorage === "true");
+		const numbersEnabled = numbersEnabledStorage == null
+			? defaults.numbersEnabled
+			: numbersEnabledStorage === "true";
+		setNumbersEnabled(numbersEnabled);
 
 		const symbolsEnabledStorage = localStorage.getItem("symbolsEnabled");
-		if (symbolsEnabledStorage == null)
-			Notify(SET_SYMBOLS, defaults.symbolsEnabled);
-		else
-			Notify(SET_SYMBOLS, symbolsEnabledStorage === "true");
+		const symbolsEnabled = symbolsEnabledStorage == null
+			? defaults.symbolsEnabled
+			: symbolsEnabledStorage === "true";
+		setSymbolsEnabled(symbolsEnabled);
 	});
 }

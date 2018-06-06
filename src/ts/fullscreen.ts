@@ -61,7 +61,6 @@ namespace FullScreen
 		{
 			hideControls();
 			hideCursor();
-			return;
 		}
 		else
 		{
@@ -112,13 +111,13 @@ namespace FullScreen
 		controlsVisible = true;
 	}
 
-	function start()
+	export function Start()
 	{
 		document.addEventListener("mousemove", markTime);
 		hideControlsInterval = setInterval(hideOrReveal, 200);
 	}
 
-	function stop()
+	export function StopPlaying()
 	{
 		clearInterval(hideControlsInterval);
 		document.removeEventListener("mousemove", markTime);
@@ -127,9 +126,6 @@ namespace FullScreen
 		if (isFullScreen)
 			exitFullScreen();
 	}
-
-	Listen(CMD_START, start);
-	Listen(CMD_STOP, stop);
 
 	if (document.fullscreenEnabled)
 		document.addEventListener("fullscreenchange", fullScreenChanged);

@@ -14,19 +14,32 @@ namespace UI
 	const storyLinks = QueryAll(".story a");
 	const patternEl = Query<HTMLElement>(".view.playing .pattern");
 
-	let playState = "stopped";
+	export let playState = "stopped";
 
-	pauseBtn.addEventListener("click",
-		() => Notify(CMD_PAUSE, null));
+	pauseBtn.addEventListener("click", () =>
+	{
+		Player.StopPlaying();
+		UI.PausePlaying();
+	});
 
 	for (let i = 0; i < startBtns.length; ++i)
 	{
-		startBtns[i].addEventListener("click",
-			() => Notify(CMD_START, null));
+		startBtns[i].addEventListener("click", () =>
+		{
+			// TODO: Combine StartPlaying (search for other)
+			Player.StartPlaying();
+			FullScreen.Start();
+			UI.StartPlaying();
+		});
 	}
 
-	stopBtn.addEventListener("click",
-		() => Notify(CMD_STOP, null));
+	stopBtn.addEventListener("click", () =>
+	{
+		Player.StopPlaying();
+		FullScreen.StopPlaying();
+		TextLoader.ResetPosition();
+		UI.StopPlaying();
+	});
 
 	for (let i = 0; i < storyLinks.length; ++i)
 	{
@@ -36,34 +49,36 @@ namespace UI
 			evt.preventDefault();
 			const anchor = <HTMLAnchorElement>evt.target;
 			const href = anchor.href;
-			Notify(CMD_STORY, href);
+			TextLoader.LoadBook(href);
 		});
 	}
 
-	Listen(CMD_CLEAR_OUTPUT, () =>
-		outputBuffer.innerHTML = "");
+	export function ClearOutput()
+	{
+		outputBuffer.innerHTML = "";
+	}
 
-	Listen(CMD_PAUSE, () =>
+	export function StartPlaying()
+	{
+		if (AudioCtx.state === "suspended")
+			AudioCtx.resume();
+
+		startBtn.disabled = true;
+		pauseBtn.disabled = false;
+		stopBtn.disabled = false;
+		playState = "started";
+		location.hash = "#playing";
+	}
+
+	export function PausePlaying()
 	{
 		playState = "paused";
 		startBtn.disabled = false;
 		pauseBtn.disabled = true;
 		stopBtn.disabled = true;
-	});
+	}
 
-	Listen(CMD_START, () =>
-	{
-		if (AudioCtx.state === "suspended")
-			AudioCtx.resume();
-
-		playState = "started";
-		Notify(WATCH, null);
-		startBtn.disabled = true;
-		pauseBtn.disabled = false;
-		stopBtn.disabled = false;
-	});
-
-	Listen(CMD_STOP, () =>
+	export function StopPlaying()
 	{
 		playState = "stopped";
 		location.hash = "";
@@ -73,56 +88,52 @@ namespace UI
 		startBtn.disabled = false;
 		pauseBtn.disabled = true;
 		stopBtn.disabled = true;
-	});
+	}
 
-	Listen(EMIT_LETTER,
-		(value: string) => letterElement.innerHTML = value);
+	export function EmitCharacter(char: string)
+	{
+		letterElement.innerHTML = char;
+	}
 
-	Listen(EMIT_OUTPUT,
-		(value: string) =>
+	export function EmitOutput(value: string)
+	{
+		outputBuffer.innerHTML += value;
+		outputBuffer.scrollTop = outputBuffer.scrollHeight;
+	}
+
+	export function DrawPattern(pattern: string)
+	{
+		function make(className: string): HTMLElement
 		{
-			outputBuffer.innerHTML += value;
+			const el = document.createElement("span");
+			el.classList.add("element");
+			el.classList.add(className);
+			return el;
+		}
+
+		patternEl.appendChild(make("charSpace"));
+
+		for (let i = 0; i < pattern.length; ++i)
+		{
+			let el: HTMLElement;
+
+			if (pattern[i] === ".")
+				el = make("dit");
+			else if (pattern[i] === "-")
+				el = make("dah");
+			else if (pattern[i] === " ")
+				el = make("wordSpace");
+
+			patternEl.appendChild(el);
+		}
+	}
+
+	Listen("patternend", (char: Morse.Char) =>
+	{
+		if (playState !== "stopped")
+		{
+			outputBuffer.innerHTML += char == null ? " " : char.name;
 			outputBuffer.scrollTop = outputBuffer.scrollHeight;
-		});
-
-	Listen(PATTERN_START,
-		(pattern: string) =>
-		{
-			function make(className: string): HTMLElement
-			{
-				const el = document.createElement("span");
-				el.classList.add("element");
-				el.classList.add(className);
-				return el;
-			}
-
-			for (let i = 0; i < pattern.length; ++i)
-			{
-				let el: HTMLElement;
-
-				if (pattern[i] === ".")
-					el = make("dit");
-				else if (pattern[i] === "-")
-					el = make("dah");
-				else if (pattern[i] === " ")
-					el = make("wordSpace");
-
-				patternEl.appendChild(el);
-			}
-
-			patternEl.appendChild(make("charSpace"));
-		});
-
-	Listen(PATTERN_STOP,
-		(char: Morse.Char) =>
-		{
-			if (playState !== "stopped")
-			{
-				outputBuffer.innerHTML += char == null ? " " : char.name;
-				outputBuffer.scrollTop = outputBuffer.scrollHeight;
-			}
-		});
-
-	Listen(WATCH,
-		() => location.hash = "#playing");
+		}
+	});
 }

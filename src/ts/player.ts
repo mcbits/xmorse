@@ -8,14 +8,12 @@
 
 namespace Player
 {
-	const T = Timing;
-
-	function playNextPattern(): void
+	export function playNextPattern(): void
 	{
-		if (T.NowPlaying)
+		if (Timing.NowPlaying)
 		{
 			// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
-			let [text, morseChar] = TextLoader.Next() || [" ", {name: " ", pattern: ""}];
+			let [text, morseChar] = TextLoader.Next() || [" ", Morse.GetCharacter(" ")];
 
 			if (morseChar)
 			{
@@ -24,9 +22,9 @@ namespace Player
 				// If there is unplayable text, send it to the output buffer and delay for one word-break.
 				if (text !== morseChar.name)
 				{
-					Notify(EMIT_OUTPUT, text.substr(0, text.length - 1));
-					Notify(PATTERN_START, " ");
-					Notify(EMIT_LETTER, "");
+					UI.EmitOutput(text.substr(0, text.length - 1));
+					UI.DrawPattern(" ");
+					UI.EmitCharacter("");
 				}
 
 				setTimeout(() =>
@@ -37,34 +35,30 @@ namespace Player
 			}
 			else
 			{
-				Notify(PATTERN_START, "");
-				Notify(PATTERN_STOP, null);
+				UI.DrawPattern("");
+				Notify("patternend", null);
 			}
 		}
 	}
 
-	function updateVolume(value: number): void
+	export function StartPlaying(): void
 	{
-		MasterGain.gain.setTargetAtTime(value, AudioCtx.currentTime, 0.01);
-	}
-
-	function startPlaying(): void
-	{
-		if (!T.NowPlaying)
+		if (!Timing.NowPlaying)
 		{
-			Notify(SET_NOW_PLAYING, true);
+			Timing.NowPlaying = true;
 			setTimeout(playNextPattern, 500);
 		}
 	}
 
-	function stopPlaying(): void
+	export function StopPlaying(): void
 	{
-		Notify(SET_NOW_PLAYING, false);
+		Timing.NowPlaying = false;
+		TonePlayer.StopPlaying();
 	}
 
 	function patternComplete(char: Morse.Char): void
 	{
-		if (T.NowPlaying)
+		if (Timing.NowPlaying)
 		{
 			if (char == null)
 			{
@@ -79,10 +73,5 @@ namespace Player
 		}
 	}
 
-	Listen(EMIT_VOICE_DONE, playNextPattern);
-	Listen(CMD_PAUSE, stopPlaying);
-	Listen(CMD_STOP, stopPlaying);
-	Listen(CMD_START, startPlaying);
-	Listen(PATTERN_STOP, patternComplete);
-	Listen(SET_VOLUME, updateVolume);
+	Listen("patternend", patternComplete);
 }
