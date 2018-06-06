@@ -13,7 +13,7 @@ namespace TextLoader
 
 	export function SetTextBuffer(text: string)
 	{
-		textBuffer = text.toUpperCase() + "\n";
+		textBuffer = text.toUpperCase().trim() + "\n";
 		ResetPosition();
 	}
 
@@ -25,13 +25,8 @@ namespace TextLoader
 			{
 				UI.playState = "stopped";
 				UI.ClearOutput();
-
 				Settings.SetTextBuffer(value);
-
-				// TODO: Combine StartPlaying (search for other)
 				Player.StartPlaying();
-				FullScreen.Start();
-				UI.StartPlaying();
 			}));
 	}
 

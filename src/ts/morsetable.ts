@@ -135,7 +135,7 @@ namespace Morse
 			return letterPatterns[char] || numberPatterns[char] || symbolPatterns[char];
 		}
 
-		return null;
+		return spacePatterns[""];
 	}
 
 	export function GetCharacter(char: string): Char

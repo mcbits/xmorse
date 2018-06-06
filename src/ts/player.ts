@@ -49,6 +49,7 @@ namespace Player
 		{
 			nowPlaying = true;
 			setTimeout(PlayNextPattern, 500);
+			UI.StartPlaying();
 		}
 	}
 
