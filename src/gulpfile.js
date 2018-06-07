@@ -56,7 +56,11 @@ gulp.task("copy-txt", () =>
 	gulp.src("txt/*")
 		.pipe(gulp.dest("dist/txt")));
 
-gulp.task("copy-all", ["copy-html", "copy-misc", "copy-img", "copy-snd", "copy-txt"]);
+gulp.task("copy-js", () =>
+	gulp.src("js/*")
+		.pipe(gulp.dest("dist/js")));
+
+gulp.task("copy-all", ["copy-html", "copy-misc", "copy-img", "copy-snd", "copy-txt", "copy-js"]);
 
 gulp.task("build", ["compile-ts", "compile-less", "copy-all"]);
 
@@ -65,5 +69,6 @@ gulp.task("minify", ["minify-js", "minify-css"]);
 gulp.task("default", ["build"], () => {
 	gulp.watch("ts/**/*.ts", ["compile-ts"]);
 	gulp.watch("less/**/*.less", ["compile-less"]);
+	gulp.watch("img/**/*", ["copy-img"]);
 	gulp.watch("*.html", ["copy-html"]);
 });

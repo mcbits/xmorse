@@ -4,8 +4,10 @@
 @textFaded: #c2c2c2;
 @flashColor: #404860;
 @black: #101010;
-@gray2: #2d282d;
+//@gray2: #2d282d;
+@gray2: #101010;
 @gray1: #101010;
+@settingsBorder: #404040;
 //@linkBlue: #288eff;
 //@linkBlue: #67d9e0;
 @linkBlue: #76e1ef;
@@ -57,6 +59,10 @@ body {
 	}
 }
 
+body.fullscreen {
+	overflow-y: initial;
+}
+
 a, a:visited, a:active {
 	color: @linkBlue;
 	text-decoration: none;
@@ -106,7 +112,7 @@ button:not([disabled]) {
 }
 
 .siteName {
-	font-family: Audiowide;
+	font-family: Audiowide, Helvetica, Arial, sans-serif;
 	font-size: 30px;
 	font-weight: normal;
 	margin: 0 @size-s;
@@ -136,12 +142,8 @@ button:not([disabled]) {
 	grid-row: 1;
 	grid-column: 2;
 
-	@media (min-width: 1024px) {
-		margin-right: 0;
-	}
-
 	.btn {
-		background: url(/img/media-buttons-48.png);
+		background-color: transparent;
 		width: 48px;
 		height: 48px;
 		border: none;
@@ -158,16 +160,24 @@ button:not([disabled]) {
 	}
 
 	.btn-start {
+		background: url(/img/media-buttons-48.png);
 		background-position-x: -96px;
 	}
 
 	.btn-pause {
+		background: url(/img/media-buttons-48.png);
 		display: none;
 		background-position-x: 0;
 	}
 
 	.btn-stop {
+		background: url(/img/media-buttons-48.png);
 		background-position-x: -48px;
+	}
+
+	.btn-gear {
+		background-image: url(/img/if_gear_1055051.svg);
+		background-size: 48px 48px;
 	}
 }
 
@@ -196,15 +206,18 @@ nav.menu {
 	}
 
 	.btn {
-		font-weight: bold;
 		color: @gray2;
 		line-height: 2;
 
 		@media (min-width: 0) {
 			padding: @size-s 0.3rem;
 			font-size: @size-m;
+			font-weight: bold;
 		}
+
 		@media (min-width: 480px) {
+			font-family: Audiowide, Helvetica, Arial, sans-serif;
+			font-weight: normal;
 			padding: @size-s;
 		}
 		@media (min-width: 640px) {
@@ -262,6 +275,10 @@ nav.menu {
 		padding: @size-m;
 	}
 
+	@media (min-width: 1024px) {
+		overflow-y: auto;
+	}
+
 	h2 {
 		font-size: 1.6rem;
 		margin-top: 0;
@@ -272,10 +289,6 @@ nav.menu {
 		color: @black;
 		text-align: center;
 		padding: 0 @size-s;
-	}
-
-	@media (min-width: 1024px) {
-		overflow-y: auto;
 	}
 
 	&.disabled {
@@ -446,7 +459,7 @@ nav.menu {
 		@media (min-width: 1600px) { font-size: 120px; }
 
 		@media (max-height: 480px) {
-			flex: 0;
+			font-size: 50px;
 		}
 	}
 
@@ -556,7 +569,7 @@ nav.menu {
 		.output {
 			grid-column: 2;
 			padding: 0 @size-s;
-			border-left: 5px solid @gray2;
+			border-left: 5px solid @settingsBorder;
 			font-family: monospace;
 			color: @linkBlue;
 			font-size: larger;
@@ -596,13 +609,13 @@ nav.menu {
 		.output {
 			grid-column: 2;
 			padding: @size-s;
-			border-left: 5px solid @gray2;
+			border-left: 5px solid @settingsBorder;
 		}
 
 		.input, .checkboxes {
 			grid-column: 3;
 			padding: @size-s @size-s;
-			border-left: 5px solid @gray2;
+			border-left: 5px solid @settingsBorder;
 			margin-bottom: 0;
 		}
 
@@ -614,7 +627,8 @@ nav.menu {
 
 .sidebar {
 	text-align: center;
-	height: 0;
+	display: flex;
+	flex-direction: column;
 
 	@media (min-width: 0) {
 	}
@@ -625,13 +639,12 @@ nav.menu {
 	}
 
 	.social {
-		margin-top: @size-m;
-		margin-bottom: 40px;
-		height: 28px;
+		margin: @size-m 0;
 	}
 
 	.sidebarContent {
-		padding: 20px 0;
+		margin: @size-m 0;
+		flex: 1;
 
 		.ad {
 			display: inline-block;
@@ -642,7 +655,7 @@ nav.menu {
 	}
 
 	.info {
-		margin-top: @size-m;
+		margin: @size-m 0;
 
 		a {
 			color: #a8a8a8;

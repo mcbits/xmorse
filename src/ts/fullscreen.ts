@@ -15,6 +15,8 @@ namespace FullScreen
 
 	function exitFullScreen()
 	{
+		document.body.classList.remove("fullscreen");
+
 		if (document.exitFullscreen)
 			document.exitFullscreen();
 		else if (document["webkitExitFullscreen"])
@@ -37,6 +39,8 @@ namespace FullScreen
 			playingView["webkitRequestFullscreen"]();
 		else if (document["mozFullScreenEnabled"])
 			playingView["mozRequestFullScreen"]();
+
+		document.body.classList.add("fullscreen");
 	}
 
 	function toggleFullScreen()

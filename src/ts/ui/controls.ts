@@ -5,6 +5,7 @@ namespace UI
 	const startBtn = Query<HTMLButtonElement>(".btn-start");
 	const pauseBtn = Query<HTMLButtonElement>(".btn-pause");
 	const stopBtn = Query<HTMLButtonElement>(".btn-stop");
+	const gearBtn = Query<HTMLButtonElement>(".btn-gear");
 	const letterElement = Query(".letter");
 	const outputBuffer = Query(".outputBuffer");
 	const storyLinks = QueryAll(".story a");
@@ -20,6 +21,8 @@ namespace UI
 	pauseBtn.addEventListener("click", () => UI.PausePlaying());
 
 	stopBtn.addEventListener("click", () => UI.StopPlaying());
+
+	gearBtn.addEventListener("click", () => location.hash = "settings");
 
 	for (let i = 0; i < storyLinks.length; ++i)
 	{
