@@ -1,10 +1,3 @@
-/// <reference path="events.ts"/>
-/// <reference path="audiocontext.ts"/>
-/// <reference path="morsetable.ts"/>
-/// <reference path="toneplayer.ts"/>
-/// <reference path="voiceplayer.ts"/>
-/// <reference path="text.ts"/>
-
 namespace Player
 {
 	let nowPlaying: boolean;

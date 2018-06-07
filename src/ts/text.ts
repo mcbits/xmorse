@@ -1,6 +1,3 @@
-/// <reference path="events.ts"/>
-/// <reference path="morsetable.ts"/>
-
 namespace TextLoader
 {
 	let textBuffer = "";

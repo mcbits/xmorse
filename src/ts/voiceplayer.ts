@@ -1,7 +1,3 @@
-/// <reference path="morsetable.ts"/>
-/// <reference path="events.ts"/>
-/// <reference path="audiocontext.ts"/>
-
 namespace VoicePlayer
 {
 	// For caching audio files as they're loaded

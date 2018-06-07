@@ -1,5 +1,3 @@
-/// <reference path="events.ts"/>
-
 namespace Morse
 {
 	export interface Char

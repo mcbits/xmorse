@@ -1,7 +1,3 @@
-/// <reference path="../events.ts"/>
-/// <reference path="../morsetable.ts"/>
-/// <reference path="../query.ts"/>
-
 namespace UI
 {
 	const homeBtn = Query<HTMLElement>(".btn-home");

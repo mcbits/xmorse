@@ -1,5 +1,3 @@
-/// <reference path="../events.ts"/>
-
 namespace Settings
 {
 	const resetSettingsButton = QueryId("resetSettings");

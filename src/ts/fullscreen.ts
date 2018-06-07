@@ -1,5 +1,3 @@
-/// <reference path="query.ts"/>
-
 namespace FullScreen
 {
 	const fullScreenButton = Query(".btn-fullscreen");

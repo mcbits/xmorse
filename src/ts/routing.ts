@@ -1,5 +1,3 @@
-/// <reference path="events.ts"/>
-
 namespace Routing
 {
 	const routes = {

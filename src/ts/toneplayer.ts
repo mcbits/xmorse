@@ -1,7 +1,3 @@
-/// <reference path="events.ts"/>
-/// <reference path="audiocontext.ts"/>
-/// <reference path="morsetable.ts"/>
-
 namespace TonePlayer
 {
 	const ditUnits = 1;
