@@ -46,6 +46,8 @@ namespace UI
 		startBtn.disabled = true;
 		pauseBtn.disabled = false;
 		stopBtn.disabled = false;
+		startBtn.style.display = "none";
+		pauseBtn.style.display = "initial";
 		playState = "started";
 		location.hash = "#playing";
 	}
@@ -55,7 +57,9 @@ namespace UI
 		playState = "paused";
 		startBtn.disabled = false;
 		pauseBtn.disabled = true;
-		stopBtn.disabled = true;
+		stopBtn.disabled = false;
+		pauseBtn.style.display = "none";
+		startBtn.style.display = "initial";
 		Player.StopPlaying();
 	}
 
@@ -68,6 +72,8 @@ namespace UI
 		startBtn.disabled = false;
 		pauseBtn.disabled = true;
 		stopBtn.disabled = true;
+		pauseBtn.style.display = "none";
+		startBtn.style.display = "initial";
 		Player.StopPlaying();
 		FullScreen.StopPlaying();
 		TextLoader.ResetPosition();
