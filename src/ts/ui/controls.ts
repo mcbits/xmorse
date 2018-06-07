@@ -52,7 +52,6 @@ namespace UI
 		stopBtn.disabled = false;
 		playState = "started";
 		location.hash = "#playing";
-		FullScreen.Start();
 	}
 
 	export function PausePlaying()

@@ -23,10 +23,16 @@ namespace FullScreen
 			document["webkitExitFullscreen"]();
 		else if (document["mozCancelFullScreen"])
 			document["mozCancelFullScreen"]();
+
+		clearInterval(hideControlsInterval);
+		document.removeEventListener("mousemove", markTime);
 	}
 
 	function enterFullScreen()
 	{
+		document.addEventListener("mousemove", markTime);
+		hideControlsInterval = setInterval(hideOrReveal, 200);
+
 		if (document.fullscreenEnabled)
 			playingView.requestFullscreen();
 		else if (document["webkitFullscreenEnabled"])
@@ -111,16 +117,8 @@ namespace FullScreen
 		controlsVisible = true;
 	}
 
-	export function Start()
-	{
-		document.addEventListener("mousemove", markTime);
-		hideControlsInterval = setInterval(hideOrReveal, 200);
-	}
-
 	export function StopPlaying()
 	{
-		clearInterval(hideControlsInterval);
-		document.removeEventListener("mousemove", markTime);
 		showCursor();
 		showControls();
 		if (isFullScreen)
