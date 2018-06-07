@@ -1,28 +1,39 @@
-@gradient: linear-gradient(#f1f1f1, #dedede);
-@inverseGradient: linear-gradient(#d1d7da, #f1f1f1);
-@textWhite: #e4e4e4;
+@gradient: linear-gradient(#ececec, #c3c3c3);
+@inverseGradient: linear-gradient(#bec9ce, #f1f1f1);
+@textWhite: #f8f8f8;
 @textFaded: #c2c2c2;
 @flashColor: #404860;
-@black: #0c0c0c;
-@gray1: #161616;
-@gray2: #262626;
+@black: #101010;
+@gray2: #2d282d;
+@gray1: #101010;
 //@linkBlue: #288eff;
 //@linkBlue: #67d9e0;
-@linkBlue: #76f0ff;
-@yellow: #a79e1e;
+@linkBlue: #76e1ef;
+@yellow: #c7bf4a;
 @size-s: 0.6rem;
 @size-m: 1rem;
 @size-l: 2rem;
 
 * {
 	box-sizing: border-box;
-	font-weight: normal;
 	margin: 0;
 	padding: 0;
 }
 
 html {
 	height: 100%;
+
+	@media (min-width: 0) {
+		font-size: 16px;
+	}
+
+	@media (min-width: 720px) {
+		font-size: 17px;
+	}
+
+	@media (min-width: 1600px) {
+		font-size: 18px;
+	}
 }
 
 body {
@@ -31,7 +42,6 @@ body {
 	font-family: "IBM Plex Sans Condensed", Helvetica, Arial, sans-serif;
 	background-color: @gray2;
 	color: @textWhite;
-	font-size: 18px;
 	line-height: 1.45;
 	display: flex;
 	flex-direction: column;
@@ -60,6 +70,14 @@ hr {
 	margin: 1rem 0;
 }
 
+ul {
+	margin-left: @size-l;
+}
+
+li {
+	margin: @size-m 0;
+}
+
 button:not([disabled]) {
 	cursor: pointer;
 }
@@ -67,11 +85,11 @@ button:not([disabled]) {
 .pageHeader {
 	display: grid;
 	align-items: center;
-	padding-top: @size-s;
 
 	@media (min-width: 0) {
 		grid-template-columns: minmax(0, 1fr) auto;
 		grid-template-rows: auto auto;
+		padding-top: @size-s;
 	}
 
 	@media (min-width: 1024px) {
@@ -79,6 +97,7 @@ button:not([disabled]) {
 		grid-column: 1 / span 2;
 		grid-template-columns: minmax(0, 1fr) auto 320px;
 		grid-template-rows: auto;
+		padding-top: 0;
 	}
 
 	@media (max-height: 480px) {
@@ -89,6 +108,7 @@ button:not([disabled]) {
 .siteName {
 	font-family: Audiowide;
 	font-size: 30px;
+	font-weight: normal;
 	margin: 0 @size-s;
 
 	@media (min-width: 0) {
@@ -115,6 +135,10 @@ button:not([disabled]) {
 	margin: 0 @size-s;
 	grid-row: 1;
 	grid-column: 2;
+
+	@media (min-width: 1024px) {
+		margin-right: 0;
+	}
 
 	.btn {
 		background: url(/img/media-buttons-48.png);
@@ -149,9 +173,9 @@ nav.menu {
 	background: @gradient;
 	text-align: center;
 	border: 1px solid #fff;
-	box-shadow: 0 0 12px -1px #fff;
+	box-shadow: 0 0 12px -1px #ccc;
 	line-height: 1.3;
-	margin: @size-m 0;
+	margin: @size-s 0;
 
 	@media (min-width: 0) {
 		grid-row: 2;
@@ -161,15 +185,12 @@ nav.menu {
 	@media (min-width: 1024px) {
 		grid-row: 1;
 		grid-column: 1;
+		margin: @size-m 0;
 	}
 
 	@media (max-height: 480px) {
 		line-height: 1;
 		margin: 0 0 @size-s 0;
-	}
-
-	&:hover {
-		box-shadow: 0 0 11px 1px #fff;
 	}
 
 	.btn {
@@ -179,7 +200,7 @@ nav.menu {
 
 		@media (min-width: 0) {
 			padding: @size-s 0.3rem;
-			font-size: 1rem;
+			font-size: @size-m;
 		}
 		@media (min-width: 480px) {
 			padding: @size-s;
@@ -192,11 +213,12 @@ nav.menu {
 		}
 
 		&:hover {
-			background: #e5e5e5;
+			background: #f6f6f6;
 			text-shadow: 0 0 3px #fff;
 		}
 		&:active {
 			background: #fff;
+			box-shadow: 0 0 12px -1px #ddd;
 		}
 
 		&.active {
@@ -239,10 +261,12 @@ nav.menu {
 	}
 
 	h2 {
-		font-size: 2rem;
+		font-size: 1.6rem;
 		margin-top: 0;
 		margin-bottom: 1rem;
-		background: @textWhite;
+		background: @gradient;
+		border: 1px solid #fff;
+		box-shadow: 0 0 12px -1px #ccc;
 		color: @black;
 		text-align: center;
 		padding: 0 @size-s;
@@ -259,7 +283,7 @@ nav.menu {
 
 .view.home {
 	display: grid;
-	grid-gap: @size-m;
+	grid-gap: @size-l;
 
 	@media (min-width: 0) {
 		grid-template-rows: auto auto auto;
@@ -297,8 +321,7 @@ nav.menu {
 		}
 
 		kbd {
-			border: 1px solid #ccc;
-			border-radius: 4px;
+			border: 1px solid @linkBlue;
 		}
 
 		kbd, a {
@@ -334,8 +357,13 @@ nav.menu {
 			grid-column: 2 / span 1;
 		}
 
+		.story {
+			margin: @size-m 0;
+		}
+
 		.title {
-			font-size: 1.5rem;
+			font-size: 1rem;
+			font-weight: bold;
 		}
 
 		.byline {
@@ -348,11 +376,8 @@ nav.menu {
 		}
 
 		.more {
-			font-size: 1.5rem;
+			font-size: 1.25rem;
 			text-align: right;
-		}
-
-		.blurb {
 		}
 	}
 }
@@ -372,7 +397,7 @@ nav.menu {
 .view.stories {
 	.story {
 		margin-bottom: @size-l;
-		border-left: 4px solid @linkBlue;
+		border-left: 2px solid @linkBlue;
 		border-radius: 8px;
 		padding-left: @size-m;
 
@@ -476,7 +501,7 @@ nav.menu {
 		max-height: 250px;
 		overflow-wrap: break-word;
 		overflow-y: hidden;
-		background: linear-gradient(@black, @gray1);
+		background: linear-gradient(#000, transparent);
 		color: @yellow;
 		font-family: monospace;
 		font-size: 1.5rem;
