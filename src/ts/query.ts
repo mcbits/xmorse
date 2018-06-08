@@ -1,14 +1,14 @@
-function Query<T extends Element>(selector: string, element?: Element): T
+export function Query<T extends Element>(selector: string, element?: Element): T
 {
 	return <T>(element || document).querySelector(selector);
 }
 
-function QueryAll<T extends Element>(selector: string, element?: Element): NodeListOf<T>
+export function QueryAll<T extends Element>(selector: string, element?: Element): T[]
 {
-	return <NodeListOf<T>>(element || document).querySelectorAll(selector);
+	return Array.prototype.slice.call((element || document).querySelectorAll(selector));
 }
 
-function QueryId<T extends HTMLElement>(id: string): T
+export function QueryId<T extends HTMLElement>(id: string): T
 {
 	return <T>document.getElementById(id);
 }

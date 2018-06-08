@@ -60,7 +60,11 @@ gulp.task("copy-js", () =>
 	gulp.src("js/*")
 		.pipe(gulp.dest("dist/js")));
 
-gulp.task("copy-all", ["copy-html", "copy-misc", "copy-img", "copy-snd", "copy-txt", "copy-js"]);
+gulp.task("copy-font", () =>
+	gulp.src("font/*")
+		.pipe(gulp.dest("dist/font")));
+
+gulp.task("copy-all", ["copy-html", "copy-misc", "copy-img", "copy-snd", "copy-txt", "copy-js", "copy-font"]);
 
 gulp.task("build", ["compile-ts", "compile-less", "copy-all"]);
 
@@ -68,6 +72,7 @@ gulp.task("minify", ["minify-js", "minify-css"]);
 
 gulp.task("default", ["build"], () => {
 	gulp.watch("ts/**/*.ts", ["compile-ts"]);
+	gulp.watch("ts/tsconfig.json", ["compile-ts"]);
 	gulp.watch("less/**/*.less", ["compile-less"]);
 	gulp.watch("img/**/*", ["copy-img"]);
 	gulp.watch("*.html", ["copy-html"]);

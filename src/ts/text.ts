@@ -1,60 +1,63 @@
-namespace TextLoader
+import * as UI from "./controls";
+import * as Player from "./player";
+import * as Settings from "./settings";
+import * as Morse from "./morsetable";
+
+let textBuffer = "";
+let textBufferIndex = -1;
+
+export function ResetPosition()
 {
-	let textBuffer = "";
-	let textBufferIndex = -1;
+	textBufferIndex = textBuffer.length > 0 ? 0 : -1;
+}
 
-	export function ResetPosition()
-	{
-		textBufferIndex = textBuffer.length > 0 ? 0 : -1;
-	}
+export function SetTextBuffer(text: string)
+{
+	UI.StopPlaying();
+	UI.ClearOutput();
+	textBuffer = text.toUpperCase().trim() + "\n";
+	ResetPosition();
+}
 
-	export function SetTextBuffer(text: string)
-	{
-		UI.StopPlaying();
-		UI.ClearOutput();
-		textBuffer = text.toUpperCase().trim() + "\n";
-		ResetPosition();
-	}
+export function LoadBook(href: string): void
+{
+	UI.SetPlayState("stopped");
+	Player.StopPlaying();
 
-	export function LoadBook(href: string): void
-	{
-		Player.StopPlaying();
-		fetch(href, { method: "GET" }).then(response =>
-			response.text().then(value =>
-			{
-				UI.playState = "stopped";
-				Settings.SetTextBuffer(value);
-				Player.StartPlaying();
-			}));
-	}
-
-	export function Next(): [string, Morse.Char]
-	{
-		if (textBuffer.length > 0)
+	fetch(href, { method: "GET" }).then(response =>
+		response.text().then(value =>
 		{
-			const startingIndex = textBufferIndex;
-			let text = "";
+			Settings.SetTextBuffer(value);
+			Player.StartPlaying();
+		}));
+}
 
-			do
-			{
-				text += textBuffer[textBufferIndex];
-				const morseChar = Morse.GetCharacter(textBuffer[textBufferIndex]);
+export function Next(): [string, Morse.Char]
+{
+	if (textBuffer.length > 0)
+	{
+		const startingIndex = textBufferIndex;
+		let text = "";
 
-				// Increment and wrap around if necessary
-				++textBufferIndex;
-				if (textBufferIndex === textBuffer.length)
-					textBufferIndex = 0;
+		do
+		{
+			text += textBuffer[textBufferIndex];
+			const morseChar = Morse.GetCharacter(textBuffer[textBufferIndex]);
 
-				if (morseChar)
-					return [text, morseChar];
-			}
-			while (textBufferIndex !== startingIndex);
+			// Increment and wrap around if necessary
+			++textBufferIndex;
+			if (textBufferIndex === textBuffer.length)
+				textBufferIndex = 0;
 
-			return ["", null];
+			if (morseChar)
+				return [text, morseChar];
 		}
+		while (textBufferIndex !== startingIndex);
 
-		const char = Morse.RandomCharacter();
-
-		return [char.name, char];
+		return ["", null];
 	}
+
+	const char = Morse.RandomCharacter();
+
+	return [char.name, char];
 }
