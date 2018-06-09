@@ -562,6 +562,12 @@ nav.menu {
 	display: grid;
 	grid-template-rows: repeat(50, min-content);
 
+	input[type=checkbox] {
+		width: 20px;
+		height: 20px;
+		vertical-align: middle;
+	}
+
 	input[type=range] {
 		width: 100%;
 	}
@@ -574,16 +580,22 @@ nav.menu {
 	}
 
 	@media (min-width: 0) {
-		grid-template-columns: auto min-content;
+		grid-template-columns: min-content auto;
 
 		.name {
 			font-weight: bold;
-			grid-column: 1;
+			grid-column: 2;
 			align-self: center;
+			border-left: 5px solid @settingsBorder;
+			padding: 0 @size-s;
 		}
 
-		.output {
-			grid-column: 2;
+		.name.enableCharacters {
+			grid-column: 1 / span 2;
+		}
+
+		.value {
+			grid-column: 1;
 			padding: 0 @size-s;
 			border-left: 5px solid @settingsBorder;
 			font-family: monospace;
@@ -593,9 +605,12 @@ nav.menu {
 			align-self: center;
 		}
 
-		.input, .checkboxes {
+		.input {
 			grid-column: 1 / span 2;
-			padding: @size-s @size-s;
+		}
+
+		.input {
+			padding: @size-s 0;
 			margin-bottom: @size-m;
 			align-self: center;
 		}
@@ -611,27 +626,29 @@ nav.menu {
 			align-self: center;
 			width: 60%;
 			padding: @size-s;
+			font-family: Audiowide, Helvetica, Arial, sans-serif;
+			font-size: 1rem;
 		}
 	}
 
 	@media (min-width: 720px) {
 		grid-template-columns: min-content max-content auto;
 
-		.name {
-			padding-right: @size-s;
-			text-align: right;
-		}
-
-		.output {
-			grid-column: 2;
+		.value {
 			padding: @size-s;
 			border-left: 5px solid @settingsBorder;
+			border-right: 5px solid @settingsBorder;
 		}
 
-		.input, .checkboxes {
+		.name {
+			grid-column: 2;
+			padding-right: @size-s;
+			border: none;
+		}
+
+		.input {
 			grid-column: 3;
 			padding: @size-s @size-s;
-			border-left: 5px solid @settingsBorder;
 			margin-bottom: 0;
 		}
 
