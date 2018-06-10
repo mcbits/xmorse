@@ -72,7 +72,7 @@ function setCharSpacing(value: number)
 
 function setVoiceEnabled(value: boolean)
 {
-	VoicePlayer.SetEnabled(value);
+	VoicePlayer.Enable(value);
 	voiceEnabledInput.checked = value;
 }
 
@@ -135,7 +135,7 @@ export function Initialize()
 	{
 		const value = voiceEnabledInput.checked;
 		localStorage.setItem("voiceEnabled", value.toString());
-		VoicePlayer.SetEnabled(value);
+		VoicePlayer.Enable(value);
 	});
 
 	lettersEnabledInput.addEventListener("change", () =>

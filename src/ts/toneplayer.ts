@@ -154,13 +154,16 @@ export function PlayPattern(char: Morse.Char): void
 	UI.EmitCharacter(char.name);
 	UI.DrawPattern(char.pattern);
 
+	if (currentBufferSource)
+		StopPlaying();
+
 	currentBufferSource = AudioCtx.createBufferSource();
 	currentBufferSource.connect(ToneGain);
 	currentBufferSource.buffer = char.toneAudioBuffer;
-	currentBufferSource.addEventListener("ended", () =>
+	currentBufferSource.addEventListener("ended", async () =>
 	{
-		UI.PatternComplete(char);
-		Player.PatternComplete(char);
+		UI.OutputChar(char);
+		await Player.PatternComplete(char);
 	});
 	currentBufferSource.start();
 }

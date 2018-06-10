@@ -21,14 +21,13 @@ export function SetTextBuffer(text: string)
 
 export function LoadBook(href: string): void
 {
-	UI.SetPlayState("stopped");
-	Player.StopPlaying();
+	UI.StopPlaying();
 
 	fetch(href, { method: "GET" }).then(response =>
 		response.text().then(value =>
 		{
 			Settings.SetTextBuffer(value);
-			Player.StartPlaying();
+			UI.StartPlaying();
 		}));
 }
 

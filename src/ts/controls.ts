@@ -35,6 +35,7 @@ export function StartPlaying()
 	pauseBtn.style.display = "initial";
 	playState = "started";
 	location.hash = "#playing";
+	Player.StartPlaying();
 }
 
 export function PausePlaying()
@@ -69,10 +70,15 @@ export function EmitCharacter(char: string)
 	letterElement.innerHTML = char;
 }
 
-export function EmitOutput(value: string)
+export function OutputString(value: string)
 {
 	outputBuffer.innerHTML += value;
 	outputBuffer.scrollTop = outputBuffer.scrollHeight;
+}
+
+export function OutputChar(char: Morse.Char)
+{
+	OutputString(char == null ? " " : char.name);
 }
 
 export function DrawPattern(pattern: string)
@@ -102,25 +108,11 @@ export function DrawPattern(pattern: string)
 	}
 }
 
-export function PatternComplete(char: Morse.Char)
-{
-	if (playState !== "stopped")
-	{
-		outputBuffer.innerHTML += char == null ? " " : char.name;
-		outputBuffer.scrollTop = outputBuffer.scrollHeight;
-	}
-}
-
-export function SetPlayState(value: string)
-{
-	playState = value;
-}
-
 export function Initialize()
 {
 	for (let i = 0; i < startBtns.length; ++i)
 	{
-		startBtns[i].addEventListener("click", () => Player.StartPlaying());
+		startBtns[i].addEventListener("click", () => StartPlaying());
 	}
 
 	pauseBtn.addEventListener("click", () => PausePlaying());

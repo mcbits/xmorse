@@ -6,7 +6,7 @@ import * as Morse from "./morsetable";
 
 let nowPlaying: boolean;
 
-export function PlayNextPattern(): void
+export async function PlayNextPattern(): Promise<void>
 {
 	if (nowPlaying)
 	{
@@ -15,51 +15,48 @@ export function PlayNextPattern(): void
 
 		if (morseChar)
 		{
-			let sleepTime = 0;
-
 			// If there is unplayable text, send it to the output buffer and delay for one word-break.
 			if (text !== morseChar.name)
 			{
-				UI.EmitOutput(text.substr(0, text.length - 1));
+				UI.OutputString(text.substr(0, text.length - 1));
 				UI.DrawPattern(" ");
 				UI.EmitCharacter("");
 			}
 
-			VoicePlayer.PreloadVoice(morseChar);
+			VoicePlayer.Preload(morseChar);
 			TonePlayer.PlayPattern(morseChar);
 		}
 		else
 		{
-			UI.DrawPattern("");
-			PatternComplete(null);
-			UI.PatternComplete(null);
+			await PlayNextPattern();
 		}
 	}
 }
 
-export function StartPlaying(): void
+export async function StartPlaying(): Promise<void>
 {
 	if (!nowPlaying)
 	{
 		nowPlaying = true;
-		setTimeout(PlayNextPattern, 500);
-		UI.StartPlaying();
+		await PlayNextPattern();
 	}
 }
 
 export function StopPlaying(): void
 {
 	nowPlaying = false;
-	VoicePlayer.Cancel();
 	TonePlayer.StopPlaying();
 }
 
-export function PatternComplete(char: Morse.Char): void
+export async function PatternComplete(char: Morse.Char): Promise<void>
 {
 	if (nowPlaying)
 	{
-		// PlayNextPattern() will be called by VOICE_DONE (which is
-		// triggered whether the voice is currently enabled or not).
-		VoicePlayer.PlayVoice(char);
+		// PlayNextPattern() will be called when done.
+		await VoicePlayer.PlayVoice(char);
+	}
+	else
+	{
+		StopPlaying();
 	}
 }

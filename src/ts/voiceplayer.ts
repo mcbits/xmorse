@@ -3,94 +3,68 @@ import * as Morse from "./morsetable";
 import { AudioCtx, VoiceGain } from "./audiocontext";
 
 // For caching audio files as they're loaded
-const audioBuffers: { [char: string]: AudioBuffer } = {};
+const audioBuffers: { [charName: string]: AudioBuffer } = {};
 
-let loading: { [_: string]: boolean } = {};
-let loaded: { [_: string]: boolean } = {};
-let playWhenDone = false;
 let enabled = false;
+let loadingPromise: Promise<void>;
 
-function voiceLoaded(char: Morse.Char): void
+async function loadVoice(char: Morse.Char): Promise<void>
 {
-	const playNow = playWhenDone;
-	playWhenDone = false;
-
-	if (playNow)
-		PlayVoice(char);
-}
-
-function loadVoice(char: Morse.Char): void
-{
-	if (loaded[char.name])
-		voiceLoaded(char);
-	else
+	try
 	{
-		loading[char.name] = true;
-		fetch("/snd/" + Morse.fileName(char), { method: "GET" })
-			.then(response =>
-			{
-				if (response.status === 200)
-					response.arrayBuffer()
-						.then(arrayBuffer =>
-						{
-							AudioCtx.decodeAudioData(
-								arrayBuffer,
-								function (audioBuffer: AudioBuffer)
-								{
-									audioBuffers[char.name] = audioBuffer;
-									loading[char.name] = false;
-									loaded[char.name] = true;
+		const response = await fetch("/snd/" + Morse.fileName(char), { method: "GET" });
 
-									voiceLoaded(char);
-								},
-								(err: DOMException) => console.error("Error decoding audio source: ", err));
-						});
-				else
-				{
-					console.error("Failed to load voice for char: ", char);
-					loading[char.name] = false;
-					playWhenDone = false;
-					Player.PlayNextPattern();
-				}
-			})
-			.catch(reason => console.error(reason));
+		if (response.status === 200 || response.status === 304)
+		{
+			const arrayBuffer = await response.arrayBuffer();
+			audioBuffers[char.name] = await AudioCtx.decodeAudioData(arrayBuffer);
+		}
+		else
+			throw "Failed to fetch audio.";
+
+	}
+	catch (err)
+	{
+		console.error("Error deocding audio source: ", err);
 	}
 }
 
-export function SetEnabled(value: boolean)
+export function Enable(value: boolean)
 {
 	enabled = value;
 }
 
-export function Cancel()
+export async function Preload(char: Morse.Char): Promise<void>
 {
-	playWhenDone = false;
+	if (enabled && !audioBuffers[char.name] && !loadingPromise)
+		loadingPromise = loadVoice(char);
 }
 
-export function PreloadVoice(char: Morse.Char): void
+export async function PlayVoice(char: Morse.Char): Promise<void>
 {
-	if (enabled && !loaded[char.name] && loading[char.name])
-		loadVoice(char);
-}
-
-export function PlayVoice(char: Morse.Char): void
-{
-	if (!enabled || char == null || Morse.fileName(char) === undefined)
-		Player.PlayNextPattern();
-	else if (loading[char.name])
-		playWhenDone = true;
-	else if (!loaded[char.name])
-	{
-		playWhenDone = true;
-		loadVoice(char);
-	}
+	if (!enabled || !char || !Morse.fileName(char))
+		await Player.PlayNextPattern();
 	else
 	{
-		const buffer = audioBuffers[char.name];
-		const audioSource = AudioCtx.createBufferSource();
-		audioSource.addEventListener("ended", Player.PlayNextPattern);
-		audioSource.buffer = buffer;
-		audioSource.connect(VoiceGain);
-		audioSource.start(0);
+		if (loadingPromise)
+		{
+			await loadingPromise;
+			loadingPromise = undefined;
+		}
+
+		const audioBuffer = audioBuffers[char.name];
+
+		if (audioBuffer)
+		{
+			const audioSource = AudioCtx.createBufferSource();
+			audioSource.addEventListener("ended", Player.PlayNextPattern);
+			audioSource.buffer = audioBuffer;
+			audioSource.connect(VoiceGain);
+			audioSource.start(0);
+		}
+		else
+		{
+			Player.PlayNextPattern();
+		}
 	}
 }
