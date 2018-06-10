@@ -1,5 +1,5 @@
 import * as UI from "./controls";
-import * as Player from "./player";
+import { player } from "player";
 import * as Morse from "./morsetable";
 import { AudioCtx, ToneGain } from "./audiocontext";
 
@@ -151,7 +151,7 @@ export function StopPlaying()
 function patternEnded(char: Morse.Char): Promise<void>
 {
 	UI.OutputChar(char);
-	return Player.PatternComplete(char);
+	return player.PatternComplete(char);
 }
 
 export function PlayPattern(char: Morse.Char): void

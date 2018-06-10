@@ -1,4 +1,4 @@
-import * as Player from "./player";
+import { player } from "player";
 import { pasteBuffer } from "pasteBuffer";
 import * as FullScreen from "./fullscreen";
 import * as Morse from "./morsetable";
@@ -41,7 +41,7 @@ export function StartPlaying()
 	pauseBtn.style.display = "initial";
 	playState = "started";
 	location.hash = "#playing";
-	Player.StartPlaying();
+	player.StartPlaying();
 }
 
 export function PausePlaying()
@@ -52,12 +52,12 @@ export function PausePlaying()
 	stopBtn.disabled = false;
 	pauseBtn.style.display = "none";
 	startBtn.style.display = "initial";
-	Player.StopPlaying();
+	player.StopPlaying();
 }
 
 export function StopPlaying()
 {
-	Player.StopPlaying();
+	player.StopPlaying();
 	FullScreen.StopPlaying();
 	pasteBuffer.ResetPosition();
 	playState = "stopped";

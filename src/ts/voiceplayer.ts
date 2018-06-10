@@ -1,4 +1,4 @@
-import * as Player from "./player";
+import { player } from "player";
 import * as Morse from "./morsetable";
 import { AudioCtx, VoiceGain } from "./audiocontext";
 
@@ -43,7 +43,7 @@ export async function Preload(char: Morse.Char): Promise<void>
 export async function PlayVoice(char: Morse.Char): Promise<void>
 {
 	if (!enabled || !char || !Morse.fileName(char))
-		await Player.PlayNextPattern();
+		await player.PlayNextPattern();
 	else
 	{
 		if (loadingPromise)
@@ -57,14 +57,14 @@ export async function PlayVoice(char: Morse.Char): Promise<void>
 		if (audioBuffer)
 		{
 			const audioSource = AudioCtx.createBufferSource();
-			audioSource.addEventListener("ended", Player.PlayNextPattern);
+			audioSource.addEventListener("ended", player.PlayNextPattern);
 			audioSource.buffer = audioBuffer;
 			audioSource.connect(VoiceGain);
 			audioSource.start(0);
 		}
 		else
 		{
-			await Player.PlayNextPattern();
+			await player.PlayNextPattern();
 		}
 	}
 }
