@@ -1,5 +1,5 @@
 import * as Player from "./player";
-import { pasteBuffer } from "text";
+import { pasteBuffer } from "pasteBuffer";
 import * as FullScreen from "./fullscreen";
 import * as Morse from "./morsetable";
 import { AudioCtx } from "./audiocontext";

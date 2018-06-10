@@ -1,5 +1,5 @@
 import * as UI from "./controls";
-import { pasteBuffer } from "text";
+import { pasteBuffer } from "pasteBuffer";
 import * as TonePlayer from "./toneplayer";
 import * as VoicePlayer from "./voiceplayer";
 import * as Morse from "./morsetable";

@@ -1,4 +1,4 @@
-import { pasteBuffer } from "text";
+import { pasteBuffer } from "pasteBuffer";
 import * as TonePlayer from "./toneplayer";
 import * as VoicePlayer from "./voiceplayer";
 import * as FullScreen from "./fullscreen";
