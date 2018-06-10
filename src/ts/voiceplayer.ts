@@ -64,7 +64,7 @@ export async function PlayVoice(char: Morse.Char): Promise<void>
 		}
 		else
 		{
-			Player.PlayNextPattern();
+			await Player.PlayNextPattern();
 		}
 	}
 }

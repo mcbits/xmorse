@@ -1,4 +1,4 @@
-import * as TextLoader from "./text";
+import { pasteBuffer } from "text";
 import * as TonePlayer from "./toneplayer";
 import * as VoicePlayer from "./voiceplayer";
 import * as FullScreen from "./fullscreen";
@@ -20,7 +20,6 @@ const charWPMInput = QueryId<HTMLInputElement>("charWPM");
 const pitchInput = QueryId<HTMLInputElement>("pitch");
 const charSpacingInput = QueryId<HTMLInputElement>("charSpacing");
 const voiceEnabledInput = QueryId<HTMLInputElement>("voiceEnabled");
-const pasteTextBoxInput = QueryId<HTMLTextAreaElement>("pasteText");
 const lettersEnabledInput = QueryId<HTMLInputElement>("lettersEnabled");
 const numbersEnabledInput = QueryId<HTMLInputElement>("numbersEnabled");
 const symbolsEnabledInput = QueryId<HTMLInputElement>("symbolsEnabled");
@@ -35,12 +34,6 @@ const defaults = {
 	volume: 0.40,
 	wpm: 10
 };
-
-export function SetTextBuffer(value: string)
-{
-	TextLoader.SetTextBuffer(value);
-	pasteTextBoxInput.value = value;
-}
 
 function setVolume(value: number)
 {
@@ -122,13 +115,6 @@ export function Initialize()
 		const value = parseInt(pitchInput.value);
 		localStorage.setItem("pitch", value.toString());
 		setPitch(value);
-	});
-
-	pasteTextBoxInput.addEventListener("input", () =>
-	{
-		const value = pasteTextBoxInput.value;
-		localStorage.setItem("textBuffer", value.toString());
-		SetTextBuffer(value);
 	});
 
 	voiceEnabledInput.addEventListener("change", () =>

@@ -1,5 +1,5 @@
 import * as Player from "./player";
-import * as TextLoader from "./text";
+import { pasteBuffer } from "text";
 import * as FullScreen from "./fullscreen";
 import * as Morse from "./morsetable";
 import { AudioCtx } from "./audiocontext";
@@ -15,8 +15,14 @@ const letterElement = Query(".letter");
 const outputBuffer = Query(".outputBuffer");
 const storyLinks = QueryAll(".story a");
 const patternEl = Query<HTMLElement>(".view.playing .pattern");
+const pasteTextBoxInput = QueryId<HTMLTextAreaElement>("pasteText");
 
 let playState = "stopped";
+
+export function SetPasteTextBoxValue(value: string)
+{
+	pasteTextBoxInput.value = value;
+}
 
 export function ClearOutput()
 {
@@ -51,6 +57,9 @@ export function PausePlaying()
 
 export function StopPlaying()
 {
+	Player.StopPlaying();
+	FullScreen.StopPlaying();
+	pasteBuffer.ResetPosition();
 	playState = "stopped";
 	outputBuffer.innerHTML = "";
 	letterElement.innerHTML = "";
@@ -60,9 +69,6 @@ export function StopPlaying()
 	stopBtn.disabled = true;
 	pauseBtn.style.display = "none";
 	startBtn.style.display = "initial";
-	Player.StopPlaying();
-	FullScreen.StopPlaying();
-	TextLoader.ResetPosition();
 }
 
 export function EmitCharacter(char: string)
@@ -110,6 +116,13 @@ export function DrawPattern(pattern: string)
 
 export function Initialize()
 {
+	pasteTextBoxInput.addEventListener("input", () =>
+	{
+		const value = pasteTextBoxInput.value;
+		localStorage.setItem("textBuffer", value.toString());
+		pasteBuffer.SetTextBuffer(value);
+	});
+
 	for (let i = 0; i < startBtns.length; ++i)
 	{
 		startBtns[i].addEventListener("click", () => StartPlaying());
@@ -124,12 +137,12 @@ export function Initialize()
 	for (let i = 0; i < storyLinks.length; ++i)
 	{
 		const storyLink = storyLinks[i];
-		storyLink.addEventListener("click", (evt: MouseEvent) =>
+		storyLink.addEventListener("click", async (evt: MouseEvent) =>
 		{
 			evt.preventDefault();
 			const anchor = <HTMLAnchorElement>evt.target;
 			const href = anchor.href;
-			TextLoader.LoadBook(href);
+			await pasteBuffer.LoadBook(href);
 		});
 	}
 }

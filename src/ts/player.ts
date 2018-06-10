@@ -1,5 +1,5 @@
 import * as UI from "./controls";
-import * as TextLoader from "./text";
+import { pasteBuffer } from "text";
 import * as TonePlayer from "./toneplayer";
 import * as VoicePlayer from "./voiceplayer";
 import * as Morse from "./morsetable";
@@ -11,7 +11,7 @@ export async function PlayNextPattern(): Promise<void>
 	if (nowPlaying)
 	{
 		// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
-		let [text, morseChar] = TextLoader.Next() || [" ", Morse.GetCharacter(" ")];
+		let [text, morseChar] = pasteBuffer.Next() || [" ", Morse.GetCharacter(" ")];
 
 		if (morseChar)
 		{
@@ -54,9 +54,5 @@ export async function PatternComplete(char: Morse.Char): Promise<void>
 	{
 		// PlayNextPattern() will be called when done.
 		await VoicePlayer.PlayVoice(char);
-	}
-	else
-	{
-		StopPlaying();
 	}
 }

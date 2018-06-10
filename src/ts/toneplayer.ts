@@ -102,7 +102,7 @@ function createCharacterBuffer(char: Morse.Char): AudioBuffer
 	return buffer;
 }
 
-export function InitializeBuffers()
+function generateBuffers()
 {
 	const allCharacters = Morse.AllCharacters();
 
@@ -125,13 +125,13 @@ export function InitializeBuffers()
 export function SetFrequency(value: number)
 {
 	frequency = value;
-	InitializeBuffers();
+	generateBuffers();
 }
 
 export function SetCharSpacing(value: number)
 {
 	charSpacing = value;
-	InitializeBuffers();
+	generateBuffers();
 }
 
 // With 60 seconds per minute and 50 units in "PARIS":
@@ -140,13 +140,18 @@ export function SetCharSpacing(value: number)
 export function SetWpm(value: number)
 {
 	unitTime = 1.2 / value;
-	InitializeBuffers();
+	generateBuffers();
 }
 
 export function StopPlaying()
 {
-	if (currentBufferSource)
-		currentBufferSource.stop();
+	currentBufferSource.stop(0);
+}
+
+function patternEnded(char: Morse.Char): Promise<void>
+{
+	UI.OutputChar(char);
+	return Player.PatternComplete(char);
 }
 
 export function PlayPattern(char: Morse.Char): void
@@ -154,16 +159,9 @@ export function PlayPattern(char: Morse.Char): void
 	UI.EmitCharacter(char.name);
 	UI.DrawPattern(char.pattern);
 
-	if (currentBufferSource)
-		StopPlaying();
-
 	currentBufferSource = AudioCtx.createBufferSource();
 	currentBufferSource.connect(ToneGain);
 	currentBufferSource.buffer = char.toneAudioBuffer;
-	currentBufferSource.addEventListener("ended", async () =>
-	{
-		UI.OutputChar(char);
-		await Player.PatternComplete(char);
-	});
+	currentBufferSource.addEventListener("ended", () => { console.log(char, performance.now()); patternEnded(char); });
 	currentBufferSource.start();
 }
