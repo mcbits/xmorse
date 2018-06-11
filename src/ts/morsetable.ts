@@ -98,18 +98,15 @@ const numbers = Object.keys(numberPatterns);
 
 const symbols = Object.keys(symbolPatterns);
 
+export const allCharacters = letters.map(l => letterPatterns[l])
+	.concat(numbers.map(n => numberPatterns[n]))
+	.concat(symbols.map(s => symbolPatterns[s]));
+
 let lettersEnabled = true;
 
 let numbersEnabled = false;
 
 let symbolsEnabled = false;
-
-export function AllCharacters(): Char[]
-{
-	return letters.map(l => letterPatterns[l])
-		.concat(numbers.map(n => numberPatterns[n]))
-		.concat(symbols.map(s => symbolPatterns[s]));
-}
 
 export function RandomCharacter(): Char
 {

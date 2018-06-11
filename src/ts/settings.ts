@@ -1,94 +1,95 @@
-import { pasteBuffer } from "pasteBuffer";
-import * as TonePlayer from "./toneplayer";
-import * as VoicePlayer from "./voiceplayer";
-import * as FullScreen from "./fullscreen";
-import * as Morse from "./morsetable";
-import { AudioCtx, MasterGain } from "./audiocontext";
-import { Query, QueryId } from "./query";
-
-const resetSettingsButton = QueryId("resetSettings");
-
-// Settings text labels
-const volumeText = Query<HTMLInputElement>(".volumeText");
-const charWPMText = Query<HTMLInputElement>(".charWPMText");
-const pitchText = Query<HTMLInputElement>(".pitchText");
-const charSpacingText = Query<HTMLInputElement>(".charSpacingText");
-
-// Settings inputs
-const volumeInput = QueryId<HTMLInputElement>("volume");
-const charWPMInput = QueryId<HTMLInputElement>("charWPM");
-const pitchInput = QueryId<HTMLInputElement>("pitch");
-const charSpacingInput = QueryId<HTMLInputElement>("charSpacing");
-const voiceEnabledInput = QueryId<HTMLInputElement>("voiceEnabled");
-const lettersEnabledInput = QueryId<HTMLInputElement>("lettersEnabled");
-const numbersEnabledInput = QueryId<HTMLInputElement>("numbersEnabled");
-const symbolsEnabledInput = QueryId<HTMLInputElement>("symbolsEnabled");
-
-const defaults = {
-	charSpacing: 2,
-	lettersEnabled: true,
-	numbersEnabled: false,
-	pitch: 650,
-	symbolsEnabled: false,
-	voiceEnabled: true,
-	volume: 0.40,
-	wpm: 10
-};
-
-function setVolume(value: number)
-{
-	MasterGain.gain.setTargetAtTime(value, AudioCtx.currentTime, 0.01);
-	volumeText.value = Math.floor(value * 100).toString();
-	volumeInput.value = value.toString();
-}
-
-function setWpm(value: number)
-{
-	TonePlayer.SetWpm(value);
-	charWPMText.value = value.toString();
-	charWPMInput.value = value.toString();
-}
-
-function setPitch(value: number)
-{
-	TonePlayer.SetFrequency(value);
-	pitchText.value = value.toString();
-	pitchInput.value = value.toString();
-}
-
-function setCharSpacing(value: number)
-{
-	TonePlayer.SetCharSpacing(value);
-	charSpacingText.value = value.toString();
-	charSpacingInput.value = value.toString();
-}
-
-function setVoiceEnabled(value: boolean)
-{
-	VoicePlayer.Enable(value);
-	voiceEnabledInput.checked = value;
-}
-
-function setLettersEnabled(value: boolean)
-{
-	Morse.SetLetters(value);
-	lettersEnabledInput.checked = value;
-}
-
-function setNumbersEnabled(value: boolean)
-{
-	Morse.SetNumbers(value);
-	numbersEnabledInput.checked = value;
-}
-
-function setSymbolsEnabled(value: boolean)
-{
-	Morse.SetSymbols(value);
-	symbolsEnabledInput.checked = value;
-}
+import { ToneGenerator } from "tonegenerator";
+import { voicePlayer } from "voiceplayer";
+import * as Morse from "morsetable";
+import { AudioCtx, MasterGain } from "audiocontext";
+import { Query, QueryId } from "query";
 
 export function Initialize()
 {
+	console.log("Initialize Settings");
+
+	const toneGenerator = new ToneGenerator();
+	const resetSettingsButton = QueryId("resetSettings");
+
+	// Settings text labels
+	const volumeText = Query<HTMLInputElement>(".volumeText");
+	const charWPMText = Query<HTMLInputElement>(".charWPMText");
+	const pitchText = Query<HTMLInputElement>(".pitchText");
+	const charSpacingText = Query<HTMLInputElement>(".charSpacingText");
+
+	// Settings inputs
+	const volumeInput = QueryId<HTMLInputElement>("volume");
+	const charWPMInput = QueryId<HTMLInputElement>("charWPM");
+	const pitchInput = QueryId<HTMLInputElement>("pitch");
+	const charSpacingInput = QueryId<HTMLInputElement>("charSpacing");
+	const voiceEnabledInput = QueryId<HTMLInputElement>("voiceEnabled");
+	const lettersEnabledInput = QueryId<HTMLInputElement>("lettersEnabled");
+	const numbersEnabledInput = QueryId<HTMLInputElement>("numbersEnabled");
+	const symbolsEnabledInput = QueryId<HTMLInputElement>("symbolsEnabled");
+
+	const defaults = {
+		charSpacing: 2,
+		lettersEnabled: true,
+		numbersEnabled: false,
+		pitch: 650,
+		symbolsEnabled: false,
+		voiceEnabled: true,
+		volume: 0.40,
+		wpm: 10
+	};
+
+	function setVolume(value: number)
+	{
+		MasterGain.gain.setTargetAtTime(value, AudioCtx.currentTime, 0.01);
+		volumeText.value = Math.floor(value * 100).toString();
+		volumeInput.value = value.toString();
+	}
+
+	function setWpm(value: number)
+	{
+		toneGenerator.SetWpm(value);
+		charWPMText.value = value.toString();
+		charWPMInput.value = value.toString();
+	}
+
+	function setPitch(value: number)
+	{
+		toneGenerator.SetFrequency(value);
+		pitchText.value = value.toString();
+		pitchInput.value = value.toString();
+	}
+
+	function setCharSpacing(value: number)
+	{
+		toneGenerator.SetCharSpacing(value);
+		charSpacingText.value = value.toString();
+		charSpacingInput.value = value.toString();
+	}
+
+	function setVoiceEnabled(value: boolean)
+	{
+		voicePlayer.Enable(value);
+		voiceEnabledInput.checked = value;
+	}
+
+	function setLettersEnabled(value: boolean)
+	{
+		Morse.SetLetters(value);
+		lettersEnabledInput.checked = value;
+	}
+
+	function setNumbersEnabled(value: boolean)
+	{
+		Morse.SetNumbers(value);
+		numbersEnabledInput.checked = value;
+	}
+
+	function setSymbolsEnabled(value: boolean)
+	{
+		Morse.SetSymbols(value);
+		symbolsEnabledInput.checked = value;
+	}
+
 	volumeInput.addEventListener("input", () =>
 	{
 		const value = parseFloat(volumeInput.value);
@@ -121,7 +122,7 @@ export function Initialize()
 	{
 		const value = voiceEnabledInput.checked;
 		localStorage.setItem("voiceEnabled", value.toString());
-		VoicePlayer.Enable(value);
+		voicePlayer.Enable(value);
 	});
 
 	lettersEnabledInput.addEventListener("change", () =>

@@ -1,14 +1,16 @@
-import * as UI from "./controls";
+import * as UI from "controls";
 import { pasteBuffer } from "pasteBuffer";
-import * as TonePlayer from "./toneplayer";
-import * as VoicePlayer from "./voiceplayer";
-import * as Morse from "./morsetable";
+import { TonePlayer } from "toneplayer";
+import { voicePlayer } from "voiceplayer";
+import * as Morse from "morsetable";
 
 class Player
 {
 	private playing: boolean;
 
-	async PlayNextPattern(): Promise<void>
+	constructor(private readonly tonePlayer: TonePlayer) { }
+
+	PlayNextPattern = async (): Promise<void> =>
 	{
 		if (this.playing)
 		{
@@ -25,8 +27,8 @@ class Player
 					UI.EmitCharacter("");
 				}
 
-				VoicePlayer.Preload(morseChar);
-				TonePlayer.PlayPattern(morseChar);
+				voicePlayer.Preload(morseChar);
+				this.tonePlayer.PlayPattern(morseChar);
 			}
 			else
 			{
@@ -47,7 +49,7 @@ class Player
 	StopPlaying(): void
 	{
 		this.playing = false;
-		TonePlayer.StopPlaying();
+		this.tonePlayer.Stop();
 	}
 
 	async PatternComplete(char: Morse.Char): Promise<void>
@@ -55,9 +57,9 @@ class Player
 		if (this.playing)
 		{
 			// PlayNextPattern() will be called when done.
-			await VoicePlayer.PlayVoice(char);
+			await voicePlayer.PlayVoice(char);
 		}
 	}
 }
 
-export const player = new Player();
+export const player = new Player(new TonePlayer());
