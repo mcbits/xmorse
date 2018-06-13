@@ -74,19 +74,19 @@ export function Initialize()
 
 	function setLettersEnabled(value: boolean)
 	{
-		Morse.SetLetters(value);
+		Morse.EnableCharType(Morse.CharType.Letter, value);
 		lettersEnabledInput.checked = value;
 	}
 
 	function setNumbersEnabled(value: boolean)
 	{
-		Morse.SetNumbers(value);
+		Morse.EnableCharType(Morse.CharType.Number, value);
 		numbersEnabledInput.checked = value;
 	}
 
 	function setSymbolsEnabled(value: boolean)
 	{
-		Morse.SetSymbols(value);
+		Morse.EnableCharType(Morse.CharType.Symbol, value);
 		symbolsEnabledInput.checked = value;
 	}
 

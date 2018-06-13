@@ -11,7 +11,7 @@ export class VoicePlayer
 {
 	// For caching audio files as they're loaded
 	private readonly audioBuffers: { [charName: string]: AudioBuffer } = {};
-	private loadingPromise: Promise<void>;
+	private loadingPromise: Promise<AudioBuffer>;
 	private audioSource: AudioBufferSourceNode;
 
 	constructor()
@@ -19,16 +19,16 @@ export class VoicePlayer
 		console.log("Construct VoicePlayer");
 	}
 
-	private async loadVoice(char: Morse.Char): Promise<void>
+	private async loadVoice(char: Morse.Char): Promise<AudioBuffer>
 	{
 		try
 		{
-			const response = await fetch("/snd/" + Morse.fileName(char), { method: "GET" });
+			const response = await fetch("/snd/" + char.voiceFileName, { method: "GET" });
 
 			if (response.status === 200 || response.status === 304)
 			{
 				const arrayBuffer = await response.arrayBuffer();
-				this.audioBuffers[char.name] = await AudioCtx.decodeAudioData(arrayBuffer);
+				return AudioCtx.decodeAudioData(arrayBuffer);
 			}
 			else
 				throw "Failed to fetch audio.";
@@ -41,7 +41,7 @@ export class VoicePlayer
 
 	Preload(char: Morse.Char)
 	{
-		if (!this.audioBuffers[char.name] && char && Morse.fileName(char))
+		if (!this.audioBuffers[char.name] && char && char.voiceFileName)
 			this.loadingPromise = this.loadVoice(char);
 	}
 
@@ -58,13 +58,13 @@ export class VoicePlayer
 	{
 		console.log("Play voice: ", char);
 
-		if (!char || !Morse.fileName(char))
+		if (!char || !char.voiceFileName)
 			voiceDone()
 		else
 		{
 			if (this.loadingPromise)
 			{
-				await this.loadingPromise;
+				this.audioBuffers[char.name] = await this.loadingPromise;
 				this.loadingPromise = undefined;
 			}
 
