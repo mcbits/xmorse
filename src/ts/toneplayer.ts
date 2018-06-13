@@ -1,4 +1,4 @@
-import * as UI from "./controls";
+import { ui } from "controls";
 import { player } from "player";
 import * as Morse from "./morsetable";
 import { AudioCtx, ToneGain } from "./audiocontext";
@@ -8,15 +8,20 @@ export class TonePlayer
 	private currentChar: Morse.Char;
 	private currentBufferSource: AudioBufferSourceNode;
 
+	constructor()
+	{
+		console.log("Construct TonePlayer");
+	}
+
 	Stop()
 	{
-		this.currentBufferSource.removeEventListener("ended", this.patternEnded);
+		//this.currentBufferSource.removeEventListener("ended", this.patternEnded);
 		this.currentBufferSource.stop(0);
 	}
 
 	private patternEnded = (): Promise<void> =>
 	{
-		UI.OutputChar(this.currentChar);
+		ui.OutputChar(this.currentChar);
 
 		return player.PatternComplete(this.currentChar);
 	}
@@ -25,8 +30,8 @@ export class TonePlayer
 	{
 		this.currentChar = char;
 
-		UI.EmitCharacter(char.name);
-		UI.DrawPattern(char.pattern);
+		ui.EmitCharacter(char.name);
+		ui.DrawPattern(char.pattern);
 
 		this.currentBufferSource = AudioCtx.createBufferSource();
 		this.currentBufferSource.connect(ToneGain);

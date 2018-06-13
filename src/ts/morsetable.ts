@@ -173,7 +173,7 @@ export function fileName(char: Char)
 		return fileName;
 	}
 
-	return undefined;
+	return;
 }
 
 export function SetNumbers(value: boolean)

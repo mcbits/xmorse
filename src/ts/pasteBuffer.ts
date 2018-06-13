@@ -1,16 +1,17 @@
-import * as UI from "./controls";
+import { ui, ControlsUI } from "controls";
 import * as Player from "./player";
 import * as Settings from "./settings";
 import * as Morse from "./morsetable";
 import { QueryId } from "query";
 
-class PasteBuffer
+export class PasteBuffer
 {
 	private textBuffer = "";
 	private textBufferIndex = -1;
 
-	constructor(private el: HTMLTextAreaElement)
+	constructor(private el: HTMLTextAreaElement, private ui: ControlsUI)
 	{
+		console.log("Construct PasteBuffer");
 	}
 
 	ResetPosition()
@@ -20,22 +21,18 @@ class PasteBuffer
 
 	SetTextBuffer(text: string)
 	{
-		UI.StopPlaying();
-		UI.ClearOutput();
-		this.textBuffer = text.toUpperCase().trim() + "\n";
-		this.ResetPosition();
+		if (text)
+		{
+			console.log("Set text buffer: ", text.substr(0, Math.min(text.length, 76)), "...");
+			this.textBuffer = text.toUpperCase().trim() + "\n";
+			this.ResetPosition();
+		}
 	}
 
-	async LoadBook(href: string): Promise<void>
+	async LoadBook(href: string): Promise<string>
 	{
-		UI.StopPlaying();
-
 		const response = await fetch(href, { method: "GET" });
-		const value = await response.text();
-
-		UI.SetPasteTextBoxValue(value);
-		this.SetTextBuffer(value);
-		UI.StartPlaying();
+		return response.text();
 	}
 
 	Next(): [string, Morse.Char]
@@ -60,7 +57,7 @@ class PasteBuffer
 			}
 			while (this.textBufferIndex !== startingIndex);
 
-			return ["", null];
+			return ["", Morse.GetCharacter("")];
 		}
 
 		const char = Morse.RandomCharacter();
@@ -68,5 +65,3 @@ class PasteBuffer
 		return [char.name, char];
 	}
 }
-
-export const pasteBuffer = new PasteBuffer(QueryId<HTMLTextAreaElement>("pasteText"));

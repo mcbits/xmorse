@@ -1,33 +1,40 @@
-import * as UI from "controls";
-import { pasteBuffer } from "pasteBuffer";
+import { PasteBuffer } from "pasteBuffer";
 import { TonePlayer } from "toneplayer";
-import { voicePlayer } from "voiceplayer";
+import { VoicePlayer } from "voiceplayer";
+import { ui, pasteBuffer } from "controls";
 import * as Morse from "morsetable";
 
 class Player
 {
 	private playing: boolean;
+	private voiceEnabled: boolean;
 
-	constructor(private readonly tonePlayer: TonePlayer) { }
+	constructor(private readonly tonePlayer: TonePlayer, private readonly voicePlayer: VoicePlayer, private pasteBuffer: PasteBuffer)
+	{
+		console.log("Construct Player");
+		document.addEventListener("voicedone", this.PlayNextPattern);
+	}
 
 	PlayNextPattern = async (): Promise<void> =>
 	{
 		if (this.playing)
 		{
 			// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
-			let [text, morseChar] = pasteBuffer.Next() || [" ", Morse.GetCharacter(" ")];
+			let [text, morseChar] = this.pasteBuffer.Next();
 
 			if (morseChar)
 			{
-				// If there is unplayable text, send it to the output buffer and delay for one word-break.
+				if (this.voiceEnabled)
+					this.voicePlayer.Preload(morseChar);
+
+				// If there is unplayable text, send it to the output buffer.
 				if (text !== morseChar.name)
 				{
-					UI.OutputString(text.substr(0, text.length - 1));
-					UI.DrawPattern(" ");
-					UI.EmitCharacter("");
+					ui.DrawPattern(" ");
+					ui.EmitCharacter("");
+					ui.OutputString(text.substr(0, text.length - 1));
 				}
 
-				voicePlayer.Preload(morseChar);
 				this.tonePlayer.PlayPattern(morseChar);
 			}
 			else
@@ -50,6 +57,7 @@ class Player
 	{
 		this.playing = false;
 		this.tonePlayer.Stop();
+		this.voicePlayer.Stop();
 	}
 
 	async PatternComplete(char: Morse.Char): Promise<void>
@@ -57,9 +65,17 @@ class Player
 		if (this.playing)
 		{
 			// PlayNextPattern() will be called when done.
-			await voicePlayer.PlayVoice(char);
+			if (this.voiceEnabled)
+				await this.voicePlayer.PlayVoice(char);
+			else
+				await this.PlayNextPattern();
 		}
+	}
+
+	EnableVoice(value: boolean)
+	{
+		this.voiceEnabled = value;
 	}
 }
 
-export const player = new Player(new TonePlayer());
+export const player = new Player(new TonePlayer(), new VoicePlayer(), pasteBuffer);

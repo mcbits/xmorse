@@ -1,8 +1,8 @@
 import { ToneGenerator } from "tonegenerator";
-import { voicePlayer } from "voiceplayer";
 import * as Morse from "morsetable";
 import { AudioCtx, MasterGain } from "audiocontext";
 import { Query, QueryId } from "query";
+import { player } from "player";
 
 export function Initialize()
 {
@@ -68,7 +68,7 @@ export function Initialize()
 
 	function setVoiceEnabled(value: boolean)
 	{
-		voicePlayer.Enable(value);
+		player.EnableVoice(value);
 		voiceEnabledInput.checked = value;
 	}
 
@@ -122,7 +122,7 @@ export function Initialize()
 	{
 		const value = voiceEnabledInput.checked;
 		localStorage.setItem("voiceEnabled", value.toString());
-		voicePlayer.Enable(value);
+		player.EnableVoice(value);
 	});
 
 	lettersEnabledInput.addEventListener("change", () =>

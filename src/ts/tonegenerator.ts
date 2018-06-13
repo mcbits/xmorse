@@ -11,6 +11,11 @@ export class ToneGenerator
 	private charSpacing: number = 2;
 	private unitTime: number;
 
+	constructor()
+	{
+		console.log("Construct ToneGenerator");
+	}
+
 	// We consider dit and dah to be 10 and 1110 in binary, which are 2 and 4 units.
 	private countUnitsInPattern(pattern: string): number
 	{

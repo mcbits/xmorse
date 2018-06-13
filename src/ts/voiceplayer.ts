@@ -1,14 +1,23 @@
-import { player } from "player";
 import * as Morse from "./morsetable";
 import { AudioCtx, VoiceGain } from "./audiocontext";
 
-class VoicePlayer
+function voiceDone()
+{
+	console.log("Voice done");
+	document.dispatchEvent(new CustomEvent("voicedone"));
+}
+
+export class VoicePlayer
 {
 	// For caching audio files as they're loaded
 	private readonly audioBuffers: { [charName: string]: AudioBuffer } = {};
-
-	private enabled = false;
 	private loadingPromise: Promise<void>;
+	private audioSource: AudioBufferSourceNode;
+
+	constructor()
+	{
+		console.log("Construct VoicePlayer");
+	}
 
 	private async loadVoice(char: Morse.Char): Promise<void>
 	{
@@ -23,7 +32,6 @@ class VoicePlayer
 			}
 			else
 				throw "Failed to fetch audio.";
-
 		}
 		catch (err)
 		{
@@ -31,21 +39,27 @@ class VoicePlayer
 		}
 	}
 
-	Enable(value: boolean)
+	Preload(char: Morse.Char)
 	{
-		this.enabled = value;
+		if (!this.audioBuffers[char.name] && char && Morse.fileName(char))
+			this.loadingPromise = this.loadVoice(char);
 	}
 
-	async Preload(char: Morse.Char): Promise<void>
+	Stop()
 	{
-		if (this.enabled && !this.audioBuffers[char.name] && !this.loadingPromise)
-			this.loadingPromise = this.loadVoice(char);
+		if (this.audioSource)
+		{
+			this.audioSource.removeEventListener("ended", voiceDone);
+			this.audioSource.stop(0);
+		}
 	}
 
 	async PlayVoice(char: Morse.Char): Promise<void>
 	{
-		if (!this.enabled || !char || !Morse.fileName(char))
-			await player.PlayNextPattern();
+		console.log("Play voice: ", char);
+
+		if (!char || !Morse.fileName(char))
+			voiceDone()
 		else
 		{
 			if (this.loadingPromise)
@@ -58,18 +72,16 @@ class VoicePlayer
 
 			if (audioBuffer)
 			{
-				const audioSource = AudioCtx.createBufferSource();
-				audioSource.addEventListener("ended", player.PlayNextPattern);
-				audioSource.buffer = audioBuffer;
-				audioSource.connect(VoiceGain);
-				audioSource.start(0);
+				this.audioSource = AudioCtx.createBufferSource();
+				this.audioSource.addEventListener("ended", voiceDone);
+				this.audioSource.buffer = audioBuffer;
+				this.audioSource.connect(VoiceGain);
+				this.audioSource.start(0);
 			}
 			else
 			{
-				await player.PlayNextPattern();
+				voiceDone();
 			}
 		}
 	}
 }
-
-export const voicePlayer = new VoicePlayer();
