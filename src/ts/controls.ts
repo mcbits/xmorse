@@ -42,7 +42,7 @@ export class ControlsUI
 		pauseBtn.style.display = "initial";
 		location.hash = "#playing";
 		pasteBuffer.SetTextBuffer(pasteTextBoxInput.value.length > 0 ? pasteTextBoxInput.value : undefined);
-		player.StartPlaying();
+		player.Start();
 	}
 
 	PausePlaying()
@@ -53,13 +53,13 @@ export class ControlsUI
 		stopBtn.disabled = false;
 		pauseBtn.style.display = "none";
 		startBtn.style.display = "initial";
-		player.StopPlaying();
+		player.Pause();
 	}
 
 	StopPlaying()
 	{
 		console.log("Stop playing");
-		player.StopPlaying();
+		player.Stop();
 		FullScreen.StopPlaying();
 		pasteBuffer.ResetPosition();
 		outputBuffer.innerHTML = "";
@@ -79,7 +79,12 @@ export class ControlsUI
 
 	OutputString(value: string)
 	{
-		outputBuffer.innerHTML += value;
+		let text = outputBuffer.innerHTML;
+
+		if (text.length > 10000)
+			text = text.substring(text.length / 2, text.length - 1);
+
+		outputBuffer.innerHTML = text + value;
 		outputBuffer.scrollTop = outputBuffer.scrollHeight;
 	}
 

@@ -13,9 +13,14 @@ export class TonePlayer
 		console.log("Construct TonePlayer");
 	}
 
+	Pause()
+	{
+		this.currentBufferSource.stop(0);
+	}
+
 	Stop()
 	{
-		//this.currentBufferSource.removeEventListener("ended", this.patternEnded);
+		this.currentBufferSource.removeEventListener("ended", this.patternEnded);
 		this.currentBufferSource.stop(0);
 	}
 

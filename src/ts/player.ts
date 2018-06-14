@@ -44,7 +44,7 @@ class Player
 		}
 	}
 
-	async StartPlaying(): Promise<void>
+	async Start(): Promise<void>
 	{
 		if (!this.playing)
 		{
@@ -53,7 +53,14 @@ class Player
 		}
 	}
 
-	StopPlaying(): void
+	Pause()
+	{
+		this.playing = false;
+		this.tonePlayer.Pause();
+		this.voicePlayer.Pause();
+	}
+
+	Stop(): void
 	{
 		this.playing = false;
 		this.tonePlayer.Stop();

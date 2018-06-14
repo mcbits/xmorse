@@ -45,6 +45,11 @@ export class VoicePlayer
 			this.loadingPromise = this.loadVoice(char);
 	}
 
+	Pause()
+	{
+		this.audioSource.stop(0);
+	}
+
 	Stop()
 	{
 		if (this.audioSource)
