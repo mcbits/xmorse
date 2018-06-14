@@ -9,9 +9,6 @@
 		<link rel="icon" href="/favicon.ico" />
 		<link rel="stylesheet" href="css/site.css" />
 		<link rel="canonical" href="http://xmorse.com" />
-		<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/css?family=Audiowide" rel="stylesheet">
-		<script src="js/app.js" defer></script>
 	</head>
 
 	<body>
@@ -84,13 +81,14 @@
 							Set aside a few minutes every day to practice. Small, consistent efforts add up to long-term success!
 						</li>
 						<li>
-							If you have never learned Morse code, start with the voice enabled. Close your eyes and try to recognize each character
-							before the voice reveals it. Once you have memorized most of the characters, you can disable the voice. (This takes
-							less time than you might think!)
+							If you have never learned Morse code, start with the voice enabled. Close your eyes and try to recognize each character before
+							the voice reveals it. Once you have memorized most of the characters, you can disable the voice. (This takes less
+							time than you might think!)
 						</li>
 						<li>
-							At first, you may find it helpful to <a href="#settings">increase the spacing between characters</a>. As you progress,
-							gradually reduce the character spacing until you reach the standard speed.
+							At first, you may find it helpful to
+							<a href="#settings">increase the spacing between characters</a>. As you progress, gradually reduce the character spacing until you reach
+							the standard speed.
 						</li>
 						<li>
 							Set the words-per-minute (WPM) speed a bit faster than your target speed, and set the spacing just wide enough to be challenging.
@@ -155,61 +153,64 @@
 			</div>
 
 			<div class="settings view disabled">
-				<div class="name">Voice</div>
-				<div class="output">
-					<input type="checkbox" id="voiceEnabled" checked>
+				<div class="value">
+					<input type="checkbox" id="voiceEnabled">
 				</div>
-				<div class="input">
-					<label for="voiceEnabled">Enable voice repeating each letter</label>
+				<div class="name">
+					<label for="voiceEnabled">Speak characters</label>
 				</div>
 
-				<div class="name">Volume</div>
-				<div class="output">
+				<div class="value">
+					<input type="checkbox" id="lettersEnabled" checked>
+				</div>
+				<div class="name">
+					<label for="lettersEnabled">Play letters</label>
+				</div>
+
+				<div class="value">
+					<input type="checkbox" id="numbersEnabled">
+				</div>
+				<div class="name">
+					<label for="numbersEnabled">Play numbers</label>
+				</div>
+
+				<div class="value">
+					<input type="checkbox" id="symbolsEnabled">
+				</div>
+				<div class="name">
+					<label for="symbolsEnabled">Play symbols</label>
+				</div>
+
+				<br>
+
+				<div class="value">
 					<output for="volume" class="volumeText"></output>
 				</div>
+				<div class="name">Volume</div>
 				<div class="input">
 					<input type="range" id="volume" value="0.4" min="0" max="1" step="0.01" />
 				</div>
 
-				<div class="name">Character WPM</div>
-				<div class="output">
+				<div class="value">
 					<output for="charWPM" class="charWPMText"></output>
 				</div>
+				<div class="name">Character WPM</div>
 				<div class="input">
 					<input type="range" id="charWPM" value="10" min="5" max="50" />
 				</div>
 
-				<div class="name">Character Spacing</div>
-				<div class="output">
+				<div class="value">
 					<output for="charSpacing" class="charSpacingText"></output>
 				</div>
+				<div class="name">Character Spacing</div>
 				<div class="input">
 					<input type="range" id="charSpacing" value="2" min="2" max="20" />
 				</div>
 
-				<div class="name">Enable characters</div>
-				<div class="checkboxes">
-					<label>
-						<input type="checkbox" id="lettersEnabled" checked /> Letters
-					</label>
-
-					<br>
-
-					<label>
-						<input type="checkbox" id="numbersEnabled" /> Numbers
-					</label>
-
-					<br>
-
-					<label>
-						<input type="checkbox" id="symbolsEnabled" /> Symbols
-					</label>
-				</div>
-
-				<div class="name">Pitch</div>
-				<div class="output">
+				<div class="value">
 					<output for="pitch" class="pitchText"></output>
 				</div>
+				<div class="name">Pitch</div>
 				<div class="input">
 					<input type="range" id="pitch" value="650" min="400" max="999" />
 				</div>
@@ -505,7 +506,9 @@
 			</div>
 
 			<div class="info">
-				<a>&copy; 2015-2018 xMorse<br/></a>
+				<a>&copy; 2015-2018 xMorse
+					<br/>
+				</a>
 				<a href="/privacy.html">Privacy Policy</a>
 			</div>
 		</aside>
@@ -528,6 +531,11 @@
 
 			ga('create', 'UA-89858630-1', 'auto');
 			ga('send', 'pageview');
+		</script>
+		<script src="js/system-production.js"></script>
+		<script src="js/app.js"></script>
+		<script>
+			SystemJS.import("main").then(app => app.main());
 		</script>
 	</body>
 
