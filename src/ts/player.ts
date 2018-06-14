@@ -9,7 +9,7 @@ class Player
 	private playing: boolean;
 	private voiceEnabled: boolean;
 
-	constructor(private readonly tonePlayer: TonePlayer, private readonly voicePlayer: VoicePlayer, private pasteBuffer: PasteBuffer)
+	constructor(private readonly tonePlayer: TonePlayer, private readonly voicePlayer: VoicePlayer)
 	{
 		document.addEventListener("voicedone", this.VoiceComplete);
 	}
@@ -17,7 +17,7 @@ class Player
 	PlayNextPattern = async (): Promise<void> =>
 	{
 		// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
-		let [text, morseChar] = this.pasteBuffer.Next();
+		let [text, morseChar] = pasteBuffer.Next();
 
 		if (this.voiceEnabled)
 			this.voicePlayer.Preload(morseChar);
@@ -77,4 +77,4 @@ class Player
 	}
 }
 
-export const player = new Player(new TonePlayer(), new VoicePlayer(), pasteBuffer);
+export const player = new Player(new TonePlayer(), new VoicePlayer());

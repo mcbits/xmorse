@@ -8,8 +8,11 @@ export class TonePlayer
 	private currentChar: Morse.Char;
 	private currentBufferSource: AudioBufferSourceNode;
 
-	constructor()
+	private patternEnded = (): Promise<void> =>
 	{
+		ui.OutputChar(this.currentChar);
+
+		return player.PatternComplete(this.currentChar);
 	}
 
 	Stop()
@@ -19,13 +22,6 @@ export class TonePlayer
 			this.currentBufferSource.removeEventListener("ended", this.patternEnded);
 			this.currentBufferSource = undefined;
 		}
-	}
-
-	private patternEnded = (): Promise<void> =>
-	{
-		ui.OutputChar(this.currentChar);
-
-		return player.PatternComplete(this.currentChar);
 	}
 
 	PlayPattern(char: Morse.Char): void

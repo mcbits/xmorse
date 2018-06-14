@@ -17,18 +17,20 @@ const storyLinks = QueryAll(".story a");
 const patternEl = Query<HTMLElement>(".view.playing .pattern");
 const pasteTextBoxInput = QueryId<HTMLTextAreaElement>("pasteText");
 
-export class ControlsUI
+async function loadBook(href: string): Promise<string>
 {
-	constructor()
-	{
-	}
+	const response = await fetch(href, { method: "GET" });
+	return response.text();
+}
 
+class ControlsUI
+{
 	ClearOutput()
 	{
 		outputBuffer.innerHTML = "";
 	}
 
-	StartPlaying()
+	StartPlaying = () =>
 	{
 		if (AudioCtx.state === "suspended")
 			AudioCtx.resume();
@@ -43,7 +45,7 @@ export class ControlsUI
 		player.Start();
 	}
 
-	PausePlaying()
+	PausePlaying = () =>
 	{
 		startBtn.disabled = false;
 		pauseBtn.disabled = true;
@@ -53,7 +55,7 @@ export class ControlsUI
 		player.Pause();
 	}
 
-	StopPlaying()
+	StopPlaying = () =>
 	{
 		player.Stop();
 		FullScreen.StopPlaying();
@@ -128,16 +130,16 @@ export class ControlsUI
 	{
 		pasteTextBoxInput.addEventListener("input", this.pasteTextBoxChanged);
 
-		for (let i = 0; i < startBtns.length; ++i)
-		{
-			startBtns[i].addEventListener("click", () => this.StartPlaying());
-		}
+		pauseBtn.addEventListener("click", this.PausePlaying);
 
-		pauseBtn.addEventListener("click", () => this.PausePlaying());
-
-		stopBtn.addEventListener("click", () => this.StopPlaying());
+		stopBtn.addEventListener("click", this.StopPlaying);
 
 		gearBtn.addEventListener("click", () => location.hash = "settings");
+
+		for (let i = 0; i < startBtns.length; ++i)
+		{
+			startBtns[i].addEventListener("click", this.StartPlaying);
+		}
 
 		for (let i = 0; i < storyLinks.length; ++i)
 		{
@@ -149,7 +151,7 @@ export class ControlsUI
 				const href = anchor.href;
 
 				this.StopPlaying();
-				const value = await pasteBuffer.LoadBook(href);
+				const value = await loadBook(href);
 				pasteTextBoxInput.value = value;
 				this.pasteTextBoxChanged();
 				this.StartPlaying();
@@ -159,4 +161,4 @@ export class ControlsUI
 }
 
 export const ui = new ControlsUI();
-export const pasteBuffer = new PasteBuffer(QueryId<HTMLTextAreaElement>("pasteText"), ui);
+export const pasteBuffer = new PasteBuffer();

@@ -9,10 +9,6 @@ export class PasteBuffer
 	private textBuffer = "";
 	private textBufferIndex = -1;
 
-	constructor(private el: HTMLTextAreaElement, private ui: ControlsUI)
-	{
-	}
-
 	ResetPosition()
 	{
 		this.textBufferIndex = this.textBuffer.length > 0 ? 0 : -1;
@@ -29,12 +25,6 @@ export class PasteBuffer
 				this.ResetPosition();
 			}
 		}
-	}
-
-	async LoadBook(href: string): Promise<string>
-	{
-		const response = await fetch(href, { method: "GET" });
-		return response.text();
 	}
 
 	Next(): [string, Morse.Char]
