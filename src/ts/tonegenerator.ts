@@ -14,7 +14,6 @@ export class ToneGenerator
 
 	constructor()
 	{
-		console.log("Construct ToneGenerator");
 	}
 
 	// We consider dit and dah to be 10 and 1110 in binary, which are 2 and 4 units.

@@ -6,8 +6,6 @@ import { player } from "player";
 
 export function Initialize()
 {
-	console.log("Initialize Settings");
-
 	const toneGenerator = new ToneGenerator();
 	const resetSettingsButton = QueryId("resetSettings");
 

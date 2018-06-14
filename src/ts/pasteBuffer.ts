@@ -11,7 +11,6 @@ export class PasteBuffer
 
 	constructor(private el: HTMLTextAreaElement, private ui: ControlsUI)
 	{
-		console.log("Construct PasteBuffer");
 	}
 
 	ResetPosition()
@@ -24,7 +23,6 @@ export class PasteBuffer
 		if (text)
 		{
 			text = text.toUpperCase().trim() + "\n";
-			console.log("Set text buffer: ", text.substr(0, Math.min(text.length, 76)), "...");
 			if (text != this.textBuffer)
 			{
 				this.textBuffer = text;

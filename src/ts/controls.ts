@@ -21,7 +21,6 @@ export class ControlsUI
 {
 	constructor()
 	{
-		console.log("Construct ControlsUI");
 	}
 
 	ClearOutput()
@@ -31,7 +30,6 @@ export class ControlsUI
 
 	StartPlaying()
 	{
-		console.log("Start playing");
 		if (AudioCtx.state === "suspended")
 			AudioCtx.resume();
 
@@ -47,7 +45,6 @@ export class ControlsUI
 
 	PausePlaying()
 	{
-		console.log("Pause playing");
 		startBtn.disabled = false;
 		pauseBtn.disabled = true;
 		stopBtn.disabled = false;
@@ -58,7 +55,6 @@ export class ControlsUI
 
 	StopPlaying()
 	{
-		console.log("Stop playing");
 		player.Stop();
 		FullScreen.StopPlaying();
 		pasteBuffer.ResetPosition();
@@ -122,7 +118,6 @@ export class ControlsUI
 
 	pasteTextBoxChanged = () =>
 	{
-		console.log("Paste textbox content changed");
 		const value = pasteTextBoxInput.value;
 		localStorage.setItem("textBuffer", value);
 		this.StopPlaying();

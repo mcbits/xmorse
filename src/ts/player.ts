@@ -11,7 +11,6 @@ class Player
 
 	constructor(private readonly tonePlayer: TonePlayer, private readonly voicePlayer: VoicePlayer, private pasteBuffer: PasteBuffer)
 	{
-		console.log("Construct Player");
 		document.addEventListener("voicedone", this.VoiceComplete);
 	}
 

@@ -3,7 +3,6 @@ import { AudioCtx, VoiceGain } from "./audiocontext";
 
 function voiceDone()
 {
-	console.log("Voice done");
 	document.dispatchEvent(new CustomEvent("voicedone"));
 }
 
@@ -16,7 +15,6 @@ export class VoicePlayer
 
 	constructor()
 	{
-		console.log("Construct VoicePlayer");
 	}
 
 	private async loadVoice(char: Morse.Char): Promise<[Morse.Char, AudioBuffer]>
@@ -56,8 +54,6 @@ export class VoicePlayer
 
 	async PlayVoice(char: Morse.Char): Promise<void>
 	{
-		console.log("Play voice: ", char);
-
 		if (!char || !char.voiceFileName)
 			voiceDone()
 		else

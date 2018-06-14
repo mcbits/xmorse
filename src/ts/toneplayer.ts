@@ -10,7 +10,6 @@ export class TonePlayer
 
 	constructor()
 	{
-		console.log("Construct TonePlayer");
 	}
 
 	Stop()
