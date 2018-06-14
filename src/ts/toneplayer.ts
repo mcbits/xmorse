@@ -13,15 +13,13 @@ export class TonePlayer
 		console.log("Construct TonePlayer");
 	}
 
-	Pause()
-	{
-		this.currentBufferSource.stop(0);
-	}
-
 	Stop()
 	{
-		this.currentBufferSource.removeEventListener("ended", this.patternEnded);
-		this.currentBufferSource.stop(0);
+		if (this.currentBufferSource)
+		{
+			this.currentBufferSource.removeEventListener("ended", this.patternEnded);
+			this.currentBufferSource = undefined;
+		}
 	}
 
 	private patternEnded = (): Promise<void> =>

@@ -23,9 +23,13 @@ export class PasteBuffer
 	{
 		if (text)
 		{
+			text = text.toUpperCase().trim() + "\n";
 			console.log("Set text buffer: ", text.substr(0, Math.min(text.length, 76)), "...");
-			this.textBuffer = text.toUpperCase().trim() + "\n";
-			this.ResetPosition();
+			if (text != this.textBuffer)
+			{
+				this.textBuffer = text;
+				this.ResetPosition();
+			}
 		}
 	}
 

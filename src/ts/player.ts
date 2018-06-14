@@ -12,36 +12,26 @@ class Player
 	constructor(private readonly tonePlayer: TonePlayer, private readonly voicePlayer: VoicePlayer, private pasteBuffer: PasteBuffer)
 	{
 		console.log("Construct Player");
-		document.addEventListener("voicedone", this.PlayNextPattern);
+		document.addEventListener("voicedone", this.VoiceComplete);
 	}
 
 	PlayNextPattern = async (): Promise<void> =>
 	{
-		if (this.playing)
+		// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
+		let [text, morseChar] = this.pasteBuffer.Next();
+
+		if (this.voiceEnabled)
+			this.voicePlayer.Preload(morseChar);
+
+		// If there is unplayable text, send it to the output buffer.
+		if (text !== morseChar.name)
 		{
-			// Fetch a tuple containing the next character and any unplayable text before it (whitespace, etc).
-			let [text, morseChar] = this.pasteBuffer.Next();
-
-			if (morseChar)
-			{
-				if (this.voiceEnabled)
-					this.voicePlayer.Preload(morseChar);
-
-				// If there is unplayable text, send it to the output buffer.
-				if (text !== morseChar.name)
-				{
-					ui.DrawPattern(" ");
-					ui.EmitCharacter("");
-					ui.OutputString(text.substr(0, text.length - 1));
-				}
-
-				this.tonePlayer.PlayPattern(morseChar);
-			}
-			else
-			{
-				await this.PlayNextPattern();
-			}
+			ui.DrawPattern(" ");
+			ui.EmitCharacter("");
+			ui.OutputString(text.substr(0, text.length - 1));
 		}
+
+		this.tonePlayer.PlayPattern(morseChar);
 	}
 
 	async Start(): Promise<void>
@@ -56,8 +46,6 @@ class Player
 	Pause()
 	{
 		this.playing = false;
-		this.tonePlayer.Pause();
-		this.voicePlayer.Pause();
 	}
 
 	Stop(): void
@@ -67,11 +55,16 @@ class Player
 		this.voicePlayer.Stop();
 	}
 
-	async PatternComplete(char: Morse.Char): Promise<void>
+	VoiceComplete = async () =>
+	{
+		if (this.playing)
+			await this.PlayNextPattern();
+	}
+
+	PatternComplete = async (char: Morse.Char) =>
 	{
 		if (this.playing)
 		{
-			// PlayNextPattern() will be called when done.
 			if (this.voiceEnabled)
 				await this.voicePlayer.PlayVoice(char);
 			else
