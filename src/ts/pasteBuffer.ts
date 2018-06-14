@@ -1,4 +1,4 @@
-import { ui, ControlsUI } from "controls";
+import { ui } from "controls";
 import * as Player from "./player";
 import * as Settings from "./settings";
 import * as Morse from "./morsetable";
