@@ -1,5 +1,10 @@
 import { Query, QueryId } from "./query";
 
+declare interface Document
+{
+	mozCancelFullScreen: Function;
+}
+
 const fullScreenButton = Query(".btn-fullscreen");
 const playingView = document.body.parentElement;
 const controls = Query(".controls");
@@ -21,8 +26,8 @@ function exitFullScreen()
 		document.exitFullscreen();
 	else if (document["webkitExitFullscreen"])
 		document["webkitExitFullscreen"]();
-	else if (document["mozCancelFullScreen"])
-		document["mozCancelFullScreen"]();
+	else if ((<any>document).mozCancelFullScreen)
+		(<any>document)["mozCancelFullScreen"]();
 
 	clearInterval(hideControlsInterval);
 	document.removeEventListener("mousemove", markTime);
@@ -37,8 +42,8 @@ function enterFullScreen()
 		playingView.requestFullscreen();
 	else if (document["webkitFullscreenEnabled"])
 		playingView["webkitRequestFullscreen"]();
-	else if (document["mozFullScreenEnabled"])
-		playingView["mozRequestFullScreen"]();
+	else if ((<any>document)["mozFullScreenEnabled"])
+		(<any>playingView)["mozRequestFullScreen"]();
 
 	document.body.classList.add("fullscreen");
 }
@@ -133,7 +138,7 @@ export function Initialize()
 		document.addEventListener("fullscreenchange", fullScreenChanged);
 	else if (document["webkitFullscreenEnabled"])
 		document.addEventListener("webkitfullscreenchange", fullScreenChanged);
-	else if (document["mozFullScreenEnabled"])
+	else if ((<any>document)["mozFullScreenEnabled"])
 		document.addEventListener("mozfullscreenchange", fullScreenChanged);
 
 	fullScreenButton.addEventListener("click", toggleFullScreen);

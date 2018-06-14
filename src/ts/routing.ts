@@ -28,7 +28,7 @@ function setView(viewSelector: string, menuItemSelector: string)
 
 function processHash()
 {
-	const route = routes[location.hash];
+	const route = (<any>routes)[location.hash];
 
 	if (route)
 		setView(route.viewSelector, route.menuItemSelector);

@@ -16,7 +16,7 @@ export class Char
 	public voiceAudioBuffer?: AudioBuffer;
 	public toneAudioBuffer?: AudioBuffer;
 
-	constructor(charType, name, pattern, voiceFileName?)
+	constructor(charType: CharType, name: string, pattern: string, voiceFileName?: string)
 	{
 		this.type = charType;
 		this.name = name;
