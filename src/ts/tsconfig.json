@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "es5",
-		"lib": ["dom"],
+		"lib": ["dom", "es2017"],
 		"module": "system",
 		"sourceMap": true,
 		"alwaysStrict": true,
